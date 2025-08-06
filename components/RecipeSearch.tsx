@@ -1,6 +1,6 @@
-import { ActivityIndicator, Image, Text, TextInput, View } from 'react-native';
-import { OLink, OText } from "./Overrides";
+import { ActivityIndicator, Text, TextInput, View } from 'react-native';
 import { useEffect, useState } from 'react';
+import { RecipeLink } from './RecipeLink';
 
 const RecipeSearch = () => {
   const [search, setSearch] = useState("");
@@ -78,20 +78,7 @@ const RecipeSearch = () => {
 
       <View className="grid-5 gap-std">
         {recipes.map((recipe) => (
-          <OLink
-            href={"/@"+recipe.author.username+"/"+recipe.slug}
-            key={recipe.slug}
-            className="btn-np btn-primary grid gap-2"
-          >
-            <Image
-              source={{ uri: "https://api.ourcookbook.org/storage/recipes/@"+recipe.author.username+"/"+recipe.slug+".webp" }}
-              className="rounded-t-md h-40"
-            />
-            <View className="grid gap-2 px-4 py-3">
-              <Text className="font-serif txt-2xl text-white">{recipe.title}</Text>
-              <OText className="txt-xl text-white">By {recipe.author.name}</OText>
-            </View>
-          </OLink>
+          <RecipeLink recipe={recipe} key={recipe.slug} />
         ))}
       </View>
 
