@@ -1,6 +1,6 @@
-import "./../global.css"
+import "./../../global.css"
 import {Text, View, ScrollView} from "react-native";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 
 export default function App() {
     return (
@@ -8,7 +8,7 @@ export default function App() {
             <Navbar></Navbar>
             <View className="header grid-2">
               <View className="grid gap-std">
-                <Text className="h1 font-serif text-white">Collections</Text>
+                <Text className="h1 font-serif text-white">News</Text>
               </View>
             </View>
         </ScrollView>

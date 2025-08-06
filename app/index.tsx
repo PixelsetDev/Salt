@@ -1,25 +1,42 @@
-import "./../global.css"
-import {Text, View, ScrollView} from "react-native";
-import Navbar from "../components/Navbar";
-import {OText} from "../components/Overrides";
+import './../global.css';
+import { View, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
+import { Homepage, WelcomeScreen } from '../components/Homepage';
 
 export default function App() {
+  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
+  const [showMainApp, setShowMainApp] = useState(false);
+
+  useEffect(() => {
+    const checkFirstLaunch = async () => {
+      try {
+        const hasLaunched = await AsyncStorage.getItem('hasLaunched');
+        if (hasLaunched === null) {
+          await AsyncStorage.setItem('hasLaunched', 'true');
+          setIsFirstLaunch(true);
+        } else {
+          setIsFirstLaunch(false);
+        }
+      } catch (error) {
+        console.error('Error checking first launch:', error);
+      }
+    };
+
+    checkFirstLaunch();
+  }, []);
+
+  if (isFirstLaunch === null) {
     return (
-        <ScrollView>
-            <Navbar></Navbar>
-            <View className="header grid-2">
-                <View className="grid gap-std">
-                    <View className="grid">
-                        <Text className="h1 font-serif text-white">Let&#39;s cook</Text>
-                        <Text className="h1 font-serif text-white">Curry</Text>
-                    </View>
-                    <OText className="h3 text-white">
-                        Cook with recipes submitted by your friends and people around the world on OurCookbook.
-                    </OText>
-                </View>
-            </View>
-        </ScrollView>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
     );
+  }
+
+  if (isFirstLaunch && !showMainApp) {
+    return <WelcomeScreen onContinue={() => setShowMainApp(true)} />;
+  }
+
+  return <Homepage />;
 }
-
-

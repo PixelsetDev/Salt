@@ -4,17 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Config">
-      <change afterPath="$PROJECT_DIR$/app/[id]/[id].tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/[id]/index.tsx" afterDir="false" />
+    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Update OCB">
+      <change afterPath="$PROJECT_DIR$/app/collections/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/join.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/recipes.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/Exclusions.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/Homepage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/RecipeSearch.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/chefs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/chefs.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/collections.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/collections.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/[id]/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/[id]/[id].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/[id]/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/[id]/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/collections.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/news.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/news.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/news.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/news/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/profile.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/Navbar.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,18 +32,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "lewmilburn"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;lewmilburn&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/PixelsetDev/Salt.git",
-    "accountId": "14e1b3ee-0d46-4c6f-ba4e-1f8554c60408"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/PixelsetDev/Salt.git&quot;,
+    &quot;accountId&quot;: &quot;14e1b3ee-0d46-4c6f-ba4e-1f8554c60408&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -51,7 +59,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/2 - Code/TypeScript/OurCookbook/app/[id]&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/2 - Code/TypeScript/OurCookbook/components&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -66,11 +74,14 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\2 - Code\TypeScript\OurCookbook\app\[id]" />
+      <recent name="D:\2 - Code\TypeScript\OurCookbook\components" />
       <recent name="D:\2 - Code\TypeScript\OurCookbook\app" />
+      <recent name="D:\2 - Code\TypeScript\OurCookbook\app\[id]" />
       <recent name="D:\2 - Code\TypeScript\OurCookbook\assets" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\2 - Code\TypeScript\OurCookbook\app\collections" />
+      <recent name="D:\2 - Code\TypeScript\OurCookbook\app\news" />
       <recent name="D:\2 - Code\TypeScript\OurCookbook\app\[id]" />
       <recent name="D:\2 - Code\TypeScript\OurCookbook\app" />
       <recent name="D:\2 - Code\TypeScript\OurCookbook" />
@@ -120,7 +131,7 @@
       <updated>1754398868105</updated>
       <workItem from="1754398868964" duration="20735000" />
       <workItem from="1754482415630" duration="4156000" />
-      <workItem from="1754493182272" duration="1366000" />
+      <workItem from="1754493182272" duration="13409000" />
     </task>
     <task id="LOCAL-00001" summary="Init">
       <option name="closed" value="true" />
@@ -146,7 +157,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754494082374</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Update OCB">
+      <option name="closed" value="true" />
+      <created>1754494595350</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1754494595350</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -156,6 +175,7 @@
     <MESSAGE value="Init" />
     <MESSAGE value="IDEA changes" />
     <MESSAGE value="Config" />
-    <option name="LAST_COMMIT_MESSAGE" value="Config" />
+    <MESSAGE value="Update OCB" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update OCB" />
   </component>
 </project>

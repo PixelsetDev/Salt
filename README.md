@@ -11,3 +11,5 @@ Start development build run `expo`
 Android: `eas build -p android`
 
 iOS: `eas build -p ios`
+
+Web: `expo export --platform web`

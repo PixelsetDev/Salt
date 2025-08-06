@@ -1,6 +1,7 @@
-import "./../../global.css";
+import "./../global.css";
 import { Text, View, ScrollView } from 'react-native';
-import Navbar from "../../components/Navbar";
+import Navbar from "../components/Navbar";
+import { SearchBar } from 'react-native-screens';
 
 export default function App() {
   return (
@@ -8,13 +9,11 @@ export default function App() {
       <Navbar />
       <View className="header grid-2">
         <View className="grid gap-std">
-            <Text className="h1 font-serif text-white">Recipe</Text>
+          <Text className="h1 font-serif text-white">Recipes</Text>
         </View>
       </View>
 
-      <View className="p-std grid gap-std">
-
-      </View>
+      <SearchBar/>
     </ScrollView>
   );
 }
