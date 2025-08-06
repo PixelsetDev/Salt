@@ -41,15 +41,13 @@ export default function App() {
     <ScrollView>
       <Navbar />
       <View className="header">
-        {collection ? (
         <View className="grid gap-std">
+          {collection ? (
             <Text className="h1 font-serif text-white">{collection.name}</Text>
-        </View>
-        ) : (
-          <View className="grid gap-std">
+          ) : (
             <Text className="h1 font-serif text-white">Loading...</Text>
-          </View>
-        )}
+          )}
+        </View>
       </View>
 
       {collection ? (
