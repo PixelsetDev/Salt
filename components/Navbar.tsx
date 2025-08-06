@@ -12,7 +12,7 @@ const Navbar = () => {
           <OLink href="/" className="btn-nav-active font-serif">OurCookbook</OLink>
         </View>
 
-        <View className="py-1 self-center"><OLink href="/collections" className="btn-nav">Recipes</OLink></View>
+        <View className="py-1 self-center"><OLink href="/recipes" className="btn-nav">Recipes</OLink></View>
         <View className="py-1 self-center"><OLink href="/chefs" className="btn-nav">Chefs</OLink></View>
         <View className="py-1 self-center"><OLink href="/collections" className="btn-nav">Collections</OLink></View>
         <View className="py-1 self-center"><OLink href="/news" className="btn-nav">News</OLink></View>

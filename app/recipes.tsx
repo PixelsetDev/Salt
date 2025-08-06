@@ -1,7 +1,7 @@
 import "./../global.css";
 import { Text, View, ScrollView } from 'react-native';
 import Navbar from "../components/Navbar";
-import { SearchBar } from 'react-native-screens';
+import RecipeSearch from '../components/RecipeSearch';
 
 export default function App() {
   return (
@@ -13,7 +13,7 @@ export default function App() {
         </View>
       </View>
 
-      <SearchBar/>
+      <RecipeSearch/>
     </ScrollView>
   );
 }
