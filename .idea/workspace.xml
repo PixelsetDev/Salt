@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Fix routing">
-      <change afterPath="$PROJECT_DIR$/components/RecipeLink.tsx" afterDir="false" />
+    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Add collections">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/[chef]/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/[chef]/[id].tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/collections/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/collections/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/PageContainer.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/RecipeSearch.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/RecipeSearch.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Overrides.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/Overrides.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -123,7 +121,7 @@
       <updated>1754398868105</updated>
       <workItem from="1754398868964" duration="20735000" />
       <workItem from="1754482415630" duration="4156000" />
-      <workItem from="1754493182272" duration="16806000" />
+      <workItem from="1754493182272" duration="17778000" />
     </task>
     <task id="LOCAL-00001" summary="Init">
       <option name="closed" value="true" />
@@ -189,7 +187,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754509299810</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Add collections">
+      <option name="closed" value="true" />
+      <created>1754512046722</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1754512046722</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -202,6 +208,7 @@
     <MESSAGE value="Update OCB" />
     <MESSAGE value="Update recipes" />
     <MESSAGE value="Fix routing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix routing" />
+    <MESSAGE value="Add collections" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add collections" />
   </component>
 </project>

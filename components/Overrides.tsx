@@ -3,7 +3,7 @@ import React, {ReactNode} from 'react';
 import {Link} from "expo-router";
 
 export const OText = ({ className = '', ...props }: TextProps & { className?: string }) => {
-    return <Text className={`font-sans-serif txt-lg ${className}`} {...props} />;
+    return <Text className={`font-sans-serif dark:text-white txt-lg ${className}`} {...props} />;
 };
 
 export const OLink = ({ className = '', href = '', children, ...props }: { className?: string; href?: string; children: ReactNode; }) => {

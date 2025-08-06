@@ -71,7 +71,7 @@ export default function App() {
           <View className="grid-2-1 gap-std">
             {collection?.recipes?.map((recipe) => (
               <RecipeLink recipe={recipe} key={recipe.slug}>
-                <OText className="italic">&quot;{recipe.notes}&quot;</OText>
+                <OText className="italic text-white">&quot;{recipe.notes}&quot;</OText>
               </RecipeLink>
             ))}
           </View>
