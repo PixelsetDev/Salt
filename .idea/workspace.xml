@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Update OCB">
+    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Update recipes">
+      <change afterPath="$PROJECT_DIR$/app/collections/[id].tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/recipes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/recipes.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/Navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/Navbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/[id]/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/[chef]/[id].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/[id]/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/[chef]/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,28 +41,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/2 - Code/TypeScript/OurCookbook/components&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.ios.executor&quot;: &quot;Run&quot;,
-    &quot;npm.web.executor&quot;: &quot;Run&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;D:\\2 - Code\\TypeScript\\OurCookbook\\node_modules\\prettier&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\2 - Code\\TypeScript\\OurCookbook\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "D:/2 - Code/TypeScript/OurCookbook/app/collections",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.ios.executor": "Run",
+    "npm.web.executor": "Run",
+    "prettierjs.PrettierConfiguration.Package": "D:\\2 - Code\\TypeScript\\OurCookbook\\node_modules\\prettier",
+    "ts.external.directory.path": "D:\\2 - Code\\TypeScript\\OurCookbook\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\2 - Code\TypeScript\OurCookbook\app\collections" />
       <recent name="D:\2 - Code\TypeScript\OurCookbook\components" />
       <recent name="D:\2 - Code\TypeScript\OurCookbook\app" />
       <recent name="D:\2 - Code\TypeScript\OurCookbook\app\[id]" />
@@ -119,7 +121,7 @@
       <updated>1754398868105</updated>
       <workItem from="1754398868964" duration="20735000" />
       <workItem from="1754482415630" duration="4156000" />
-      <workItem from="1754493182272" duration="13672000" />
+      <workItem from="1754493182272" duration="13976000" />
     </task>
     <task id="LOCAL-00001" summary="Init">
       <option name="closed" value="true" />
@@ -161,7 +163,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754508775218</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Update recipes">
+      <option name="closed" value="true" />
+      <created>1754508890185</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1754508890185</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -172,6 +182,7 @@
     <MESSAGE value="IDEA changes" />
     <MESSAGE value="Config" />
     <MESSAGE value="Update OCB" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update OCB" />
+    <MESSAGE value="Update recipes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update recipes" />
   </component>
 </project>

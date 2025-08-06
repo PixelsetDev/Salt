@@ -7,8 +7,8 @@ import {OLink, OText} from "../../components/Overrides";
 
 export default function App() {
 
-  const { id } = useLocalSearchParams();
-  const cleanId = (typeof id === 'string' ? id : '').replace(/^@/, '');
+  const { chef } = useLocalSearchParams();
+  const cleanId = (typeof chef === 'string' ? chef : '').replace(/^@/, '');
 
   const [user, setUser] = useState<{
     name: string;
