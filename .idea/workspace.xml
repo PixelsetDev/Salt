@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Update recipes">
-      <change afterPath="$PROJECT_DIR$/app/collections/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/[id]/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/[chef]/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/[id]/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/[chef]/index.tsx" afterDir="false" />
+    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Fix routing">
+      <change beforePath="$PROJECT_DIR$/app/[chef]/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/[chef]/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,7 +118,7 @@
       <updated>1754398868105</updated>
       <workItem from="1754398868964" duration="20735000" />
       <workItem from="1754482415630" duration="4156000" />
-      <workItem from="1754493182272" duration="13976000" />
+      <workItem from="1754493182272" duration="14100000" />
     </task>
     <task id="LOCAL-00001" summary="Init">
       <option name="closed" value="true" />
@@ -171,7 +168,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754508890185</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Fix routing">
+      <option name="closed" value="true" />
+      <created>1754509218412</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1754509218412</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -183,6 +188,7 @@
     <MESSAGE value="Config" />
     <MESSAGE value="Update OCB" />
     <MESSAGE value="Update recipes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update recipes" />
+    <MESSAGE value="Fix routing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix routing" />
   </component>
 </project>
