@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fonts */
+.font-serif { font-family: 'Merriweather', serif !important; }
+.font-sans-serif { font-family: 'Roboto', sans-serif; }
+
+/* Global */
+.header { @apply bg-green p-std sm:block hidden; }
+
+.px-std { @apply lg:px-48 md:px-24 sm:px-12 px-8; }
+.py-std { @apply lg:py-32 md:py-16 sm:py-8 py-6; }
+.p-std { @apply px-std py-std; }
+
+.bg-green { @apply bg-green-800 text-white; }
+.bg-green-d { @apply bg-green-900 text-white; }
+
+.txt-7xl { @apply lg:text-7xl md:text-6xl sm:text-5xl text-4xl; }
+.txt-4xl { @apply lg:text-4xl md:text-3xl sm:text-2xl text-xl; }
+.txt-2xl { @apply lg:text-2xl md:text-xl text-lg; }
+.txt-xl { @apply lg:text-xl text-lg; }
+.txt-lg { @apply text-lg; }
+
+.gap-std { @apply gap-4; }
+.grid-3 { @apply grid lg:grid-cols-3 grid-cols-2; }
+.grid-2 { @apply grid grid-cols-2; }
+
+.tc-white { @apply text-white; }
+
+.btn { @apply px-4 py-2 btn-np }
+.btn-np { @apply rounded-lg border-2 transition duration-200 }
+
+.btn-primary { @apply border-green-800 bg-green-800 hover:border-green-700 hover:bg-green-700 text-lg sm:text-sm; }
+.btn-secondary { @apply border-green-800 hover:bg-green-800 text-lg sm:text-sm; }
+
+.btn-nav { @apply text-white px-4 py-2 rounded-lg border-2 border-green-800 hover:bg-green-800 transition duration-200 text-lg sm:text-sm; }
+.btn-nav-active { @apply text-white px-4 py-2 rounded-lg border-2 border-green-800 bg-green-800 transition duration-200 text-lg sm:text-sm; }

@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "OurCookbook",
+    "slug": "ourcookbook",
+    "scheme": "ourcookbook",
+    "version": "0.0.0",
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "userInterfaceStyle": "light",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "backgroundColor": "#14532d"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "dev.pixelset.ourcookbook"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "dff4d091-cf95-4365-acad-3a505488792f"
+      }
+    }
+  }
+}
