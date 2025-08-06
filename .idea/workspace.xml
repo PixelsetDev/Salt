@@ -4,12 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="IDEA changes">
+    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Config">
       <change afterPath="$PROJECT_DIR$/app/[id]/[id].tsx" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/app/[id]/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/chefs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/chefs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/collections.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/collections.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/news.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/news.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/global.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +120,7 @@
       <updated>1754398868105</updated>
       <workItem from="1754398868964" duration="20735000" />
       <workItem from="1754482415630" duration="4156000" />
-      <workItem from="1754493182272" duration="328000" />
+      <workItem from="1754493182272" duration="1366000" />
     </task>
     <task id="LOCAL-00001" summary="Init">
       <option name="closed" value="true" />
@@ -133,7 +138,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754483732324</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Config">
+      <option name="closed" value="true" />
+      <created>1754494082374</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1754494082374</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -142,6 +155,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Init" />
     <MESSAGE value="IDEA changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="IDEA changes" />
+    <MESSAGE value="Config" />
+    <option name="LAST_COMMIT_MESSAGE" value="Config" />
   </component>
 </project>

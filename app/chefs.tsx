@@ -4,20 +4,19 @@ import Navbar from "../components/Navbar";
 import {OLink, OText} from "../components/Overrides";
 import { useState, useEffect } from "react";
 
-interface Chef {
-    name: string;
-    username: string;
-    avatar: string;
-}
-
 export default function App() {
-    const [chefs, setChefs] = useState<Chef[]>([]); // <-- typed here
+
+    const [users, setUsers] = useState<{
+        name: string;
+        username: string;
+        avatar: string;
+    }[]>([]);
 
     useEffect(() => {
-        fetch("https://api.ourcookbook.org/chefs", { method: "GET" })
+        fetch("https://api.ourcookbook.org/users", { method: "GET" })
             .then((res) => res.json())
             .then((data) => {
-                setChefs(data.data);
+                setUsers(data.data);
             })
             .catch((err) => console.log(err));
     }, []);
@@ -26,10 +25,8 @@ export default function App() {
         <ScrollView>
             <Navbar />
             <View className="header grid-2">
-                <View className="gap-std">
-                    <View className="grid">
-                        <Text className="font-serif txt-7xl text-white">Chefs</Text>
-                    </View>
+                <View className="grid gap-std">
+                    <Text className="h1 font-serif text-white">Chefs</Text>
                 </View>
             </View>
 
@@ -46,19 +43,19 @@ export default function App() {
                 </OLink>
 
                 <View className="grid-3 gap-std">
-                    {chefs.map((chef) => (
+                    {users.map((user) => (
                         <OLink
-                            href={"/@"+chef.username}
-                            key={chef.username}
+                            href={"/@"+user.username}
+                            key={user.username}
                             className="btn-np btn-primary flex flex-row space-x-2"
                         >
                             <Image
-                                source={{ uri: chef.avatar }}
+                                source={{ uri: user.avatar }}
                                 className="h-full rounded-l-md w-20"
                             />
                             <View className="grid gap-2 px-4 py-2">
-                                <Text className="font-serif txt-2xl text-white">{chef.name}</Text>
-                                <OText className="txt-xl text-white">@{chef.username}</OText>
+                                <Text className="font-serif txt-2xl text-white">{user.name}</Text>
+                                <OText className="txt-xl text-white">@{user.username}</OText>
                             </View>
                         </OLink>
                     ))}

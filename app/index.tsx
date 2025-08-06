@@ -8,12 +8,12 @@ export default function App() {
         <ScrollView>
             <Navbar></Navbar>
             <View className="header grid-2">
-                <View className="gap-std">
+                <View className="grid gap-std">
                     <View className="grid">
-                        <Text className="font-serif txt-7xl text-white">Let's cook</Text>
-                        <Text className="font-serif txt-7xl text-white">Curry</Text>
+                        <Text className="h1 font-serif text-white">Let&#39;s cook</Text>
+                        <Text className="h1 font-serif text-white">Curry</Text>
                     </View>
-                    <OText className="txt-4xl text-white">
+                    <OText className="h3 text-white">
                         Cook with recipes submitted by your friends and people around the world on OurCookbook.
                     </OText>
                 </View>

@@ -7,11 +7,9 @@ export default function App() {
         <ScrollView>
             <Navbar></Navbar>
             <View className="header grid-2">
-                <View className="gap-std">
-                    <View className="grid">
-                        <Text className="font-serif txt-7xl text-white">News</Text>
-                    </View>
-                </View>
+              <View className="grid gap-std">
+                <Text className="h1 font-serif text-white">News</Text>
+              </View>
             </View>
         </ScrollView>
     );
