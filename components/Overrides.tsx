@@ -6,18 +6,24 @@ export const OText = ({ className = '', ...props }: TextProps & { className?: st
     return <Text className={`font-sans-serif dark:text-white txt-lg ${className}`} {...props} />;
 };
 
-export const OLink = ({ className = '', href = '', children, ...props }: { className?: string; href?: string; children: ReactNode; }) => {
-    return (
-        <Link className={`font-sans-serif ${className}`} {...props} href={`${href}`}>
-            {children}
-        </Link>
-    );
+export const OLink = ({ className = '', href = '', children, target = undefined, ...props }: { className?: string; href?: string; children: ReactNode; target: string|undefined }) => {
+  return (
+    (typeof target === 'string') ? (
+      <Link className={`font-sans-serif ${className}`} {...props} href={`${href}`} target={`${target}`}>
+        {children}
+      </Link>
+    ) : (
+      <Link className={`font-sans-serif ${className}`} {...props} href={`${href}`}>
+        {children}
+      </Link>
+    )
+  )
 };
 
 export const OPressable = ({ className = '', children, onPress, ...props }: { className?: string; children: ReactNode; onPress: (event: GestureResponderEvent) => void; }) => {
-    return (
-        <Pressable className={`font-sans-serif ${className}`} onPress={onPress} {...props}>
-            {children}
-        </Pressable>
-    );
+  return (
+    <Pressable className={`font-sans-serif ${className}`} onPress={onPress} {...props}>
+      {children}
+    </Pressable>
+  );
 };

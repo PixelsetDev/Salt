@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { OLink, OPressable } from "./Overrides";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useState } from "react";
@@ -7,6 +7,12 @@ const Navbar = () => {
   const [visible, setVisible] = useState(false);
   return(
     <View>
+      <View className="bg-red-800 flex flex-row space-x-2 px-std py-1">
+        <Text className={`text-white text-xs`}>
+          You&apos;re on our BETA website, it&apos;s under active development and is likely to behave unexpectedly.
+          Please report any bugs, crashes, or issues to ocb-app-issues@pixelset.dev
+        </Text>
+      </View>
       <View className="bg-green-d sm:flex hidden flex-row space-x-2 px-std py-1">
         <View className="py-1 self-center">
           <OLink href="/" className="btn-nav-active font-serif">OurCookbook</OLink>

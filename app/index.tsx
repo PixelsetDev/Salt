@@ -1,14 +1,17 @@
 import './../global.css';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { Homepage, WelcomeScreen } from '../components/Homepage';
 
 export default function App() {
-  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
+  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(Platform.OS === 'web' ? false : null);
   const [showMainApp, setShowMainApp] = useState(false);
 
   useEffect(() => {
+    // Skip the first launch logic if on web
+    if (Platform.OS === 'web') return;
+
     const checkFirstLaunch = async () => {
       try {
         const hasLaunched = await AsyncStorage.getItem('hasLaunched');
