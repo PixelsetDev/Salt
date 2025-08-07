@@ -46,8 +46,7 @@ export const Stepper = ({ currentStep, steps = [] }: {currentStep:number, steps:
                 className={`rounded-full w-8 h-8 justify-center items-center
                   ${isActive ? "bg-green-900" : isCompleted ? "bg-green-600" : "bg-green-200"}`}
               >
-                <Text className={`font-bold text-sm
-                  ${(isActive || stepNumber < currentStep) ? "text-white" : "text-green-900"}`}>{stepNumber}</Text>
+                <Text className={`font-bold text-sm ${(isActive || stepNumber < currentStep) ? "text-white" : "text-green-900"}`}>{stepNumber}</Text>
               </View>
               <Text className="text-xs mt-1 text-center">{label}</Text>
             </View>

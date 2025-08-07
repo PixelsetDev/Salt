@@ -4,16 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Update recipe API">
-      <change afterPath="$PROJECT_DIR$/components/Scales.tsx" afterDir="false" />
+    <list default="true" id="a7eecc09-027e-4e01-87d9-161fcdd96693" name="Changes" comment="Update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/[chef]/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/[chef]/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/[chef]/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/[chef]/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/collections/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/collections/[id].tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/RecipeLink.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/RecipeLink.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Scales.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/Scales.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/global.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -127,7 +123,7 @@
       <workItem from="1754398868964" duration="20735000" />
       <workItem from="1754482415630" duration="4156000" />
       <workItem from="1754493182272" duration="25144000" />
-      <workItem from="1754567536607" duration="398000" />
+      <workItem from="1754567536607" duration="3398000" />
     </task>
     <task id="LOCAL-00001" summary="Init">
       <option name="closed" value="true" />
@@ -217,7 +213,39 @@
       <option name="project" value="LOCAL" />
       <updated>1754513735557</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Update recipe viewer">
+      <option name="closed" value="true" />
+      <created>1754568006358</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1754568006358</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Update collection viewer">
+      <option name="closed" value="true" />
+      <created>1754568015202</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1754568015202</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Update indents">
+      <option name="closed" value="true" />
+      <created>1754568066141</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1754568066141</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Update">
+      <option name="closed" value="true" />
+      <created>1754568094341</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1754568094341</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -233,6 +261,10 @@
     <MESSAGE value="Add collections" />
     <MESSAGE value="Modify" />
     <MESSAGE value="Update recipe API" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update recipe API" />
+    <MESSAGE value="Update recipe viewer" />
+    <MESSAGE value="Update collection viewer" />
+    <MESSAGE value="Update indents" />
+    <MESSAGE value="Update" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update" />
   </component>
 </project>

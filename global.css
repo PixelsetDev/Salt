@@ -36,6 +36,7 @@
 .txt-2xl { @apply lg:text-2xl md:text-xl text-lg; }
 .txt-xl { @apply lg:text-xl text-lg; }
 .txt-lg { @apply text-lg; }
+.txt-sm { @apply md:text-base text-sm; }
 
 .h1 { @apply txt-7xl; }
 .h2 { @apply txt-5xl; }
@@ -54,6 +55,7 @@
 .span-3 { @apply grid md:col-span-3 col-span-2; }
 .span-3-1 { @apply grid md:col-span-3; }
 .span-2 { @apply grid col-span-2; }
+.mobile-span-2 { @apply grid md:col-span-1 col-span-2; }
 
 .tc-white { @apply text-white; }
 
