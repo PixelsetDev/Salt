@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar";
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {OLink, OText} from "../../components/Overrides";
+import { RecipeLink } from '../../components/RecipeLink';
 
 export default function App() {
 
@@ -86,28 +87,20 @@ export default function App() {
         <View className="grid gap-std">
           <Text className="h2 font-serif text-center">Recipes</Text>
 
-          <View className="grid-2 gap-std">
+          {(recipes && recipes.length > 0) ? (
+          <View className="grid-5 gap-std">
             {recipes.map((recipe) => (
-              <OLink
-                href={"/@"+cleanId+"/"+recipe.slug}
-                key={recipe.slug}
-                className="btn-np btn-primary flex flex-row space-x-2"
-              >
-                <Image
-                  source={{ uri: "https://api.ourcookbook.org/storage/recipes/@"+cleanId+"/"+recipe.slug+".webp" }}
-                  className="h-full rounded-l-md w-20"
-                />
-                <View className="grid gap-2 px-4 py-2">
-                  <Text className="font-serif txt-2xl text-white">{recipe.title}</Text>
-                  <OText className="txt-xl text-white">By {recipe.author.name}</OText>
-                </View>
-              </OLink>
+              <RecipeLink recipe={recipe} key={recipe.slug}>{null}</RecipeLink>
             ))}
           </View>
+          ) : (
+            <OText className={`text-center`}>This user has no recipes.</OText>
+          )}
         </View>
         <View className="grid gap-std">
           <Text className="h2 font-serif text-center">Collections</Text>
 
+          {(collections && collections.length > 0) ? (
           <View className="grid-2 gap-std">
             {collections.map((collection) => (
               <OLink
@@ -128,6 +121,9 @@ export default function App() {
               </OLink>
             ))}
           </View>
+          ) : (
+            <OText className={`text-center`}>This user has no collections.</OText>
+          )}
         </View>
       </View>
     </ScrollView>

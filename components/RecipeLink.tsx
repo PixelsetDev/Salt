@@ -2,7 +2,7 @@ import { Image, Text, View } from 'react-native';
 import { OLink, OText } from './Overrides';
 import { ReactNode } from 'react';
 
-export const RecipeLink = ({ recipe, children }: { recipe: { author: { username: string, name: string }, slug:string, title:string }; children: ReactNode|null }) => {
+export const RecipeLink = ({ recipe, children }: { recipe: { author: { username: string, name: string }, slug:string, title:string }; children: ReactNode|undefined }) => {
   return (
     <OLink
       href={'/@' + recipe.author.username + '/' + recipe.slug}

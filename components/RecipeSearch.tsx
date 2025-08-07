@@ -78,7 +78,7 @@ const RecipeSearch = () => {
 
       <View className="grid-5 gap-std">
         {recipes.map((recipe) => (
-          <RecipeLink recipe={recipe} key={recipe.slug} />
+          <RecipeLink recipe={recipe} key={recipe.slug}>{null}</RecipeLink>
         ))}
       </View>
 
