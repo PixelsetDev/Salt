@@ -13,7 +13,7 @@ export default function App() {
     name: string;
     description: string;
     slug: string;
-    recipes: {
+    recipes: [{
       title: string;
       slug: string;
       notes: string;
@@ -21,10 +21,11 @@ export default function App() {
         name: string;
         username: string
       }
-    },
+    }],
     author: {
       name: string;
-      username: string
+      username: string;
+      avatar: string;
     }
   } | null>(null);
 
@@ -67,7 +68,7 @@ export default function App() {
             </View>
           </OLink>
           <View className="grid-2-1 gap-std">
-            {collection?.recipes?.map((recipe) => (
+            {collection.recipes.map((recipe) => (
               <RecipeLink recipe={recipe} key={recipe.slug}>
                 <OText className="italic text-white">&quot;{recipe.notes}&quot;</OText>
               </RecipeLink>
