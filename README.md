@@ -4,6 +4,8 @@ Salt is the frontend of OurCookbook, built using Expo (with React Native) for We
 
 ## Developing
 
+When you clone the repository, run `npm install` to download the required dependencies.
+
 Start development build run `expo`
 
 ## Building

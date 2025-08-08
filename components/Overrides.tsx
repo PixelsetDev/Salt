@@ -1,12 +1,12 @@
 import {GestureResponderEvent, Pressable, Text, TextProps} from 'react-native';
-import React, {ReactNode} from 'react';
+import {ReactNode} from 'react';
 import {Link} from "expo-router";
 
 export const OText = ({ className = '', ...props }: TextProps & { className?: string }) => {
     return <Text className={`font-sans-serif dark:text-white txt-lg ${className}`} {...props} />;
 };
 
-export const OLink = ({ className = '', href = '', children, target = undefined, ...props }: { className?: string; href?: string; children: ReactNode; target: string|undefined }) => {
+export const OLink = ({ className = '', href = '', children, target = "_self", ...props }: { className?: string; href?: string; children: ReactNode; target?: '_self' | '_blank' | '_parent' | '_top'; }) => {
   return (
     (typeof target === 'string') ? (
       <Link className={`font-sans-serif ${className}`} {...props} href={`${href}`} target={`${target}`}>

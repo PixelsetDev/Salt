@@ -163,6 +163,24 @@ export default function App() {
           </OText>
         </View>
 
+        <View className={`grid gap-std`}>
+          <View className={`flex flex-row gap-2`}>
+            <Text className={`h3 font-serif`}>Goodbye social, hello Chef&apos;s Feed!.</Text>
+            <View className={`flex gap-2`}>
+              <View className={`flex-grow`}></View>
+              <Text className={`chip-red`}>Mid-Late 2025</Text>
+              <View className={`flex-grow`}></View>
+            </View>
+          </View>
+          <OText>
+            OurCookbook social was our attempt at bringing more interactivity to the website, but it didn&apos;t really
+            ever kick off. We&apos;re changing social into the &quot;Chef&apos;s Feed&quot; which will not only include
+            posts from other chefs like social did but also their activity, so you&apos;ll be able to see when someone
+            you&apos;re following posts something new. We hope that this extended functionality will bring a new lease
+            of life to our sadly unused social tab.
+          </OText>
+        </View>
+
         <View className={`grid-3 gap-std`}>
           <OLink className={`text-center btn btn-secondary`} href={`/news/2025-05-27-our-environmental-impact`}>Previous Article</OLink>
           <OLink className={`text-center btn btn-secondary`} href={`/news`}>All News</OLink>
