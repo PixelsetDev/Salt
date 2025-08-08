@@ -15,6 +15,7 @@
     "@expo/metro-runtime": "~5.0.4",
     "@expo/vector-icons": "^14.1.0",
     "@fortawesome/react-fontawesome": "^0.2.3",
+    "@logto/browser": "^3.0.9",
     "@logto/rn": "^1.0.1",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-vector-icons/evil-icons": "^12.3.0",

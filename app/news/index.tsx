@@ -12,7 +12,7 @@ export default function App() {
           <Text className="h1 font-serif text-white">News</Text>
         </View>
       </View>
-      <View className={`grid-3 gap-std p-std`}>
+      <View className={`grid-2 gap-std p-std`}>
         <OLink className={`btn btn-primary grid`} href={`/news/2025-08-07-our-second-yearly-update`}>
           <Text className={`h3 font-serif`}>Our Second Yearly Update</Text>
           <OText>7th August 2025</OText>

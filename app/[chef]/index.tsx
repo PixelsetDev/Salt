@@ -1,5 +1,5 @@
 import "./../../global.css";
-import {Text, View, ScrollView, Image} from 'react-native';
+import {Text, View, ScrollView } from 'react-native';
 import Navbar from "../../components/Navbar";
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -37,7 +37,11 @@ export default function App() {
     fetch("https://api.ourcookbook.org/users/"+cleanId, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
-        setUser(data.data);
+        if (data.status.code === "200 OK") {
+          setUser(data.data);
+        } else {
+          window.location.href='/404';
+        }
       })
       .catch((err) => console.error(err));
 
