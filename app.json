@@ -11,7 +11,15 @@
       "tsconfigPaths": true
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "react-native",
+          "organization": "pixelset"
+        }
+      ]
     ],
     "userInterfaceStyle": "light",
     "orientation": "portrait",

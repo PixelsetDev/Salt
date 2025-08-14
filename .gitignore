@@ -20,3 +20,4 @@ android
 .metro-health-check*
 
 .idea/workspace.xml
+.env.local
