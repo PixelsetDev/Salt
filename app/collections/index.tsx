@@ -47,6 +47,11 @@ export default function App() {
     try {
       const url = `https://api.ourcookbook.org/collections${query ? `?query=${encodeURIComponent(query)}` : ""}`;
       const res = await fetch(url);
+
+      if (res.status === 204) {
+        return { data: [], status: { message: 'No content' } };
+      }
+
       const data = await res.json();
 
       if (Array.isArray(data.data)) {
@@ -123,8 +128,8 @@ export default function App() {
           </View>
         </Desktop>
 
-        {!loading && collections.length === 0 && (
-          <Text className="txt-xl text-white text-center mt-4">No results found.</Text>
+        {(!loading && collections.length === 0) && (
+          <Text className="txt-xl text-center mt-4">No results found.</Text>
         )}
       </View>
     </ScrollView>

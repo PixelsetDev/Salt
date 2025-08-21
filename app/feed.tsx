@@ -2,7 +2,7 @@ import "./../global.css";
 import { Text, View, ScrollView } from "react-native";
 import Navbar from "../components/Navbar";
 import { useLogto } from '@logto/rn';
-import NoAuth from '../components/NoAuth';
+import NoAuth from '../components/Boxes';
 
 export default function App() {
   const { isAuthenticated } = useLogto();

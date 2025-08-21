@@ -26,6 +26,8 @@ let config: LogtoConfig = {
   resources: ['https://api.ourcookbook.org'],
 };
 
-export default Sentry.wrap(() => (<LogtoProvider config={config}>
-  <Slot />
-</LogtoProvider>));
+export default Sentry.wrap(() => (
+  <LogtoProvider config={config}>
+    <Slot />
+  </LogtoProvider>
+));

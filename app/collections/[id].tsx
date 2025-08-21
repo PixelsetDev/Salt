@@ -58,13 +58,15 @@ export default function App() {
             href={"/@"+collection.author.username}
             className="btn-np btn-primary flex flex-row space-x-2"
           >
-            <Image
-              source={{ uri: collection.author.avatar }}
-              className="h-full rounded-l-md w-20"
-            />
-            <View className="grid gap-2 px-4 py-2">
-              <OText className="txt-xl text-white">This collection was curated by</OText>
-              <Text className="font-serif txt-2xl text-white">{collection.author.name}</Text>
+            <View>
+              <Image
+                source={{ uri: collection.author.avatar }}
+                className="h-full rounded-l-md w-20"
+              />
+              <View className="grid gap-2 px-4 py-2">
+                <OText className="txt-xl text-white">This collection was curated by</OText>
+                <Text className="font-serif txt-2xl text-white">{collection.author.name}</Text>
+              </View>
             </View>
           </OLink>
           <View className="grid-2-1 gap-std">

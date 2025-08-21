@@ -40,11 +40,11 @@ export const Homepage = () => {
                 Plus, it&apos;s part of Amy&apos;s new Pies collection! This recipe takes 40 minutes
                 in total and provides 3 servings.
               </OText>
-              <OText>
+              <View>
                 <OLink href="/@amy/chicken-leek-pie" className="btn btn-primary">
                   Let&apos;s get cooking!
                 </OLink>
-              </OText>
+              </View>
             </View>
           </ImageBackground>
           <ImageBackground source={featuredImageTwo} resizeMode="cover" className="p-sm">
@@ -57,11 +57,11 @@ export const Homepage = () => {
                 A new way of making Lasagna, in soup form! This recipe takes 50 minutes in total and
                 provides 4 servings.
               </OText>
-              <OText>
+              <View>
                 <OLink href="/@ella/lasagna-soup" className="btn btn-primary">
                   Try something new!
                 </OLink>
-              </OText>
+              </View>
             </View>
           </ImageBackground>
           <ImageBackground source={featuredImageThree} resizeMode="cover" className="p-sm">
@@ -74,11 +74,11 @@ export const Homepage = () => {
                 A great meal for chippy day, a classic meal with a zingy twist. This recipe takes 35
                 minutes in total and provides 2 servings.
               </OText>
-              <OText>
+              <View>
                 <OLink href="/@ourcookbook/sweet-chilli-glazed-basa" className="btn btn-primary">
                   Let&apos;s get cooking!
                 </OLink>
-              </OText>
+              </View>
             </View>
           </ImageBackground>
           <ImageBackground source={featuredImageFour} resizeMode="cover" className="span-2 p-sm">
@@ -96,11 +96,11 @@ export const Homepage = () => {
                 This recipe takes 60
                 minutes in total and provides 4 servings.
               </OText>
-              <OText>
+              <View>
                 <OLink href="/@lewis/chicken-curry" className="btn btn-primary">
                   Get started!
                 </OLink>
-              </OText>
+              </View>
             </View>
           </ImageBackground>
         </View>
@@ -119,17 +119,20 @@ export const Homepage = () => {
                 Amy&apos;s Chicken and Leek Pie is an easy, versitile, and tasty weeknight meal.
                 This recipe takes 40 minutes in total and provides 3 servings.
               </OText>
-              <OText>
+              <View>
                 <OLink href="/@amy/chicken-leek-pie" className="btn btn-primary">
                   Let&apos;s get cooking!
                 </OLink>
-              </OText>
+              </View>
             </View>
           </ImageBackground>
         </View>
       </Mobile>
 
-      <RecipeSearch />
+      <View className={`p-std grid gap-std`}>
+        <Text className="h2 text-center font-serif">Search</Text>
+        <RecipeSearch/>
+      </View>
     </ScrollView>
   );
 };
