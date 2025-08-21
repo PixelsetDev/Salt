@@ -1,4 +1,3 @@
-// utils/auth.js (or wherever you keep utilities)
 import { Platform } from 'react-native'; // or your platform detection
 
 export const getSignInRedirectUrl = () => {
