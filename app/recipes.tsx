@@ -13,7 +13,9 @@ export default function App() {
         </View>
       </View>
 
-      <RecipeSearch/>
+      <View className={`p-std`}>
+        <RecipeSearch/>
+      </View>
     </ScrollView>
   );
 }

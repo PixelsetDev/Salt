@@ -67,7 +67,7 @@ const Navbar = () => {
             {(isAuthenticated) && (
               <View className="grid gap-std">
                 <OLink href="/meal-plans" className="btn btn-primary text-white">Meal Plans</OLink>
-                <OLink href="/shopping-lists" className="btn btn-primary text-white">Shopping Lists</OLink>
+                <OLink href="/shopping-list" className="btn btn-primary text-white">Shopping List</OLink>
               </View>
             )}
             <OLink href="/chefs" className="btn btn-primary text-white">Chefs</OLink>

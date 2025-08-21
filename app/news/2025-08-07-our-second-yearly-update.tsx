@@ -152,7 +152,7 @@ export default function App() {
             <Text className={`h3 font-serif`}>Meal plans and shopping lists.</Text>
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
-              <Text className={`chip-red`}>Mid-Late 2025</Text>
+              <Text className={`chip-yellow`}>Now on BETA</Text>
               <View className={`flex-grow`}></View>
             </View>
           </View>
@@ -165,7 +165,7 @@ export default function App() {
 
         <View className={`grid gap-std`}>
           <View className={`flex flex-row gap-2`}>
-            <Text className={`h3 font-serif`}>Goodbye social, hello Chef&apos;s Feed!.</Text>
+            <Text className={`h3 font-serif`}>Goodbye social, hello Chef&apos;s Feed!</Text>
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
               <Text className={`chip-red`}>Mid-Late 2025</Text>
