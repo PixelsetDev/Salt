@@ -1,6 +1,6 @@
 import "./../global.css";
 import { Text, View, ScrollView } from 'react-native';
-import Navbar from "../components/Navbar";
+import { Footer, Navbar } from '../components/Commons';
 import RecipeSearch from '../components/RecipeSearch';
 
 export default function App() {
@@ -16,6 +16,7 @@ export default function App() {
       <View className={`p-std`}>
         <RecipeSearch/>
       </View>
+      <Footer/>
     </ScrollView>
   );
 }

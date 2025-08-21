@@ -1,6 +1,6 @@
 import "./../global.css";
 import { Text, View, ScrollView } from "react-native";
-import Navbar from "../components/Navbar";
+import { Footer, Navbar } from '../components/Commons';
 import { useLogto } from '@logto/rn';
 import { SignInButton } from '../components/Auth';
 import { OLink, OText } from '../components/Overrides';
@@ -72,6 +72,7 @@ export default function App() {
           <SignInButton className={`btn btn-primary`} />
         )}
       </View>
+      <Footer/>
     </ScrollView>
   );
 }

@@ -1,5 +1,5 @@
 import { Button, ImageBackground, ScrollView, Text, View } from 'react-native';
-import Navbar from './Navbar';
+import { Footer, Navbar } from './Commons';
 import { Desktop, Mobile } from './Exclusions';
 import { OLink, OText } from './Overrides';
 import RecipeSearch from './RecipeSearch';
@@ -12,7 +12,7 @@ export const Homepage = () => {
 
   return (
     <ScrollView>
-      <Navbar></Navbar>
+      <Navbar/>
 
       <Desktop className="nomobile">
         <View className="header grid-2 gap-std">
@@ -133,6 +133,8 @@ export const Homepage = () => {
         <Text className="h2 text-center font-serif">Search</Text>
         <RecipeSearch/>
       </View>
+
+      <Footer/>
     </ScrollView>
   );
 };

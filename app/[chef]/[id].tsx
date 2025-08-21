@@ -1,6 +1,6 @@
 import "./../../global.css";
 import { Text, View, ScrollView, ImageBackground } from 'react-native';
-import Navbar from "../../components/Navbar";
+import { Footer, Navbar } from '../../components/Commons';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import he from 'he';
@@ -273,6 +273,7 @@ export default function App() {
           </View>
         </View>
       )}
+      <Footer/>
     </ScrollView>
   );
 }

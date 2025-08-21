@@ -1,10 +1,10 @@
 import "./../../global.css";
 import {Text, View, ScrollView } from 'react-native';
-import Navbar from "../../components/Navbar";
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {OLink, OText} from "../../components/Overrides";
 import { RecipeLink } from '../../components/RecipeLink';
+import { Footer, Navbar } from '../../components/Commons';
 
 export default function App() {
 
@@ -72,7 +72,7 @@ export default function App() {
 
   return (
     <ScrollView>
-      <Navbar />
+      <Navbar/>
       <View className="header grid-2">
         {user ? (
           <View className="grid gap-std">
@@ -130,6 +130,7 @@ export default function App() {
           )}
         </View>
       </View>
+      <Footer/>
     </ScrollView>
   );
 }

@@ -1,6 +1,6 @@
 import "./../../global.css";
 import { Text, View, ScrollView, Image } from 'react-native';
-import Navbar from "../../components/Navbar";
+import { Footer, Navbar } from '../../components/Commons';
 import { OLink, OText } from '../../components/Overrides';
 import { useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
@@ -95,6 +95,7 @@ export default function App() {
           </OLink>
         </View>
       )}
+      <Footer/>
     </ScrollView>
   );
 }

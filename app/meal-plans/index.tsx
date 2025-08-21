@@ -1,6 +1,5 @@
 import "./../../global.css";
 import { Text, View, ScrollView, Pressable } from 'react-native';
-import Navbar from "../../components/Navbar";
 import { useEffect, useState } from 'react';
 import { useLogto } from '@logto/rn';
 import { InfoBox, Unauthed } from '../../components/Boxes';
@@ -9,6 +8,7 @@ import { OLink, OPressable, OText } from '../../components/Overrides';
 import { TextInput } from '../../components/Forms';
 import RecipeSearch from '../../components/RecipeSearch';
 import FeedbackButton from '../../components/SentryFeedback';
+import { Footer, Navbar } from '../../components/Commons';
 
 export default function App() {
   const [needsAuth, setNeedsAuth] = useState(false);
@@ -182,7 +182,7 @@ export default function App() {
     return days;
   };
 
-  const getMealPlanForDate = (day: number) => {
+  const getMealPlanForDate = (day: number|null) => {
     if (!day) return null;
 
     const year = currentDate.getFullYear();
@@ -308,11 +308,13 @@ export default function App() {
                     <OText>Nobody is sharing their meal plan with you.</OText>
                     <OText className={`font-bold`}>This feature is coming soon.</OText>
                   </View>
-                  <InfoBox className={`grid gap-std`}>
-                    <Text className={`font-serif h3`}>Feedback</Text>
-                    <OText>This is a new feature, we&apos;d love to hear what you think.</OText>
-                    <OText>Click the button below to send us feedback, it can be anything from a suggestion for a new feature to an issue you&apos;ve found.</OText>
-                    <FeedbackButton className={`btn btn-info`} textClassName={`text-white`}/>
+                  <InfoBox>
+                    <View className={`grid gap-std`}>
+                      <Text className={`font-serif h3`}>Feedback</Text>
+                      <OText>This is a new feature, we&apos;d love to hear what you think.</OText>
+                      <OText>Click the button below to send us feedback, it can be anything from a suggestion for a new feature to an issue you&apos;ve found.</OText>
+                      <FeedbackButton className={`btn btn-info`} textClassName={`text-white`}/>
+                    </View>
                   </InfoBox>
                 </View>
               </View>
@@ -423,6 +425,7 @@ export default function App() {
           </View>
         </View>
       )}
+      <Footer/>
     </ScrollView>
   );
 }

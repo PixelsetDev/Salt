@@ -1,6 +1,6 @@
 import "./../../global.css";
 import { Text, View, ScrollView, TextInput, ActivityIndicator } from 'react-native';
-import Navbar from "../../components/Navbar";
+import { Footer, Navbar } from '../../components/Commons';
 import { OLink, OText } from "../../components/Overrides";
 import { useState, useEffect } from "react";
 import { Desktop, Mobile } from 'components/Exclusions';
@@ -132,6 +132,7 @@ export default function App() {
           <Text className="txt-xl text-center mt-4">No results found.</Text>
         )}
       </View>
+      <Footer/>
     </ScrollView>
   );
 }

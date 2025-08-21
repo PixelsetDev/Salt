@@ -1,6 +1,6 @@
 import "./../global.css";
 import { Text, View, ScrollView } from "react-native";
-import Navbar from "../components/Navbar";
+import { Footer, Navbar } from '../components/Commons';
 import { useLogto } from '@logto/rn';
 import NoAuth from '../components/Boxes';
 
@@ -25,6 +25,7 @@ export default function App() {
       ) : (
         <NoAuth />
       )}
+      <Footer/>
     </ScrollView>
   );
 }

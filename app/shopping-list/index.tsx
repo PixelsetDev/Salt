@@ -1,7 +1,7 @@
 import "./../../global.css"
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
-import Navbar from '../../components/Navbar';
+import { Footer, Navbar } from '../../components/Commons';
 import { OText } from '../../components/Overrides';
 
 
@@ -24,7 +24,7 @@ export default function App() {
 
   return (
     <ScrollView>
-      <Navbar></Navbar>
+      <Navbar/>
       <View className="header grid-2">
         <View className="grid gap-std">
           <Text className="h1 font-serif text-white">Shopping List</Text>
@@ -64,6 +64,7 @@ export default function App() {
         )}
         </View>
       </View>
+      <Footer/>
     </ScrollView>
   );
 }

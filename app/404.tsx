@@ -1,6 +1,6 @@
 import "./../global.css";
 import { Text, View, ScrollView } from "react-native";
-import Navbar from "../components/Navbar";
+import { Footer, Navbar } from '../components/Commons';
 import { OText } from '../components/Overrides';
 
 export default function App() {
@@ -18,6 +18,7 @@ export default function App() {
           <OText>Sorry, we couldn&apos;t find what you were looking for.</OText>
         </View>
       </View>
+      <Footer/>
     </ScrollView>
   );
 }
