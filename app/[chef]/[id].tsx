@@ -80,11 +80,11 @@ export default function App() {
             </View>
             <View className="flex flex-row space-x-4">
               <View className="flex flex-row space-x-1 text-white">
-                <FontAwesome6 name="star" size={22} color="white" />
-                <FontAwesome6 name="star" size={22} color="white" />
-                <FontAwesome6 name="star" size={22} color="white" />
-                <FontAwesome6 name="star" size={22} color="white" />
-                <FontAwesome6 name="star" size={22} color="white" />
+                <Text className={`text-white`}>☆</Text>
+                <Text className={`text-white`}>☆</Text>
+                <Text className={`text-white`}>☆</Text>
+                <Text className={`text-white`}>☆</Text>
+                <Text className={`text-white`}>☆</Text>
               </View>
               <OText className="text-white">|</OText>
               <OText className="text-white">0.0</OText>
