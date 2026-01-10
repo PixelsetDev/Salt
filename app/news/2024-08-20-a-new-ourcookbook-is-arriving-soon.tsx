@@ -1,12 +1,12 @@
 import "./../../global.css"
 import {Text, View, ScrollView} from "react-native";
-import Navbar from "../../components/Navbar";
-import { OText, OLink } from "../../components/Overrides"
+import { OText, OLink } from '../../components/Overrides';
+import { Footer, Navbar } from '../../components/Commons';
 
 export default function App() {
   return (
     <ScrollView>
-      <Navbar></Navbar>
+      <Navbar/>
       <View className="header">
         <View className="grid gap-std">
           <Text className="h1 font-serif text-white">A new OurCookbook is coming soon.</Text>
@@ -190,6 +190,7 @@ export default function App() {
           <OLink className={`text-center btn btn-secondary`} href={`/news/2024-09-19-20-amazon-gift-card-prize-draw`}>Next Article</OLink>
         </View>
       </View>
+      <Footer/>
     </ScrollView>
   );
 }

@@ -1,4 +1,3 @@
-// utils/auth.js (or wherever you keep utilities)
 import { Platform } from 'react-native'; // or your platform detection
 
 export const getSignInRedirectUrl = () => {
@@ -8,3 +7,15 @@ export const getSignInRedirectUrl = () => {
     return 'ourcookbook://callback';
   }
 };
+
+export const getLastKnownAuth = () => {
+  return localStorage.getItem('ocbIsAuth') === 'true';
+}
+
+export const setLastKnownAuth = (isAuth: boolean) => {
+  if (isAuth) {
+    localStorage.setItem('ocbIsAuth', 'true');
+  } else {
+    localStorage.setItem('ocbIsAuth', 'false');
+  }
+}

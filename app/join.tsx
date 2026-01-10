@@ -1,6 +1,7 @@
 import "./../global.css";
 import { Text, View, ScrollView } from "react-native";
-import Navbar from "../components/Navbar";
+import { Footer, Navbar } from '../components/Commons';
+import { OText } from '../components/Overrides';
 
 export default function App() {
   return (
@@ -13,8 +14,10 @@ export default function App() {
       </View>
 
       <View className="p-std grid gap-std">
-
+        <OText>It&apos;s not currently possible to join OurCookbook on our BETA website.</OText>
+        <OText>To join, please visit ourcookbook.org</OText>
       </View>
+      <Footer/>
     </ScrollView>
     );
 }

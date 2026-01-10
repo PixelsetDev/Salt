@@ -59,14 +59,20 @@
 
 .tc-white { @apply text-white; }
 
-.btn { @apply px-4 py-2 btn-np }
-.btn-np { @apply rounded-lg border-2 transition duration-200 }
+.btn { @apply px-4 py-2 btn-np; }
+.btn-np { @apply rounded-lg border-2 transition duration-200 cursor-pointer; }
 
 .btn-primary { @apply text-white border-green-800 bg-green-800 hover:border-green-700 hover:bg-green-700 text-lg sm:text-sm; }
+.btn-danger { @apply text-white border-red-800 bg-red-800 hover:border-red-700 hover:bg-red-700 text-lg sm:text-sm; }
+.btn-info { @apply text-white border-blue-800 bg-blue-800 hover:border-blue-700 hover:bg-blue-700 text-lg sm:text-sm; }
 .btn-secondary { @apply border-green-800 hover:bg-green-800 text-lg sm:text-sm hover:text-white; }
+.btn-neutral { @apply bg-neutral-100 hover:bg-neutral-50 text-lg sm:text-sm border-0; }
 
 .btn-nav { @apply text-white px-4 py-2 rounded-lg border-2 border-green-800 hover:bg-green-800 transition duration-200 text-lg sm:text-sm; }
 .btn-nav-active { @apply text-white px-4 py-2 rounded-lg border-2 border-green-800 bg-green-800 transition duration-200 text-lg sm:text-sm; }
+
+.link-inline { @apply underline hover:text-green-800 transition duration-200; }
+.link-inline-red { @apply underline text-red-900 hover:text-red-700 transition duration-200; }
 
 .input { @apply border-green-800 bg-green-100 text-lg sm:text-sm border-2 px-4 py-2; }
 

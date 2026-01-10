@@ -1,11 +1,11 @@
 import { Text, View } from 'react-native';
 import { useState } from "react";
-import { OLink, OPressable } from "./Overrides";
+import { OLink, OPressable, OText } from "./Overrides";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useLogto } from '@logto/rn';
 import { SignOutButton, SignInButton } from './Auth';
 
-const Navbar = () => {
+export const Navbar = () => {
 
   const [visible, setVisible] = useState(false);
   const { isAuthenticated } = useLogto();
@@ -28,7 +28,7 @@ const Navbar = () => {
         {(isAuthenticated) && (
           <View className={`flex flex-row gap-2`}>
             <View className="py-1 self-center"><OLink href="/meal-plans" className="btn-nav">Meal Plans</OLink></View>
-            <View className="py-1 self-center"><OLink href="/shopping-lists" className="btn-nav">Shopping Lists</OLink></View>
+            <View className="py-1 self-center"><OLink href="/shopping-list" className="btn-nav">Shopping List</OLink></View>
           </View>
         )}
         <View className="py-1 self-center"><OLink href="/chefs" className="btn-nav">Chefs</OLink></View>
@@ -67,7 +67,7 @@ const Navbar = () => {
             {(isAuthenticated) && (
               <View className="grid gap-std">
                 <OLink href="/meal-plans" className="btn btn-primary text-white">Meal Plans</OLink>
-                <OLink href="/shopping-lists" className="btn btn-primary text-white">Shopping Lists</OLink>
+                <OLink href="/shopping-list" className="btn btn-primary text-white">Shopping List</OLink>
               </View>
             )}
             <OLink href="/chefs" className="btn btn-primary text-white">Chefs</OLink>
@@ -90,4 +90,28 @@ const Navbar = () => {
   );
 }
 
-export default Navbar;
+export const Footer = () => {
+  return (
+    <View className="px-std py-sm border-t grid-3 gap-std relative bg-secondary nomobile">
+      <View>
+        <Text className={`font-serif h3`}>OurCookbook</Text>
+        <OText>
+          All recipes and images are CC-BY-SA 4.0 unless otherwise stated (except icons).
+          <OLink target={`_blank`} href={`https://fontawesome.com`} className={`inline-link`}>Icons by FontAwesome</OLink>
+        </OText>
+      </View>
+      <View>
+        <Text className={`font-serif h3`}>Support</Text>
+        <OLink href={`https://support.pixelset.dev/knowledgebase.php?category=7`} className={`link-inline`} target={`_blank`}>Articles and Guides</OLink>
+        <OLink href={`https://support.pixelset.dev/index.php?a=add&amp;category=6`} className={`link-inline`} target={`_blank`}>Contact Support</OLink>
+        <OLink href={`https://support.pixelset.dev/knowledgebase.php?article=19`} className={`link-inline`} target={`_blank`}>Community Guidelines</OLink>
+      </View>
+      <View>
+        <Text className={`font-serif h3`}>Legal</Text>
+        <OLink href={`https://pixelset.dev/legal/terms/?s=ourcookbook`} className={`link-inline`} target={`_blank`}>Terms and Conditions</OLink>
+        <OLink href={`https://pixelset.dev/legal/privacy/?s=ourcookbook`} className={`link-inline`} target={`_blank`}>Privacy Policy</OLink>
+        <OLink href={`https://pixelset.dev/legal/cookies/?s=ourcookbook`} className={`link-inline`} target={`_blank`}>Cookie Policy</OLink>
+      </View>
+    </View>
+  )
+}
