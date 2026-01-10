@@ -16,9 +16,10 @@ interface Recipe {
 interface RecipeSearchProps {
   navigateToRecipe?: boolean;
   onRecipePress?: (recipe: Recipe) => void;
+  user?: string;
 }
 
-const RecipeSearch = ({ navigateToRecipe = true, onRecipePress }: RecipeSearchProps) => {
+const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user }: RecipeSearchProps) => {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -49,7 +50,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress }: RecipeSearchPr
     }, 300);
 
     return () => clearTimeout(delayDebounce);
-  }, [search]);
+  }, [search, user]);
 
   useEffect(() => {
     fetchRecipes();
@@ -61,10 +62,21 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress }: RecipeSearchPr
     setShowSpinner(false);
     const spinnerDelay = setTimeout(() => setShowSpinner(true), 300);
 
-    fetch(`https://api.ourcookbook.org/recipes${query ? `?query=${encodeURIComponent(query)}` : ''}`)
+    const params = new URLSearchParams();
+    if (query) params.append('query', query);
+    if (user) params.append('user', user);
+
+    const queryString = params.toString();
+    const url = `https://api.ourcookbook.org/recipes${queryString ? `?${queryString}` : ''}`;
+
+    fetch(url)
       .then(async (res) => (res.status === 204 ? { data: [] } : res.json()))
       .then((data) => {
-        if (Array.isArray(data.data)) setRecipes(data.data);
+        if (Array.isArray(data.data)) {
+          setRecipes(data.data);
+        } else {
+          setRecipes([]);
+        }
       })
       .catch((err) => console.log('Error fetching recipes:', err))
       .finally(() => {

@@ -3,11 +3,10 @@ import {Text, View, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {OLink, OText} from "../../components/Overrides";
-import { RecipeLink } from '../../components/RecipeLink';
 import { Footer, Navbar } from '../../components/Commons';
+import RecipeSearch from '../../components/RecipeSearch';
 
 export default function App() {
-
   const { chef } = useLocalSearchParams();
   const cleanId = (typeof chef === 'string' ? chef : '').replace(/^@/, '');
 
@@ -16,15 +15,6 @@ export default function App() {
     username: string;
     avatar: string;
   } | null>(null);
-
-  const [recipes, setRecipes] = useState<{
-    slug: string;
-    title: string;
-    author: {
-      name: string;
-      username: string;
-    }
-  }[]>([]);
 
   const [collections, setCollections] = useState<{
     slug: string;
@@ -41,18 +31,6 @@ export default function App() {
           setUser(data.data);
         } else {
           window.location.href='/404';
-        }
-      })
-      .catch((err) => console.error(err));
-
-    fetch("https://api.ourcookbook.org/recipes?user="+cleanId, { method: "GET" })
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data.data)) {
-          setRecipes(data.data);
-        } else {
-          setRecipes([]);
-          console.warn("No recipes found:", data.status?.message || "Unknown issue");
         }
       })
       .catch((err) => console.error(err));
@@ -90,17 +68,9 @@ export default function App() {
       <View className="p-std grid gap-xl">
         <View className="grid gap-std">
           <Text className="h2 font-serif text-center">Recipes</Text>
-
-          {(recipes && recipes.length > 0) ? (
-          <View className="grid-5 gap-std">
-            {recipes.map((recipe) => (
-              <RecipeLink recipe={recipe} key={recipe.slug}>{null}</RecipeLink>
-            ))}
-          </View>
-          ) : (
-            <OText className={`text-center`}>This user has no recipes.</OText>
-          )}
+          <RecipeSearch user={cleanId} navigateToRecipe={true} />
         </View>
+
         <View className="grid gap-std">
           <Text className="h2 font-serif text-center">Collections</Text>
 
