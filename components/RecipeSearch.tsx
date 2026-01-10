@@ -1,7 +1,7 @@
-import { ActivityIndicator, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
-import { useEffect, useState } from 'react';
+import { ActivityIndicator, Text, TextInput, View, Image, useWindowDimensions } from 'react-native';
+import { useEffect, useState, useMemo } from 'react';
 import { RecipeLink } from './RecipeLink';
-import { OLink, OPressable, OText } from './Overrides';
+import { OPressable, OText } from './Overrides';
 
 interface Recipe {
   slug: string;
@@ -24,6 +24,16 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress }: RecipeSearchPr
   const [showSpinner, setShowSpinner] = useState(false);
 
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+
+  const { width } = useWindowDimensions();
+
+  const columnCount = useMemo(() => {
+    if (!navigateToRecipe) return 2;
+    if (width >= 1280) return 5;
+    if (width >= 1024) return 4;
+    if (width >= 768) return 3;
+    return 2;
+  }, [width, navigateToRecipe]);
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -82,48 +92,83 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress }: RecipeSearchPr
   };
 
   return (
-    <View className="gap-std grid">
+    <View className={`gap-std grid`}>
       <TextInput
         placeholder="Search recipes..."
         placeholderTextColor="#ccc"
         value={search}
         onChangeText={setSearch}
-        className="input"
+        className={`input`}
         returnKeyType="search"
       />
 
       {showSpinner && <ActivityIndicator size="large" color="#ffffff" style={{ marginTop: 20 }} />}
 
-      <View className={`${navigateToRecipe ? (`grid-5`) : (`grid-2`)} gap-std`}>
-        {recipes.map((recipe) =>
-          navigateToRecipe ? (
-            <RecipeLink recipe={recipe} key={recipe.slug}>
-              {null}
-            </RecipeLink>
-          ) : (
-            <OPressable
-              onPress={() => handleRecipePress(recipe)}
-              key={recipe.slug}
-              className="btn-np btn-primary">
-              <View className={`grid grid-cols-3 gap-std`}>
-                <Image
-                  source={{
-                    uri: `https://api.ourcookbook.org/storage/recipes/@${recipe.author.username}/${recipe.slug}.webp`,
-                  }}
-                  className="col-span-1 rounded-l-md flex-1"
-                />
-                <View className="col-span-2 grid gap-2 px-4 py-3">
-                  <Text className="txt-xl font-serif text-white">{recipe.title}</Text>
-                  <OText className="txt-lg text-white">By {recipe.author.name}</OText>
+      <View className={`gap-std`}>
+        {/* FEATURED FIRST ITEM - SPANS ENTIRE GRID WIDTH */}
+        {recipes.length > 0 && (
+          <View className={`mb-std`}>
+            {navigateToRecipe ? (
+              <RecipeLink recipe={recipes[0]} key={recipes[0].slug}>
+                {null}
+              </RecipeLink>
+            ) : (
+              <OPressable
+                onPress={() => handleRecipePress(recipes[0])}
+                key={recipes[0].slug}
+                className={`btn-np btn-primary w-full`}>
+                <View className={`grid grid-cols-3 gap-std`}>
+                  <Image
+                    source={{
+                      uri: `https://api.ourcookbook.org/storage/recipes/@${recipes[0].author.username}/${recipes[0].slug}.webp`,
+                    }}
+                    className={`col-span-1 rounded-l-md flex-1`}
+                  />
+                  <View className={`col-span-2 grid gap-2 px-4 py-3`}>
+                    <Text className={`txt-xl font-serif text-white`}>{recipes[0].title}</Text>
+                    <OText className={`txt-lg text-white`}>By {recipes[0].author.name}</OText>
+                  </View>
                 </View>
-              </View>
-            </OPressable>
-          )
+              </OPressable>
+            )}
+          </View>
         )}
+
+        {/* MASONRY RESPONSIVE GRID - Using dynamic flex columns to prevent disappearing items */}
+        <View className={`flex-row gap-std`}>
+          {Array.from({ length: columnCount }).map((_, colIndex) => (
+            <View
+              key={`col-${colIndex}`}
+              className={`flex-1 flex-col gap-std`}
+            >
+              {recipes.slice(1).filter((_, i) => i % columnCount === colIndex).map((recipe) => (
+                navigateToRecipe ? (
+                  <RecipeLink recipe={recipe} key={recipe.slug}>{null}</RecipeLink>
+                ) : (
+                  <OPressable
+                    onPress={() => handleRecipePress(recipe)}
+                    key={recipe.slug}
+                    className={`btn-np btn-primary w-full`}>
+                    <View className={`flex-col`}>
+                      <Image
+                        source={{ uri: `https://api.ourcookbook.org/storage/recipes/@${recipe.author.username}/${recipe.slug}.webp` }}
+                        className={`w-full aspect-square rounded-t-md`}
+                      />
+                      <View className={`px-3 py-2`}>
+                        <Text className={`txt-md font-serif text-white`}>{recipe.title}</Text>
+                        <OText className={`txt-sm text-white`}>{recipe.author.name}</OText>
+                      </View>
+                    </View>
+                  </OPressable>
+                )
+              ))}
+            </View>
+          ))}
+        </View>
       </View>
 
       {!loading && recipes.length === 0 && (
-        <Text className="txt-xl text-center">No results found.</Text>
+        <Text className={`txt-xl text-center`}>No results found.</Text>
       )}
     </View>
   );
