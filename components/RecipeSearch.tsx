@@ -1,7 +1,7 @@
-import { ActivityIndicator, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
-import { useEffect, useState } from 'react';
+import { ActivityIndicator, Text, TextInput, View, Image, useWindowDimensions } from 'react-native';
+import { useEffect, useState, useMemo } from 'react';
 import { RecipeLink } from './RecipeLink';
-import { OLink, OPressable, OText } from './Overrides';
+import { OPressable, OText } from './Overrides';
 
 interface Recipe {
   slug: string;
@@ -25,6 +25,24 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress }: RecipeSearchPr
 
   const [recipes, setRecipes] = useState<Recipe[]>([]);
 
+  const { width } = useWindowDimensions();
+
+  const columnCount = useMemo(() => {
+    if (!navigateToRecipe) return 2;
+    if (width >= 1280) return 5;
+    if (width >= 1024) return 4;
+    if (width >= 768) return 3;
+    return 2;
+  }, [width, navigateToRecipe]);
+
+  const columns = useMemo(() => {
+    const result: Recipe[][] = Array.from({ length: columnCount }, () => []);
+    recipes.forEach((recipe, index) => {
+      result[index % columnCount].push(recipe);
+    });
+    return result;
+  }, [recipes, columnCount]);
+
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       fetchRecipes(search);
@@ -38,36 +56,17 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress }: RecipeSearchPr
   }, []);
 
   const fetchRecipes = async (query = '') => {
-    setRecipes([]); // clear results
+    setRecipes([]);
     setLoading(true);
     setShowSpinner(false);
+    const spinnerDelay = setTimeout(() => setShowSpinner(true), 300);
 
-    const spinnerDelay = setTimeout(() => {
-      setShowSpinner(true);
-    }, 300);
-
-    fetch(
-      `https://api.ourcookbook.org/recipes${
-        query ? `?query=${encodeURIComponent(query)}` : ''
-      }`
-    )
-      .then(async (res) => {
-        if (res.status === 204) {
-          return { data: [], status: { message: 'No content' } };
-        }
-        return res.json();
-      })
+    fetch(`https://api.ourcookbook.org/recipes${query ? `?query=${encodeURIComponent(query)}` : ''}`)
+      .then(async (res) => (res.status === 204 ? { data: [] } : res.json()))
       .then((data) => {
-        if (Array.isArray(data.data)) {
-          setRecipes(data.data);
-        } else {
-          setRecipes([]);
-          console.warn('No recipes found:', data.status?.message || 'Unknown issue');
-        }
+        if (Array.isArray(data.data)) setRecipes(data.data);
       })
-      .catch((err) => {
-        console.log('Error fetching recipes:', err);
-      })
+      .catch((err) => console.log('Error fetching recipes:', err))
       .finally(() => {
         clearTimeout(spinnerDelay);
         setLoading(false);
@@ -76,13 +75,11 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress }: RecipeSearchPr
   };
 
   const handleRecipePress = (recipe: Recipe) => {
-    if (onRecipePress) {
-      onRecipePress(recipe);
-    }
+    if (onRecipePress) onRecipePress(recipe);
   };
 
   return (
-    <View className="gap-std grid">
+    <View className="gap-std">
       <TextInput
         placeholder="Search recipes..."
         placeholderTextColor="#ccc"
@@ -92,34 +89,38 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress }: RecipeSearchPr
         returnKeyType="search"
       />
 
-      {showSpinner && <ActivityIndicator size="large" color="#ffffff" style={{ marginTop: 20 }} />}
+      {showSpinner && <ActivityIndicator size="large" color="#ffffff" className="mt-5" />}
 
-      <View className={`${navigateToRecipe ? (`grid-5`) : (`grid-2`)} gap-std`}>
-        {recipes.map((recipe) =>
-          navigateToRecipe ? (
-            <RecipeLink recipe={recipe} key={recipe.slug}>
-              {null}
-            </RecipeLink>
-          ) : (
-            <OPressable
-              onPress={() => handleRecipePress(recipe)}
-              key={recipe.slug}
-              className="btn-np btn-primary">
-              <View className={`grid grid-cols-3 gap-std`}>
-                <Image
-                  source={{
-                    uri: `https://api.ourcookbook.org/storage/recipes/@${recipe.author.username}/${recipe.slug}.webp`,
-                  }}
-                  className="col-span-1 rounded-l-md flex-1"
-                />
-                <View className="col-span-2 grid gap-2 px-4 py-3">
-                  <Text className="txt-xl font-serif text-white">{recipe.title}</Text>
-                  <OText className="txt-lg text-white">By {recipe.author.name}</OText>
-                </View>
+      <View className="flex-row gap-std">
+        {columns.map((col, i) => (
+          <View key={`col-${i}`} className="flex-1 gap-std">
+            {col.map((recipe) => (
+              <View key={recipe.slug}>
+                {navigateToRecipe ? (
+                  <RecipeLink recipe={recipe}>{null}</RecipeLink>
+                ) : (
+                  <OPressable
+                    onPress={() => handleRecipePress(recipe)}
+                    className="btn-np btn-primary overflow-hidden"
+                  >
+                    <View className="flex-col">
+                      <Image
+                        source={{
+                          uri: `https://api.ourcookbook.org/storage/recipes/@${recipe.author.username}/${recipe.slug}.webp`,
+                        }}
+                        className="w-full rounded-t-md aspect-square"
+                      />
+                      <View className="gap-2 px-4 py-3">
+                        <Text className="txt-xl font-serif text-white">{recipe.title}</Text>
+                        <OText className="txt-lg text-white">By {recipe.author.name}</OText>
+                      </View>
+                    </View>
+                  </OPressable>
+                )}
               </View>
-            </OPressable>
-          )
-        )}
+            ))}
+          </View>
+        ))}
       </View>
 
       {!loading && recipes.length === 0 && (
