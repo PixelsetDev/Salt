@@ -7,6 +7,7 @@ interface Recipe {
   slug: string;
   title: string;
   author: {
+    uuid: string;
     name: string;
     username: string;
   };

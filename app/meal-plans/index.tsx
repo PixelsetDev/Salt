@@ -35,6 +35,7 @@ export default function App() {
   const [newModalOpen, setNewModalOpen] = useState(false);
   const [newModalDate, setNewModalDate] = useState<Date | null>(null);
   const [modalRecipeOCB, setModalRecipeOCB] = useState(false);
+  const [newMealText, setNewMealText] = useState('');
   const { isAuthenticated, getIdToken, signIn } = useLogto();
 
   useEffect(() => {
@@ -109,6 +110,7 @@ export default function App() {
 
       if (res.ok && res.status === 201) {
         setNewModalOpen(false);
+        setNewMealText('');
       } else {
         alert('Something went wrong.');
         console.error(await res.json());
@@ -370,10 +372,13 @@ export default function App() {
 
               <OText className={`text-center`}>or enter the meal name</OText>
 
-              <TextInput id={`newMealPlanModalTextInput`}></TextInput>
+              <TextInput
+                value={newMealText}
+                onChange={(e: any) => setNewMealText(e?.target ? e.target.value : e)}
+              />
 
               <View className={`grid-2 gap-std`}>
-                <OPressable onPress={() => addItem(true, document.getElementById('newMealPlanModalTextInput').value, null, null)} className={`btn btn-primary`}>
+                <OPressable onPress={() => addItem(true, newMealText, null, null)} className={`btn btn-primary`}>
                   <OText className={`text-center text-white`}>Add to meal plan</OText>
                 </OPressable>
                 <OPressable onPress={() => setNewModalOpen(false)} className={`btn btn-danger`}>
