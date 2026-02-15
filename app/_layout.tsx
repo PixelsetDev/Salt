@@ -2,12 +2,12 @@ import { LogtoProvider, LogtoConfig } from '@logto/rn';
 import { Slot } from 'expo-router';
 import * as Sentry from '@sentry/react-native';
 
-//   ██████  ██████  ██    ██████
-//   ██      ██  ██  ██      ██
-//   ██████  ██████  ██      ██
-//       ██  ██  ██  ██      ██
-//   ██████  ██  ██  ██████  ██
-//   Copyright (c) 2025 Pixelset
+//      ██████  ██████  ██    ██████
+//      ██      ██  ██  ██      ██
+//      ██████  ██████  ██      ██
+//          ██  ██  ██  ██      ██
+//      ██████  ██  ██  ██████  ██
+//   Copyright (c) 2025 - 2026 Pixelset
 
 Sentry.init({
   dsn: 'https://ab4cc21cf3270eeb0a957a3e0a610a8d@o4509832364687360.ingest.de.sentry.io/4509832365801552',

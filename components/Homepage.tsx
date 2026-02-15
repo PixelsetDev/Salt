@@ -5,11 +5,6 @@ import { OLink, OText } from './Overrides';
 import RecipeSearch from './RecipeSearch';
 
 export const Homepage = () => {
-  const featuredImageOne = { uri: 'https://ourcookbook.org/storage/images/recipes/@amy/chicken-leek-pie.webp', };
-  const featuredImageTwo = { uri: 'https://ourcookbook.org/storage/images/recipes/@ella/lasagna-soup.webp', };
-  const featuredImageThree = { uri: 'https://ourcookbook.org/storage/images/recipes/@ourcookbook/sweet-chilli-glazed-basa.webp', };
-  const featuredImageFour = { uri: 'https://ourcookbook.org/storage/images/recipes/@lewis/chicken-curry.webp', };
-
   return (
     <ScrollView>
       <Navbar/>
@@ -28,7 +23,7 @@ export const Homepage = () => {
           </View>
         </View>
         <View className="grid-3">
-          <ImageBackground source={featuredImageOne} resizeMode="cover" className="span-2 p-sm">
+          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@amy/chicken-leek-pie.webp' }} resizeMode="cover" className="span-2 p-sm">
             <View className="bg-white p-8 grid gap-std">
               <Text className="h2 font-serif">Chicken and Leek Pie</Text>
               <OText>
@@ -47,7 +42,7 @@ export const Homepage = () => {
               </View>
             </View>
           </ImageBackground>
-          <ImageBackground source={featuredImageTwo} resizeMode="cover" className="p-sm">
+          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@ella/lasagna-soup.webp' }} resizeMode="cover" className="p-sm">
             <View className="bg-white p-8 grid gap-std">
               <Text className="h2 font-serif">Lasagna Soup</Text>
               <OText>
@@ -64,7 +59,7 @@ export const Homepage = () => {
               </View>
             </View>
           </ImageBackground>
-          <ImageBackground source={featuredImageThree} resizeMode="cover" className="p-sm">
+          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@ourcookbook/sweet-chilli-glazed-basa.webp' }} resizeMode="cover" className="p-sm">
             <View className="bg-white p-8 grid gap-std">
               <Text className="h2 font-serif">Sweet Chilli Glazed Basa</Text>
               <OText>
@@ -81,7 +76,7 @@ export const Homepage = () => {
               </View>
             </View>
           </ImageBackground>
-          <ImageBackground source={featuredImageFour} resizeMode="cover" className="span-2 p-sm">
+          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@lewis/chicken-curry.webp', }} resizeMode="cover" className="span-2 p-sm">
             <View className="bg-white p-8 grid gap-std">
               <Text className="h2 font-serif">Chicken Curry</Text>
               <OText>
@@ -108,7 +103,7 @@ export const Homepage = () => {
 
       <Mobile>
         <View className="p-std">
-          <ImageBackground source={featuredImageOne} resizeMode="cover" className="p-std">
+          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@amy/chicken-leek-pie.webp' }} resizeMode="cover" className="p-std">
             <View className="h-72">&nbsp;</View>
             <View className="bg-white p-8 grid gap-std">
               <Text className="h2 font-serif">Chicken and Leek Pie</Text>

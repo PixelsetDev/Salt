@@ -5,7 +5,7 @@ import { OPressable, OText } from './Overrides';
 
 interface Recipe {
   slug: string;
-  title: string;
+  name: string;
   author: {
     uuid: string;
     name: string;
@@ -68,7 +68,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user }: RecipeSe
     if (user) params.append('user', user);
 
     const queryString = params.toString();
-    const url = `https://api.ourcookbook.org/recipes${queryString ? `?${queryString}` : ''}`;
+    const url = `https://api.ourcookbook.org/recipe${queryString ? `?${queryString}` : ''}`;
 
     fetch(url)
       .then(async (res) => (res.status === 204 ? { data: [] } : res.json()))
@@ -124,7 +124,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user }: RecipeSe
                         className="w-full rounded-t-md aspect-square"
                       />
                       <View className="gap-2 px-4 py-3">
-                        <Text className="txt-xl font-serif text-white">{recipe.title}</Text>
+                        <Text className="txt-xl font-serif text-white">{recipe.name}</Text>
                         <OText className="txt-lg text-white">By {recipe.author.name}</OText>
                       </View>
                     </View>

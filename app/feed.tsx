@@ -2,7 +2,7 @@ import "./../global.css";
 import { Text, View, ScrollView } from "react-native";
 import { Footer, Navbar } from '../components/Commons';
 import { useLogto } from '@logto/rn';
-import NoAuth from '../components/Boxes';
+import { Unauthed } from '../components/Boxes';
 
 export default function App() {
   const { isAuthenticated } = useLogto();
@@ -17,13 +17,10 @@ export default function App() {
       </View>
       {isAuthenticated ? (
         <View>
-
-          <View className="p-std grid gap-std">
-
-          </View>
+          <View className="p-std grid gap-std"></View>
         </View>
       ) : (
-        <NoAuth />
+        <Unauthed />
       )}
       <Footer/>
     </ScrollView>

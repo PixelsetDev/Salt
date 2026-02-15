@@ -27,6 +27,7 @@
 .p-xs { @apply px-xs py-xs; }
 
 .bg-green { @apply bg-green-800 text-white; }
+.bg-green-50 { @apply bg-green-800/50 text-white; }
 .bg-green-d { @apply bg-green-900 text-white; }
 .bg-secondary { @apply bg-neutral-100; }
 
@@ -37,6 +38,7 @@
 .txt-xl { @apply lg:text-xl text-lg; }
 .txt-lg { @apply text-lg; }
 .txt-sm { @apply md:text-base text-sm; }
+.txt-xs { @apply text-xs; }
 
 .h1 { @apply txt-7xl; }
 .h2 { @apply txt-5xl; }

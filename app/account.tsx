@@ -7,7 +7,7 @@ import { OLink, OText } from '../components/Overrides';
 import { useEffect, useState } from 'react';
 
 export default function App() {
-  const { isAuthenticated, fetchUserInfo } = useLogto();
+  const { isAuthenticated, fetchUserInfo, getAccessToken } = useLogto();
   const [user, setUser] = useState<{
     name?: any
     username?: any
@@ -21,9 +21,10 @@ export default function App() {
 
     async function fetchUser() {
       const userInfo = await fetchUserInfo();
+      console.log(await getAccessToken())
       setUser(userInfo);
     }
-  }, [isAuthenticated, fetchUserInfo]); // <--- add dependency to avoid infinite loop
+  }, [isAuthenticated, fetchUserInfo]);
 
   return (
     <ScrollView>

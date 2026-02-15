@@ -1,4 +1,4 @@
-import { GestureResponderEvent, Pressable, Text, TextProps, View } from 'react-native';
+import { GestureResponderEvent, Pressable, Text, View } from 'react-native';
 import { ReactNode, isValidElement } from 'react';
 import { Linking } from 'react-native';
 
@@ -8,7 +8,7 @@ export const OText = ({
   className?: string; children: any
 }) => {
   return (
-    <Text className={`font-sans-serif dark:text-white txt-lg ${className}`} {...props}>
+    <Text className={`font-sans-serif dark:text-white txt-xl ${className}`} {...props}>
       {children}
     </Text>
   )

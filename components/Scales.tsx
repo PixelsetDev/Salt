@@ -3,28 +3,31 @@ import { View, Text } from "react-native";
 
 export const Difficulty = ({ currentStep, steps = [] }:{currentStep:number, steps:string[]}) => {
   return (
-    <View className="flex-row items-center">
+    <View className="grid grid-cols-5 items-center">
       {steps.map((label : string, index : number) => {
         const stepNumber = index + 1;
         const isActive = stepNumber === currentStep;
 
         return (
-          <React.Fragment key={label}>
-            <View className="items-center">
-              <View
-                className={`rounded-full w-8 h-8 justify-center items-center
-                  ${isActive ? "bg-green" : "bg-green-200"}`}
-              >
-              </View>
-              <Text className="text-xs mt-1 text-center">{label}</Text>
-            </View>
+          <>
+            <View key={index}
+              className={`h-4 w-full items-center justify-center border-x-2 border-neutral-100 px-8
+                    ${isActive ? 'bg-green' : 'bg-green-200/75'}`}>
 
-            {index < steps.length - 1 && (
-              <View
-                className={`h-1 flex-1 mx-1 mb-4 bg-green-200`}
-              />
-            )}
-          </React.Fragment>
+            </View>
+          </>
+        );
+      })}
+      {steps.map((label : string, index : number) => {
+        const stepNumber = index + 1;
+        const isActive = stepNumber === currentStep;
+
+        return (
+          <>
+            <Text className={`${isActive ? 'text-sm' : 'text-xs'} text-center ${isActive && 'font-bold'}`}>
+              {label}
+            </Text>
+          </>
         );
       })}
     </View>
