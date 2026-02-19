@@ -20,12 +20,12 @@
 .nodesktop { @apply block sm:hidden; }
 .header { @apply bg-green-800 text-white p-std; }
 
-.px-sm { @apply lg:px-24 md:px-12 sm:px-8 px-6; }
-.py-sm { @apply lg:py-16 md:py-8 sm:py-4 py-3; }
+@utility .px-sm { @apply lg:px-24 md:px-12 sm:px-8 px-6; }
+@utility .py-sm { @apply lg:py-16 md:py-8 sm:py-4 py-3; }
 .p-sm { @apply px-sm py-sm; }
 
-.px-xs { @apply lg:px-12 md:px-8 sm:px-6 px-3; }
-.py-xs { @apply lg:py-8 md:py-6 sm:py-4 py-2; }
+@utility .px-xs { @apply lg:px-12 md:px-8 sm:px-6 px-3; }
+@utility .py-xs { @apply lg:py-8 md:py-6 sm:py-4 py-2; }
 .p-xs { @apply px-xs py-xs; }
 
 .bg-green-50 { @apply bg-green-800/50 text-white; }
