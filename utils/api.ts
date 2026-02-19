@@ -12,6 +12,7 @@ export const useAuthenticatedFetch = () => {
     }
 
     const token = await getAccessToken('https://api.ourcookbook.org');
+    console.log(token);
 
     return fetch(url, {
       ...options,

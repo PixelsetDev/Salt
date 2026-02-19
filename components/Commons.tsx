@@ -4,21 +4,25 @@ import { OLink, OPressable, OText } from "./Overrides";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { SignOutButton, SignInButton } from './Auth';
 import { useAuthenticatedFetch } from '../utils/api';
+import { getLastKnownAuth } from '../utils/auth';
+import { API_BASE } from '../utils/settings';
 
 export const Navbar = () => {
 
   const [visible, setVisible] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
 
+  setAuthenticated(getLastKnownAuth);
+
   const authFetch = useAuthenticatedFetch();
 
-  const loadRecipes = async () => {
-    const res = await authFetch(
-      'https://api.ourcookbook.org/recipes'
-    );
-
+  const getUser = async () => {
+    const res = await authFetch(`${API_BASE}/v1/users/[me]`);
     const data = await res.json();
+    console.log(data);
   };
+
+  getUser();
 
   return(
     <View>

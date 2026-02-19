@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+@import "nativewind/theme";
 
 /* Fonts */
 .font-serif { font-family: 'Merriweather', serif !important; }
