@@ -13,7 +13,7 @@
 /* Global */
 .nomobile { @apply sm:block hidden; }
 .nodesktop { @apply block sm:hidden; }
-.header { @apply bg-green p-std; }
+.header { @apply bg-green-800 text-white p-std; }
 
 .px-std { @apply lg:px-32 md:px-16 sm:px-8 px-6; }
 .py-std { @apply lg:py-24 md:py-12 sm:py-6 py-4; }
@@ -27,7 +27,6 @@
 .py-xs { @apply lg:py-8 md:py-6 sm:py-4 py-2; }
 .p-xs { @apply px-xs py-xs; }
 
-.bg-green { @apply bg-green-800 text-white; }
 .bg-green-50 { @apply bg-green-800/50 text-white; }
 .bg-green-d { @apply bg-green-900 text-white; }
 .bg-secondary { @apply bg-neutral-100; }
@@ -72,7 +71,7 @@
 .btn-neutral { @apply bg-neutral-100 hover:bg-neutral-50 text-lg sm:text-sm border-0; }
 
 .link-nav { @apply text-white px-4 underline decoration-2 decoration-green-800 hover:text-green-200 hover:decoration-green-700 transition duration-200 text-lg; }
-.btn-nav { @apply px-4 py-2 hover:bg-green hover:text-white transition duration-200 text-lg; }
+.btn-nav { @apply px-4 py-2 hover:bg-green-800 hover:text-white transition duration-200 text-lg; }
 
 .link-inline { @apply underline hover:text-green-800 transition duration-200; }
 .link-inline-red { @apply underline text-red-900 hover:text-red-700 transition duration-200; }
