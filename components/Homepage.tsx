@@ -1,6 +1,6 @@
 import { Button, ImageBackground, ScrollView, Text, View } from 'react-native';
 import { Footer, Navbar } from './Commons';
-import { Desktop, Mobile } from './Exclusions';
+import { Desktop } from './Exclusions';
 import { OLink, OText } from './Overrides';
 import RecipeSearch from './RecipeSearch';
 
@@ -22,6 +22,74 @@ export const Homepage = () => {
             </OText>
           </View>
         </View>
+        <View className="grid-3 px-std py-std">
+          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@lewis/chicken-korma-couscous.webp' }} resizeMode="cover" className="span-2 p-sm">
+            <View className="bg-white p-8 grid gap-std">
+              <Text className="h2 font-serif">Chicken Korma Couscous</Text>
+              <OText>
+                By Lewis
+              </OText>
+              <OText>
+                This demo recipe is available on OurCookbook BETA.
+              </OText>
+              <View>
+                <OLink href="/@lewis/chicken-korma-couscous" className="btn btn-primary">
+                  Let&apos;s get cooking!
+                </OLink>
+              </View>
+            </View>
+          </ImageBackground>
+          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@lewis/chicken-korma-couscous.webp' }} resizeMode="cover" className="p-sm">
+            <View className="bg-white p-8 grid gap-std">
+              <Text className="h2 font-serif">Chicken Korma Couscous</Text>
+              <OText>
+                By Lewis
+              </OText>
+              <OText>
+                This demo recipe is available on OurCookbook BETA.
+              </OText>
+              <View>
+                <OLink href="/@lewis/chicken-korma-couscous" className="btn btn-primary">
+                  Let&apos;s get cooking!
+                </OLink>
+              </View>
+            </View>
+          </ImageBackground>
+          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@lewis/chicken-korma-couscous.webp' }} resizeMode="cover" className="p-sm">
+            <View className="bg-white p-8 grid gap-std">
+              <Text className="h2 font-serif">Chicken Korma Couscous</Text>
+              <OText>
+                By Lewis
+              </OText>
+              <OText>
+                This demo recipe is available on OurCookbook BETA.
+              </OText>
+              <View>
+                <OLink href="/@lewis/chicken-korma-couscous" className="btn btn-primary">
+                  Let&apos;s get cooking!
+                </OLink>
+              </View>
+            </View>
+          </ImageBackground>
+          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@lewis/chicken-korma-couscous.webp' }} resizeMode="cover" className="span-2 p-sm">
+            <View className="bg-white p-8 grid gap-std">
+              <Text className="h2 font-serif">Chicken Korma Couscous</Text>
+              <OText>
+                By Lewis
+              </OText>
+              <OText>
+                This demo recipe is available on OurCookbook BETA.
+              </OText>
+              <View>
+                <OLink href="/@lewis/chicken-korma-couscous" className="btn btn-primary">
+                  Let&apos;s get cooking!
+                </OLink>
+              </View>
+            </View>
+          </ImageBackground>
+        </View>
+      </Desktop>
+        {/*
         <View className="grid-3">
           <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@amy/chicken-leek-pie.webp' }} resizeMode="cover" className="span-2 p-sm">
             <View className="bg-white p-8 grid gap-std">
@@ -123,9 +191,10 @@ export const Homepage = () => {
           </ImageBackground>
         </View>
       </Mobile>
+      */}
 
       <View className={`p-std grid gap-std`}>
-        <Text className="h2 text-center font-serif">Search</Text>
+        <Text className="h2 text-center font-serif">Looking for something?</Text>
         <RecipeSearch/>
       </View>
 

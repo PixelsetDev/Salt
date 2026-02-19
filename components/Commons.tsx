@@ -2,13 +2,23 @@ import { Text, View } from 'react-native';
 import { useState } from "react";
 import { OLink, OPressable, OText } from "./Overrides";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { useLogto } from '@logto/rn';
 import { SignOutButton, SignInButton } from './Auth';
+import { useAuthenticatedFetch } from '../utils/api';
 
 export const Navbar = () => {
 
   const [visible, setVisible] = useState(false);
-  const { isAuthenticated } = useLogto();
+  const [authenticated, setAuthenticated] = useState(false);
+
+  const authFetch = useAuthenticatedFetch();
+
+  const loadRecipes = async () => {
+    const res = await authFetch(
+      'https://api.ourcookbook.org/recipes'
+    );
+
+    const data = await res.json();
+  };
 
   return(
     <View>
@@ -18,53 +28,52 @@ export const Navbar = () => {
           Please report any bugs, crashes, or issues to ocb-app-issues@pixelset.dev
         </Text>
       </View>
-      <View className="bg-green-d sm:flex hidden flex-row gap-2 px-std py-1">
-        <View className="py-1 self-center">
-          <OLink href="/" className="btn-nav-active font-serif">OurCookbook</OLink>
-        </View>
-
-        <View className="py-1 self-center"><OLink href="/recipes" className="btn-nav">Recipes</OLink></View>
-        <View className="py-1 self-center"><OLink href="/collections" className="btn-nav">Collections</OLink></View>
-        {(isAuthenticated) && (
-          <View className={`flex flex-row gap-2`}>
-            <View className="py-1 self-center"><OLink href="/meal-plans" className="btn-nav">Meal Plans</OLink></View>
-            <View className="py-1 self-center"><OLink href="/shopping-list" className="btn-nav">Shopping List</OLink></View>
-          </View>
-        )}
-        <View className="py-1 self-center"><OLink href="/chefs" className="btn-nav">Chefs</OLink></View>
-        <View className="py-1 self-center"><OLink href="/news" className="btn-nav">News</OLink></View>
+      <View className="bg-green-d sm:flex hidden flex-row gap-2 px-std">
+        <OLink href="/" className="link-nav font-serif">OurCookbook</OLink>
 
         <View className="flex-grow"/>
 
-        {(!isAuthenticated) ? (
-          <View className={`flex flex-row gap-2`}>
-            <SignInButton/>
-            <View className={`py-1 self-center`}><OLink href={`/join`} className={`btn-nav`}>Join</OLink></View>
+        {(!authenticated) ? (
+          <View className={`flex flex-row gap-2 pt-1`}>
+            <SignInButton className={`link-nav`}/>
+            <OLink href={`/join`} className={`link-nav`}>Join</OLink>
           </View>
         ) : (
-          <View className={`flex flex-row gap-2`}>
-            <View className={`py-1 self-center`}><OLink href={`/account`} className={`btn-nav`}>Account</OLink></View>
-            <SignOutButton/>
+          <View className={`flex flex-row gap-2 pt-1`}>
+            <OLink href={`/account`} className={`link-nav`}>Account</OLink>
+            <SignOutButton className={`link-nav`}/>
           </View>
         )}
       </View>
-      <View className="bg-green-d flex flex-row sm:hidden gap-2 px-std py-1">
-        <View className="py-1 self-center">
-          <OLink href="/" className="btn-nav-active font-serif">OurCookbook</OLink>
-        </View>
+      <View className="bg-white sm:flex hidden flex-row px-std">
+        <OLink href="/recipes" className="btn-nav">Recipes</OLink>
+        <OLink href="/collections" className="btn-nav">Collections</OLink>
+        {(authenticated) && (
+          <View className={`flex flex-row`}>
+            <OLink href="/meal-plans" className="btn-nav">Meal Plans</OLink>
+            <OLink href="/shopping-list" className="btn-nav">Shopping List</OLink>
+          </View>
+        )}
+        <OLink href="/chefs" className="btn-nav">Chefs</OLink>
+        <OLink href="/news" className="btn-nav">News</OLink>
+
         <View className="flex-grow"/>
-        <View className="py-1 self-center">
-          <OPressable onPress={() => setVisible((prev) => !prev)} className="btn-nav">
-            <FontAwesome6 name="bars" size={16} color="white" />
-          </OPressable>
-        </View>
+
+        <OLink href="/recipes" className="btn-nav">Search</OLink>
+      </View>
+      <View className="bg-green-d flex flex-row sm:hidden gap-2 px-std py-1">
+        <OLink href="/" className="btn-nav-active font-serif">OurCookbook</OLink>
+        <View className="flex-grow"/>
+        <OPressable onPress={() => setVisible((prev) => !prev)} className="btn-nav">
+          <FontAwesome6 name="bars" size={16} color="white" />
+        </OPressable>
       </View>
       {visible && (
         <View className="p-4 bg-gray-200 rounded">
           <View className="grid gap-std p-std">
             <OLink href="/recipes" className="btn btn-primary text-white">Recipes</OLink>
             <OLink href="/collections" className="btn btn-primary text-white">Collections</OLink>
-            {(isAuthenticated) && (
+            {(authenticated) && (
               <View className="grid gap-std">
                 <OLink href="/meal-plans" className="btn btn-primary text-white">Meal Plans</OLink>
                 <OLink href="/shopping-list" className="btn btn-primary text-white">Shopping List</OLink>
@@ -72,7 +81,7 @@ export const Navbar = () => {
             )}
             <OLink href="/chefs" className="btn btn-primary text-white">Chefs</OLink>
             <OLink href="/news" className="btn btn-primary text-white">News</OLink>
-            {(isAuthenticated) ? (
+            {(authenticated) ? (
               <View className="grid gap-std">
                 <OLink href={`/account`} className={`btn btn-primary text-white`}>Account</OLink>
                 <SignOutButton className={`btn btn-primary text-white`}/>

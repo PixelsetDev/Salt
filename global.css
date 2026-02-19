@@ -14,8 +14,8 @@
 .nodesktop { @apply block sm:hidden; }
 .header { @apply bg-green p-std; }
 
-.px-std { @apply lg:px-48 md:px-24 sm:px-12 px-8; }
-.py-std { @apply lg:py-32 md:py-16 sm:py-8 py-6; }
+.px-std { @apply lg:px-32 md:px-16 sm:px-8 px-6; }
+.py-std { @apply lg:py-24 md:py-12 sm:py-6 py-4; }
 .p-std { @apply px-std py-std; }
 
 .px-sm { @apply lg:px-24 md:px-12 sm:px-8 px-6; }
@@ -31,13 +31,13 @@
 .bg-green-d { @apply bg-green-900 text-white; }
 .bg-secondary { @apply bg-neutral-100; }
 
-.txt-7xl { @apply lg:text-7xl md:text-6xl sm:text-5xl text-4xl; }
-.txt-5xl { @apply lg:text-5xl md:text-4xl sm:text-3xl text-2xl; }
-.txt-4xl { @apply lg:text-4xl md:text-3xl sm:text-2xl text-xl; }
-.txt-2xl { @apply lg:text-2xl md:text-xl text-lg; }
-.txt-xl { @apply lg:text-xl text-lg; }
-.txt-lg { @apply text-lg; }
-.txt-sm { @apply md:text-base text-sm; }
+.txt-7xl { @apply lg:text-6xl md:text-5xl sm:text-4xl text-3xl; }
+.txt-5xl { @apply lg:text-4xl md:text-3xl sm:text-2xl text-xl; }
+.txt-4xl { @apply lg:text-3xl md:text-2xl sm:text-xl text-lg; }
+.txt-2xl { @apply lg:text-xl md:text-lg; }
+.txt-xl { @apply lg:text-lg text-base; }
+.txt-lg { @apply md:text-base text-sm; }
+.txt-sm { @apply text-sm; }
 .txt-xs { @apply text-xs; }
 
 .h1 { @apply txt-7xl; }
@@ -70,8 +70,8 @@
 .btn-secondary { @apply border-green-800 hover:bg-green-800 text-lg sm:text-sm hover:text-white; }
 .btn-neutral { @apply bg-neutral-100 hover:bg-neutral-50 text-lg sm:text-sm border-0; }
 
-.btn-nav { @apply text-white px-4 py-2 rounded-lg border-2 border-green-800 hover:bg-green-800 transition duration-200 text-lg sm:text-sm; }
-.btn-nav-active { @apply text-white px-4 py-2 rounded-lg border-2 border-green-800 bg-green-800 transition duration-200 text-lg sm:text-sm; }
+.link-nav { @apply text-white px-4 underline decoration-2 decoration-green-800 hover:text-green-200 hover:decoration-green-700 transition duration-200 text-lg; }
+.btn-nav { @apply px-4 py-2 hover:bg-green hover:text-white transition duration-200 text-lg; }
 
 .link-inline { @apply underline hover:text-green-800 transition duration-200; }
 .link-inline-red { @apply underline text-red-900 hover:text-red-700 transition duration-200; }

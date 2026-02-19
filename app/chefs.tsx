@@ -3,17 +3,15 @@ import { Text, View, ScrollView, Image } from "react-native";
 import { Footer, Navbar } from '../components/Commons';
 import {OLink, OText} from "../components/Overrides";
 import { useState, useEffect } from "react";
+import { usersType } from '../utils/types';
+import { API_BASE } from '../utils/settings';
 
 export default function App() {
 
-  const [users, setUsers] = useState<{
-    name: string;
-    username: string;
-    avatar: string;
-  }[]>([]);
+  const [users, setUsers] = useState<usersType[]>([]);
 
   useEffect(() => {
-    fetch("https://api.ourcookbook.org/users", { method: "GET" })
+    fetch(`${API_BASE}/v1/users`, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
         setUsers(data.data);
@@ -45,17 +43,17 @@ export default function App() {
         <View className="grid-3 gap-std">
           {users.map((user) => (
             <OLink
-              href={"/@"+user.username}
-              key={user.username}
+              href={"/@"+user?.username}
+              key={user?.username}
               className="btn-np btn-primary flex flex-row space-x-2"
             >
               <Image
-                source={{ uri: user.avatar }}
+                source={{ uri: `https://data.portalsso.com/avatar/${user?.uuid}.webp` }}
                 className="h-full rounded-l-md w-20"
               />
               <View className="grid gap-2 px-4 py-2">
-                <Text className="font-serif txt-2xl text-white">{user.name}</Text>
-                <OText className="txt-xl text-white">@{user.username}</OText>
+                <Text className="font-serif txt-2xl text-white">{user?.name}</Text>
+                <OText className="txt-xl text-white">@{user?.username}</OText>
               </View>
             </OLink>
           ))}

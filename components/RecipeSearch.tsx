@@ -2,6 +2,7 @@ import { ActivityIndicator, Text, TextInput, View, Image, useWindowDimensions } 
 import { useEffect, useState, useMemo } from 'react';
 import { RecipeLink } from './RecipeLink';
 import { OPressable, OText } from './Overrides';
+import { API_BASE } from '../utils/settings';
 
 interface Recipe {
   slug: string;
@@ -18,10 +19,11 @@ interface RecipeSearchProps {
   navigateToRecipe?: boolean;
   onRecipePress?: (recipe: Recipe) => void;
   user?: string;
+  doSearch?: string;
 }
 
-const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user }: RecipeSearchProps) => {
-  const [search, setSearch] = useState('');
+const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch }: RecipeSearchProps) => {
+  const [search, setSearch] = useState(doSearch || '');
   const [loading, setLoading] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
 
@@ -64,11 +66,11 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user }: RecipeSe
     const spinnerDelay = setTimeout(() => setShowSpinner(true), 300);
 
     const params = new URLSearchParams();
-    if (query) params.append('query', query);
+    if (query) params.append('search', query);
     if (user) params.append('user', user);
 
     const queryString = params.toString();
-    const url = `https://api.ourcookbook.org/recipe${queryString ? `?${queryString}` : ''}`;
+    const url = `${API_BASE}/v1/recipes${queryString ? `?${queryString}` : ''}`;
 
     fetch(url)
       .then(async (res) => (res.status === 204 ? { data: [] } : res.json()))
@@ -94,6 +96,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user }: RecipeSe
   return (
     <View className="gap-std">
       <TextInput
+        id={`searchbar`}
         placeholder="Search recipes..."
         placeholderTextColor="#ccc"
         value={search}
@@ -119,7 +122,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user }: RecipeSe
                     <View className="flex-col">
                       <Image
                         source={{
-                          uri: `https://api.ourcookbook.org/storage/recipes/@${recipe.author.username}/${recipe.slug}.webp`,
+                          uri: `https://ourcookbook.org/storage/recipes/@${recipe.author.username}/${recipe.slug}.webp`,
                         }}
                         className="w-full rounded-t-md aspect-square"
                       />

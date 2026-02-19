@@ -1,4 +1,4 @@
-import { Platform } from 'react-native'; // or your platform detection
+import { Platform } from 'react-native';
 
 export const getSignInRedirectUrl = () => {
   if (Platform.OS === 'web') {

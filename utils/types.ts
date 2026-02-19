@@ -1,3 +1,22 @@
+export type dietaryType = {
+  celery: number;
+  gluten: number;
+  crustaceans: number;
+  eggs: number;
+  fish: number;
+  lupin: number;
+  milk: number;
+  molluscs: number;
+  mustard: number;
+  peanuts: number;
+  sesame: number;
+  soybeans: number;
+  sulphites: number;
+  treenuts: number;
+  animal_products: number;
+  meat: number;
+} | null;
+
 export type categoryType = {
   id: number;
   name: string;
@@ -63,11 +82,11 @@ export type recipeType = {
   }
 } | null;
 
-export type recipeIngredientType = {
-  id: number;
-  name: string;
+export type recipeIngredientsType = {
+  ingredient: number;
+  name?: string;
   amount: number;
-  unit: number;
+  unit: string;
 }[] | null;
 
 export type reviewsType = {
@@ -85,7 +104,7 @@ export type usersType = {
   name: string;
   username: string;
   uuid: string;
-  recipes: [{
+  recipes?: [{
     slug: string;
     name: string;
     description: string|null;

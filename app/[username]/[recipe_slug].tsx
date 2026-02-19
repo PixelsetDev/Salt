@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react';
 import { OText, OLink } from '../../components/Overrides';
 import { Difficulty } from '../../components/Scales';
 import { API_BASE } from '../../utils/settings';
-import { recipeIngredientType, recipeType, reviewsType, stepsType } from '../../utils/types';
+import { dietaryType, recipeIngredientsType, recipeType, reviewsType, stepsType } from '../../utils/types';
+import { parseAmount, parseUnit } from '../../utils/parser';
 
 export default function App() {
   const { username, recipe_slug } = useLocalSearchParams();
@@ -15,7 +16,9 @@ export default function App() {
   const [recipe, setRecipe] = useState<recipeType>(null);
   const [steps, setSteps] = useState<stepsType>(null);
   const [reviews, setReviews] = useState<reviewsType>([]);
-  const [ingredients, setIngredients] = useState<recipeIngredientType>(null);
+  const [ingredients, setIngredients] = useState<recipeIngredientsType>(null);
+  const [dietary, setDietary] = useState<dietaryType>(null);
+  const [disclaimers, setDisclaimers] = useState<string[]>([]);
 
   useEffect(() => {
     if (!cleanUsername || typeof recipe_slug !== 'string') return;
@@ -28,25 +31,87 @@ export default function App() {
   }, [cleanUsername, recipe_slug]);
 
   useEffect(() => {
-    fetch(`${API_BASE}/v1/recipes/${recipe?.id}/steps`, { method: "GET" })
-      .then((res) => res.json())
-      .then((data) => {
-        setSteps(data.data);
-      })
-      .catch((err) => console.error(err));
-    fetch(`${API_BASE}/v1/recipes/${recipe?.id}/reviews`, { method: "GET" })
-      .then((res) => res.json())
-      .then((data) => {
-        setReviews(data.data);
-      })
-      .catch((err) => console.error(err));
-    fetch(`${API_BASE}/v1/recipes/${recipe?.id}/ingredients`, { method: "GET" })
-      .then((res) => res.json())
-      .then((data) => {
-        setIngredients(data.data);
-      })
-      .catch((err) => console.error(err));
-    console.log(recipe);
+    if (recipe?.id !== undefined) {
+      fetch(`${API_BASE}/v1/recipes/${recipe?.id}/steps`, { method: 'GET' })
+        .then((res) => res.json())
+        .then((data) => {
+          setSteps(data.data);
+        })
+        .catch((err) => console.error(err));
+      fetch(`${API_BASE}/v1/recipes/${recipe?.id}/reviews`, { method: 'GET' })
+        .then((res) => res.json())
+        .then((data) => {
+          setReviews(data.data);
+        })
+        .catch((err) => console.error(err));
+      fetch(`${API_BASE}/v1/recipes/${recipe?.id}/ingredients`, { method: "GET" })
+        .then((res) => res.json())
+        .then((data) =>
+          Promise.all(
+            data.data.map((item: any) =>
+              fetch(`${API_BASE}/v1/ingredients/${item.ingredient}`, { method: "GET" })
+                .then((res) => res.json())
+                .then(({ data }) => ({
+                  ...item,
+                  name: data.name,
+                  dietary: data.dietary,
+                  disclaimer: data.disclaimer,
+                }))
+            )
+          )
+        )
+        .then((ingredientsWithNames) => {
+          setIngredients(ingredientsWithNames);
+
+          const aggregatedDietary = {
+            celery: 0,
+            gluten: 0,
+            crustaceans: 0,
+            eggs: 0,
+            fish: 0,
+            lupin: 0,
+            milk: 0,
+            molluscs: 0,
+            mustard: 0,
+            peanuts: 0,
+            sesame: 0,
+            soybeans: 0,
+            sulphites: 0,
+            treenuts: 0,
+            animal_products: 0,
+            meat: 0,
+          };
+
+          const disclaimers = new Set<string>();
+
+          ingredientsWithNames.forEach(({ dietary, disclaimer }) => {
+            if (!dietary) return;
+
+            if (dietary.celery > aggregatedDietary.celery) aggregatedDietary.celery = dietary.celery;
+            if (dietary.gluten > aggregatedDietary.gluten) aggregatedDietary.gluten = dietary.gluten;
+            if (dietary.crustaceans > aggregatedDietary.crustaceans) aggregatedDietary.crustaceans = dietary.crustaceans;
+            if (dietary.eggs > aggregatedDietary.eggs) aggregatedDietary.eggs = dietary.eggs;
+            if (dietary.fish > aggregatedDietary.fish) aggregatedDietary.fish = dietary.fish;
+            if (dietary.lupin > aggregatedDietary.lupin) aggregatedDietary.lupin = dietary.lupin;
+            if (dietary.milk > aggregatedDietary.milk) aggregatedDietary.milk = dietary.milk;
+            if (dietary.molluscs > aggregatedDietary.molluscs) aggregatedDietary.molluscs = dietary.molluscs;
+            if (dietary.mustard > aggregatedDietary.mustard) aggregatedDietary.mustard = dietary.mustard;
+            if (dietary.peanuts > aggregatedDietary.peanuts) aggregatedDietary.peanuts = dietary.peanuts;
+            if (dietary.sesame > aggregatedDietary.sesame) aggregatedDietary.sesame = dietary.sesame;
+            if (dietary.soybeans > aggregatedDietary.soybeans) aggregatedDietary.soybeans = dietary.soybeans;
+            if (dietary.sulphites > aggregatedDietary.sulphites) aggregatedDietary.sulphites = dietary.sulphites;
+            if (dietary.treenuts > aggregatedDietary.treenuts) aggregatedDietary.treenuts = dietary.treenuts;
+            if (dietary.animal_products > aggregatedDietary.animal_products) aggregatedDietary.animal_products = dietary.animal_products;
+            if (dietary.meat > aggregatedDietary.meat) aggregatedDietary.meat = dietary.meat;
+
+            if (disclaimer) disclaimers.add(disclaimer);
+          });
+
+          setDietary(aggregatedDietary);
+          setDisclaimers([...disclaimers]);
+        })
+        .catch((err) => console.error(err));
+    }
   }, [recipe]);
 
   const backgroundImage = { uri: 'https://api.ourcookbook.org/storage/recipes/' + username + '/' + recipe_slug + '.webp' };
@@ -92,15 +157,47 @@ export default function App() {
             <View className="gap-std span-2 bg-secondary p-xs grid">
               <Text className="h2 font-serif">About this recipe</Text>
               <OText>{(recipe.description?.trim()==="")?("Looks like the author didn't upload a description!"):recipe.description }</OText>
-              <OText>This recipe serves {recipe.servings} people.</OText>
-              <OText className="txt-xs">
-                All information including dietary information was uploaded by the recipe author.
-                We are unable to verify the accuracy of this information. Always take care and
-                follow proper food hygiene procedures when cooking.
+              <View className={`border-t-2 border-neutral-200 mt-2 text-xs`}></View>
+              <OText className={`txt-xs`}>
+                {dietary && (() => {
+                  if (!dietary) return null;
+
+                  const contains: string[] = [];
+                  const mayContain: string[] = [];
+                  const allergens: (keyof typeof dietary)[] = [
+                    "celery","gluten","crustaceans","eggs","fish","lupin","milk","molluscs",
+                    "mustard","peanuts","sesame","soybeans","sulphites","treenuts"
+                  ];
+
+                  allergens.forEach((key) => {
+                    const value = dietary[key];
+                    if (value === 2) contains.push(key);
+                    else if (value === 1) mayContain.push(key);
+                  });
+
+                  const sentences: string[] = [];
+                  if (contains.length) sentences.push(`Contains ${contains.join(", ")}.`);
+                  if (mayContain.length) sentences.push(`May contain ${mayContain.join(", ")}.`);
+
+                  if (dietary.animal_products === 2) sentences.push("Not suitable for vegans.");
+                  else if (dietary.animal_products === 1) sentences.push("May not be suitable for vegans.");
+
+                  if (dietary.meat === 2) sentences.push("Not suitable for vegetarians.");
+                  else if (dietary.meat === 1) sentences.push("May not be suitable for vegetarians.");
+
+                  if (sentences.length !== 0) { sentences.unshift("Dietary information:"); }
+
+                  return sentences.join(" ");
+                })()}
+              </OText>
+              <OText className={`txt-xs`}>
+                Always follow proper food hygiene procedures when cooking.{ disclaimers.map((disclaimer) => (' '+disclaimer))}
+                &nbsp;Recipe information uploaded by the author, OurCookbook cannot guarantee the accuracy or completeness of any information on this page.
               </OText>
             </View>
             <View className="gap-std bg-secondary p-xs grid">
               <Text className="h2 font-serif">Cooking</Text>
+              <OText>This recipe serves {recipe.servings} people.</OText>
               <OText>
                 {recipe.author.name} estimates that this recipe takes {recipe.time.prep} minutes to
                 prepare, and {recipe.time.cook} minutes to cook.
@@ -114,14 +211,18 @@ export default function App() {
               <View className={`gap-std bg-secondary p-xs grid ${ !recipe.tips && (`flex-grow`)}`}>
                 <Text className="h2 font-serif">Ingredients</Text>
                 { ingredients ? (
-                  ingredients.map((ingredient, index) => (
-                    <View key={'ingredient' + index}>
-                      <OText>
-                        {ingredient.amount}
-                        {ingredient.unit} {ingredient.name}
-                      </OText>
+                  <View className={`flex-row divide-x-2 divide-neutral-200/75`}>
+                    <View className={`grid gap-1 flex-grow divide-y-2 divide-neutral-300`}>
+                      { ingredients.map((ingredient, index) => (
+                        <OText key={'ingredient-name' + index} className={`flex-grow pr-2 pt-1`}>{ingredient.name}</OText>
+                      ))}
                     </View>
-                  ))
+                    <View className={`grid gap-1 divide-y-2 divide-neutral-300`}>
+                      { ingredients.map((ingredient, index) => (
+                        <OText key={'ingredient-amount' + index} className={`pl-2 pt-1`}>{parseAmount(ingredient.amount)} {parseUnit(ingredient.amount, ingredient.unit)}</OText>
+                      ))}
+                    </View>
+                  </View>
                 ) : (
                   <>
                     <OText>
