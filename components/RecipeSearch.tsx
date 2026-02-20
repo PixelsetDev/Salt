@@ -1,4 +1,4 @@
-import { ActivityIndicator, Text, TextInput, View, Image, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Text, TextInput, View, Image, useWindowDimensions, ScrollView } from 'react-native';
 import { useEffect, useState, useMemo } from 'react';
 import { RecipeLink } from './RecipeLink';
 import { OPressable, OText } from './Overrides';
@@ -19,6 +19,7 @@ interface Recipe {
 interface Category {
   id: number;
   name: string;
+  parent?: number | null;
 }
 
 interface RecipeSearchProps {
@@ -35,6 +36,8 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
   const [showSpinner, setShowSpinner] = useState(false);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Category[]>([]);
+  const [parentCategory, setParentCategory] = useState<number | null>(null);
   const [dietaryOptions, setDietaryOptions] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedDietary, setSelectedDietary] = useState<string[]>([]);
@@ -85,33 +88,67 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
     setShowSpinner(false);
     const spinnerDelay = setTimeout(() => setShowSpinner(true), 300);
 
-    let url = `${API_BASE}/v1/recipes`;
-    const params = new URLSearchParams();
+    try {
+      let url = `${API_BASE}/v1/recipes`;
+      const params = new URLSearchParams();
 
-    if (query) params.append('search', query);
-    if (user) params.append('user', user);
-    if (selectedCategory !== null && query) params.append('category', String(selectedCategory));
-    if (selectedDietary.length > 0) params.append('dietary', JSON.stringify(selectedDietary));
+      if (query) params.append('search', query);
+      if (user) params.append('user', user);
+      if (selectedCategory !== null && query) params.append('category', String(selectedCategory));
+      if (selectedDietary.length > 0) params.append('dietary', JSON.stringify(selectedDietary));
 
-    if (!query && selectedCategory !== null) {
-      url = `${API_BASE}/v1/recipes/categories/${selectedCategory}`;
-    } else {
-      const queryString = params.toString();
-      if (queryString) url += `?${queryString}`;
+      if (!query && selectedCategory !== null) {
+        const categoryRes = await fetch(`${API_BASE}/v1/recipes/categories/${selectedCategory}`);
+        const categoryData = await categoryRes.json();
+
+        // If the category has a parent, we are looking at a subcategory
+        // We keep the current subcategories list so it doesn't disappear
+        if (categoryData.data?.parent) {
+          setParentCategory(categoryData.data.parent);
+        } else {
+          // If it's a top-level category, update the subcategories list
+          setSubcategories(categoryData.data?.subcategories || []);
+          setParentCategory(null);
+        }
+
+        const recipeIds: number[] = categoryData.data?.recipes || [];
+        const detailedRecipes = await Promise.all(
+          recipeIds.map(async (id) => {
+            try {
+              const res = await fetch(`${API_BASE}/v1/recipes/${id}`);
+              const json = await res.json();
+              return json.data;
+            } catch (e) {
+              return null;
+            }
+          })
+        );
+
+        setRecipes(detailedRecipes.filter(r => r !== null));
+      } else {
+        if (!selectedCategory) {
+          setSubcategories([]);
+          setParentCategory(null);
+        }
+
+        const queryString = params.toString();
+        if (queryString) url += `?${queryString}`;
+
+        const res = await fetch(url);
+        if (res.status === 204) {
+          setRecipes([]);
+        } else {
+          const data = await res.json();
+          setRecipes(Array.isArray(data.data) ? data.data : []);
+        }
+      }
+    } catch (error) {
+      setRecipes([]);
+    } finally {
+      clearTimeout(spinnerDelay);
+      setLoading(false);
+      setShowSpinner(false);
     }
-
-    fetch(url)
-      .then(async (res) => (res.status === 204 ? { data: [] } : res.json()))
-      .then((data) => {
-        if (Array.isArray(data.data)) setRecipes(data.data);
-        else setRecipes([]);
-      })
-      .catch(() => setRecipes([]))
-      .finally(() => {
-        clearTimeout(spinnerDelay);
-        setLoading(false);
-        setShowSpinner(false);
-      });
   };
 
   const toggleDietary = (item: string) => {
@@ -134,8 +171,12 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
           {categories.map(cat => (
             <OPressable
               key={cat.id}
-              onPress={() => setSelectedCategory(cat.id === selectedCategory ? null : cat.id)}
-              className={`px-3 py-2 rounded-md btn ${selectedCategory === cat.id ? 'btn-primary' : 'btn-secondary'}`}
+              onPress={() => {
+                const isCurrent = selectedCategory === cat.id || parentCategory === cat.id;
+                setSelectedCategory(isCurrent ? null : cat.id);
+                setParentCategory(null);
+              }}
+              className={`px-3 py-2 rounded-md btn ${(selectedCategory === cat.id || parentCategory === cat.id) ? 'btn-primary' : 'btn-secondary'}`}
             >
               <OText className="text-white">{cat.name}</OText>
             </OPressable>
@@ -191,6 +232,30 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
         {isDesktop && <View className="w-64">{FiltersContent}</View>}
 
         <View className="flex-1">
+          {/* Subcategories Row */}
+          {subcategories.length > 0 && !search && (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-4">
+              <View className="flex-row gap-sm">
+                {subcategories.map(sub => (
+                  <OPressable
+                    key={sub.id}
+                    onPress={() => {
+                      // If clicking the active subcategory, go back to parent
+                      if (selectedCategory === sub.id) {
+                        setSelectedCategory(parentCategory);
+                      } else {
+                        setSelectedCategory(sub.id);
+                      }
+                    }}
+                    className={`px-4 py-2 rounded-full btn ${selectedCategory === sub.id ? 'btn-primary' : 'btn-secondary'}`}
+                  >
+                    <OText className="text-white">{sub.name}</OText>
+                  </OPressable>
+                ))}
+              </View>
+            </ScrollView>
+          )}
+
           {showSpinner && <ActivityIndicator size="large" color="#ffffff" className="mb-5" />}
 
           <View className="flex-row gap-std">
