@@ -44,7 +44,8 @@
 @utility h2 { @apply txt-5xl dark:text-white; }
 @utility h3 { @apply txt-2xl dark:text-white; }
 
-@utility space-x-std { @apply space-x-4; }
+@utility space-x-std { @apply gap-4; }
+@utility gap-sm { @apply gap-2; }
 @utility gap-std { @apply gap-4; }
 @utility gap-lg { @apply gap-12; }
 @utility gap-xl { @apply gap-24; }
