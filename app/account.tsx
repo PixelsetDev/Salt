@@ -2,32 +2,17 @@ import "./../global.css";
 import { Text, View, ScrollView } from "react-native";
 import { Footer, Navbar } from '../components/Commons';
 import { useLogto } from '@logto/rn';
-import { SignInButton } from '../components/Auth';
+import { SignInButton } from '../components/auth/Auth';
 import { OLink, OText } from '../components/Overrides';
 import { useEffect, useState } from 'react';
+import { useUser } from '../components/auth/UserProvider';
 
 export default function App() {
-  const { isAuthenticated, fetchUserInfo, getAccessToken } = useLogto();
-  const [user, setUser] = useState<{
-    name?: any
-    username?: any
-    email?: any
-  }| null>(null);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchUser().finally();
-    }
-
-    async function fetchUser() {
-      const userInfo = await fetchUserInfo();
-      console.log(await getAccessToken())
-      setUser(userInfo);
-    }
-  }, [isAuthenticated, fetchUserInfo]);
+  const { isAuthenticated } = useLogto();
+  const { user } = useUser();
 
   return (
-    <ScrollView>
+    <ScrollView className={`body`}>
       <Navbar />
       <View className="header grid-2">
         <View className="gap-std grid">
@@ -39,7 +24,7 @@ export default function App() {
         </View>
       </View>
 
-      <View className="p-std gap-std">
+      <View className="p-std gap-std body">
         {isAuthenticated ? (
           <View>
             {user ? (

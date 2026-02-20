@@ -5,7 +5,7 @@ import { Footer, Navbar } from '../../components/Commons';
 
 export default function App() {
   return (
-    <ScrollView>
+    <ScrollView className={`body`}>
       <Navbar/>
       <View className="header">
         <View className="grid gap-std">

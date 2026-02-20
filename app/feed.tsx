@@ -8,7 +8,7 @@ export default function App() {
   const { isAuthenticated } = useLogto();
 
   return (
-    <ScrollView>
+    <ScrollView className={`body`}>
       <Navbar />
       <View className="header grid-2">
         <View className="grid gap-std">

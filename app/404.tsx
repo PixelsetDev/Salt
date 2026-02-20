@@ -6,7 +6,7 @@ import { OText } from '../components/Overrides';
 export default function App() {
 
   return (
-    <ScrollView>
+    <ScrollView className={`body`}>
       <Navbar />
       <View className="header grid-2">
         <View className="grid gap-std">

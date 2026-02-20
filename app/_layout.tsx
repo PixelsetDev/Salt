@@ -1,6 +1,7 @@
 import { LogtoProvider, LogtoConfig } from '@logto/rn';
 import { Slot } from 'expo-router';
 import * as Sentry from '@sentry/react-native';
+import { UserProvider } from '../components/auth/UserProvider';
 
 //      ██████  ██████  ██    ██████
 //      ██      ██  ██  ██      ██
@@ -22,12 +23,14 @@ Sentry.init({
 let config: LogtoConfig = {
   endpoint: 'https://auth.portalsso.com/',
   appId: 'lcjrqsxgiqxt27dyygoby',
-  scopes: ['email', 'profile', 'roles'],
+  scopes: ['openid', 'email', 'profile', 'roles'],
   resources: ['https://api.ourcookbook.org'],
 };
 
 export default Sentry.wrap(() => (
   <LogtoProvider config={config}>
-    <Slot />
+    <UserProvider>
+      <Slot />
+    </UserProvider>
   </LogtoProvider>
 ));

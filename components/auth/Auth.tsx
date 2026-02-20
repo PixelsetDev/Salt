@@ -1,7 +1,6 @@
-import { Platform } from 'react-native';
-import { OPressable } from './Overrides';
+import { OPressable } from '../Overrides';
 import { useLogto } from '@logto/rn';
-import { getSignInRedirectUrl } from '../utils/auth';
+import { getSignInRedirectUrl } from '../../utils/auth';
 
 export const SignInButton = ({ className = 'btn-nav' }: { className?: string; }) => {
   const { signIn } = useLogto();

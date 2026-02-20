@@ -74,7 +74,7 @@ export default function App() {
   }
 
   return (
-    <ScrollView>
+    <ScrollView className={`body`}>
       <Navbar/>
       <View className="header grid-2">
         {categories ? (

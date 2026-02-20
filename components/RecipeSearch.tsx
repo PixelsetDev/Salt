@@ -140,7 +140,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch }
       </View>
 
       {!loading && recipes.length === 0 && (
-        <Text className="txt-xl text-center">No results found.</Text>
+        <OText className="text-center">No results found.</OText>
       )}
     </View>
   );

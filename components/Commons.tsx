@@ -1,31 +1,20 @@
 import { Text, View } from 'react-native';
-import { useState } from "react";
+import { useState } from 'react';
 import { OLink, OPressable, OText } from "./Overrides";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { SignOutButton, SignInButton } from './Auth';
-import { useAuthenticatedFetch } from '../utils/api';
-import { getLastKnownAuth } from '../utils/auth';
-import { API_BASE } from '../utils/settings';
+import { SignOutButton, SignInButton } from './auth/Auth';
+import { useLogto } from '@logto/rn';
+import { useUser } from './auth/UserProvider';
 
 export const Navbar = () => {
-
   const [visible, setVisible] = useState(false);
-  const [authenticated, setAuthenticated] = useState(false);
+  const { isAuthenticated } = useLogto();
+  const { user } = useUser();
 
-  setAuthenticated(getLastKnownAuth);
+  const name = user?.name ?? 'Account';
 
-  const authFetch = useAuthenticatedFetch();
-
-  const getUser = async () => {
-    const res = await authFetch(`${API_BASE}/v1/users/[me]`);
-    const data = await res.json();
-    console.log(data);
-  };
-
-  getUser();
-
-  return(
-    <View>
+  return (
+    <View className={`dark:bg-black`}>
       <View className="bg-red-800 flex flex-row gap-2 px-std py-1">
         <Text className={`text-white text-xs`}>
           You&apos;re on our BETA website, it&apos;s under active development and is likely to behave unexpectedly.
@@ -37,22 +26,22 @@ export const Navbar = () => {
 
         <View className="flex-grow"/>
 
-        {(!authenticated) ? (
+        {(!isAuthenticated) ? (
           <View className={`flex flex-row gap-2 pt-1`}>
             <SignInButton className={`link-nav`}/>
             <OLink href={`/join`} className={`link-nav`}>Join</OLink>
           </View>
         ) : (
           <View className={`flex flex-row gap-2 pt-1`}>
-            <OLink href={`/account`} className={`link-nav`}>Account</OLink>
+            <OLink href={`/account`} className={`link-nav`}>{name}</OLink>
             <SignOutButton className={`link-nav`}/>
           </View>
         )}
       </View>
-      <View className="bg-white sm:flex hidden flex-row px-std">
+      <View className="bg-white dark:text-white dark:bg-neutral-900 sm:flex hidden flex-row px-std">
         <OLink href="/recipes" className="btn-nav">Recipes</OLink>
         <OLink href="/collections" className="btn-nav">Collections</OLink>
-        {(authenticated) && (
+        {(isAuthenticated) && (
           <View className={`flex flex-row`}>
             <OLink href="/meal-plans" className="btn-nav">Meal Plans</OLink>
             <OLink href="/shopping-list" className="btn-nav">Shopping List</OLink>
@@ -77,7 +66,7 @@ export const Navbar = () => {
           <View className="grid gap-std p-std">
             <OLink href="/recipes" className="btn btn-primary text-white">Recipes</OLink>
             <OLink href="/collections" className="btn btn-primary text-white">Collections</OLink>
-            {(authenticated) && (
+            {(isAuthenticated) && (
               <View className="grid gap-std">
                 <OLink href="/meal-plans" className="btn btn-primary text-white">Meal Plans</OLink>
                 <OLink href="/shopping-list" className="btn btn-primary text-white">Shopping List</OLink>
@@ -85,9 +74,9 @@ export const Navbar = () => {
             )}
             <OLink href="/chefs" className="btn btn-primary text-white">Chefs</OLink>
             <OLink href="/news" className="btn btn-primary text-white">News</OLink>
-            {(authenticated) ? (
+            {(isAuthenticated) ? (
               <View className="grid gap-std">
-                <OLink href={`/account`} className={`btn btn-primary text-white`}>Account</OLink>
+                <OLink href={`/account`} className={`btn btn-primary text-white`}>{name}</OLink>
                 <SignOutButton className={`btn btn-primary text-white`}/>
               </View>
             ) : (

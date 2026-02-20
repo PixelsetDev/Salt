@@ -117,7 +117,7 @@ export default function App() {
   const backgroundImage = { uri: 'https://api.ourcookbook.org/storage/recipes/' + username + '/' + recipe_slug + '.webp' };
 
   return (
-    <ScrollView>
+    <ScrollView className={`body`}>
       <Navbar />
       <ImageBackground source={backgroundImage} className="px-std py-sm">
         {recipe ? (

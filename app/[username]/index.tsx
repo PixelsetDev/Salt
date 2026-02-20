@@ -25,7 +25,7 @@ export default function App() {
   }, [cleanId]);
 
   return (
-    <ScrollView>
+    <ScrollView className={`body`}>
       <Navbar/>
       <View className="header grid-2">
         {user ? (

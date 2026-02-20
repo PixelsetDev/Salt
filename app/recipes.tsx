@@ -12,7 +12,7 @@ export default function App() {
   console.log("NORMALIZED:", searchValue);
 
   return (
-    <ScrollView>
+    <ScrollView className={`body`}>
       <Navbar />
 
       <View className="header grid-2">

@@ -1,6 +1,6 @@
 import { OText } from './Overrides';
 import { View } from 'react-native';
-import { SignInButton } from './Auth';
+import { SignInButton } from './auth/Auth';
 import { ReactNode } from 'react';
 
 export const Unauthed = () => {
