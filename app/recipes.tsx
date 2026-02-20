@@ -1,6 +1,6 @@
 import "./../global.css";
 import { Text, View, ScrollView } from 'react-native';
-import { Footer, Navbar } from '../components/Commons';
+import Navbar, { Footer } from '../components/Commons';
 import RecipeSearch from '../components/RecipeSearch';
 import { useLocalSearchParams } from 'expo-router';
 

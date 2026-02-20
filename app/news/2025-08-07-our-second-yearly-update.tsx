@@ -1,6 +1,6 @@
 import "./../../global.css"
 import {Text, View, ScrollView} from "react-native";
-import { Footer, Navbar } from '../../components/Commons';
+import Navbar, { Footer } from '../../components/Commons';
 import { OText, OLink } from "../../components/Overrides"
 
 export default function App() {
@@ -30,7 +30,7 @@ export default function App() {
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
               <View className={`flex flex-row gap-2`}>
-                <Text className={`chip-red`}>Part Mid-Late 2025</Text>
+                <Text className={`chip-red`}>Part Early-Mid 2026</Text>
                 <Text className={`chip-yellow`}>Part on BETA</Text>
               </View>
               <View className={`flex-grow`}></View>
@@ -47,7 +47,7 @@ export default function App() {
             it much easier to maintain and build on our website, however a combination of trying and failing with other
             tools and an incredible workload increase in my education life meant that we passed the deadline with no app
             ready. We have now decided on a technology and are working on it, the app and new smooth website will be
-            released around the same time, hopefully towards September/October.
+            released around the same time.
           </OText>
         </View>
 
@@ -58,7 +58,7 @@ export default function App() {
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
               <View className={`flex flex-row gap-2`}>
-                <Text className={`chip-red`}>Part Mid-Late 2025</Text>
+                <Text className={`chip-red`}>Part Early-Mid 2026</Text>
                 <Text className={`chip-yellow`}>Part on BETA</Text>
               </View>
               <View className={`flex-grow`}></View>
@@ -80,7 +80,7 @@ export default function App() {
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
               <View className={`flex flex-row gap-2`}>
-                <Text className={`chip-red`}>Part Mid-Late 2025</Text>
+                <Text className={`chip-red`}>Part Early-Mid 2026</Text>
                 <Text className={`chip-yellow`}>Part on BETA</Text>
               </View>
               <View className={`flex-grow`}></View>
@@ -134,7 +134,7 @@ export default function App() {
             <Text className={`h3 font-serif`}>Opening up collections.</Text>
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
-              <Text className={`chip-red`}>Mid-Late 2025</Text>
+              <Text className={`chip-red`}>Early-Mid 2026</Text>
               <View className={`flex-grow`}></View>
             </View>
           </View>
@@ -168,7 +168,7 @@ export default function App() {
             <Text className={`h3 font-serif`}>Goodbye social, hello Chef&apos;s Feed!</Text>
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
-              <Text className={`chip-red`}>Mid-Late 2025</Text>
+              <Text className={`chip-red`}>Early-Mid 2026</Text>
               <View className={`flex-grow`}></View>
             </View>
           </View>

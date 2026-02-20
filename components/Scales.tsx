@@ -3,17 +3,17 @@ import { View, Text } from "react-native";
 
 export const Difficulty = ({ currentStep, steps = [] }:{currentStep:number, steps:string[]}) => {
   return (
-    <View className="grid md:grid-cols-5 items-center">
+    <View className="grid xl:grid-cols-5 items-center">
       {steps.map((label : string, index : number) => {
         const stepNumber = index + 1;
         const isActive = stepNumber === currentStep;
 
         return (
           <View key={index}
-            className={`md:h-4 w-full items-center justify-center md:border-x-2 md:border-neutral-100 lg:px-8 md:px-6 sm:px-4 px-2
-            ${isActive ? 'bg-green' : 'bg-green-200/50'}`}
+            className={`md:h-4 w-full items-center justify-center lg:px-6 md:px-4 sm:px-3 px-2
+            ${isActive ? 'bg-green-800' : 'bg-green-200/50'}`}
           >
-            <Text className={`md:hidden block py-0.5 ${isActive && 'font-bold text-white'}`}>{label}</Text>
+            <Text className={`xl:hidden block py-0.5 ${isActive && 'font-bold text-white'}`}>{label}</Text>
           </View>
         );
       })}
@@ -22,8 +22,8 @@ export const Difficulty = ({ currentStep, steps = [] }:{currentStep:number, step
         const isActive = stepNumber === currentStep;
 
         return (
-          <View className={`md:block hidden text-center`} key={index}>
-            <Text className={`${isActive ? 'text-sm' : 'text-xs'} text-center ${isActive && 'font-bold'}`}>
+          <View className={`xl:block hidden text-center`} key={index}>
+            <Text className={`${isActive ? 'text-sm' : 'text-xs'} text-center dark:text-white ${isActive && 'font-bold'}`}>
               {label}
             </Text>
           </View>

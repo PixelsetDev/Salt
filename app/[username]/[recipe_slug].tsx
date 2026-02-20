@@ -1,6 +1,6 @@
 import "./../../global.css";
 import { Text, View, ScrollView, ImageBackground } from 'react-native';
-import { Footer, Navbar } from '../../components/Commons';
+import Navbar, { Footer } from '../../components/Commons';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { OText, OLink } from '../../components/Overrides';
@@ -8,6 +8,7 @@ import { Difficulty } from '../../components/Scales';
 import { API_BASE } from '../../utils/settings';
 import { dietaryType, recipeIngredientsType, recipeType, reviewsType, stepsType } from '../../utils/types';
 import { parseAmount, parseUnit } from '../../utils/parser';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function App() {
   const { username, recipe_slug } = useLocalSearchParams();
@@ -15,7 +16,7 @@ export default function App() {
 
   const [recipe, setRecipe] = useState<recipeType>(null);
   const [steps, setSteps] = useState<stepsType>(null);
-  const [reviews, setReviews] = useState<reviewsType>([]);
+  const [reviews, setReviews] = useState<reviewsType>(null);
   const [ingredients, setIngredients] = useState<recipeIngredientsType>(null);
   const [dietary, setDietary] = useState<dietaryType>(null);
   const [disclaimers, setDisclaimers] = useState<string[]>([]);
@@ -42,6 +43,7 @@ export default function App() {
         .then((res) => res.json())
         .then((data) => {
           setReviews(data.data);
+          console.log(data.data);
         })
         .catch((err) => console.error(err));
       fetch(`${API_BASE}/v1/recipes/${recipe?.id}/ingredients`, { method: "GET" })
@@ -119,43 +121,47 @@ export default function App() {
   return (
     <ScrollView className={`body`}>
       <Navbar />
-      <ImageBackground source={backgroundImage} className="px-std py-sm">
+      <ImageBackground source={backgroundImage} className={`px-std py-sm`}>
         {recipe ? (
-          <View className="gap-std p-sm grid " style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <Text className="h1 font-serif text-white">{recipe.name}</Text>
-            <View className="flex flex-row gap-2">
-              <OText className={`text-white h3`}>By</OText>
-              <OLink className="underline h3 text-white" href={`/@${recipe.author.username}`}>{recipe.author.name}</OLink>
+          <View className={`gap-std p-sm grid`} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+            <Text className={`h1 font-serif text-white`}>{recipe.name}</Text>
+            <View className={`flex flex-row gap-2`}>
+              <OLink className={`txt-2xl text-white`} href={`/@${recipe.author.username}`}>Created by <Text className={`underline`}>{recipe.author.name}</Text>.</OLink>
             </View>
-            <View className="flex flex-row space-x-4">
-              <View className="flex flex-row space-x-1 text-white">
-                <Text className={`text-white`}>☆</Text>
-                <Text className={`text-white`}>☆</Text>
-                <Text className={`text-white`}>☆</Text>
-                <Text className={`text-white`}>☆</Text>
-                <Text className={`text-white`}>☆</Text>
+            {reviews?.score !== -1 ? (
+            <View className={`flex flex-row gap-4`}>
+              <View className={`flex flex-row gap-1`}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FontAwesome
+                    key={star}
+                    name={star <= Math.round(reviews?.score || 0) ? "star" : "star-o"}
+                    size={24}
+                    color="#fff"
+                  />
+                ))}
               </View>
-              <OText className="text-white">|</OText>
-              <OText className="text-white">0.0</OText>
-              <OText className="text-white">|</OText>
-              <OText className="text-white">0 Ratings</OText>
+              <OText className={`text-white`}>|</OText>
+              <OText className={`text-white`}>{reviews?.score }</OText>
+              <OText className={`text-white`}>|</OText>
+              <OText className={`text-white`}>{reviews?.reviews?.length} Ratings</OText>
             </View>
+            ) : (<OText className={`text-white italic`}>This recipe doesn&apos;t have any reviews yet.</OText>)}
           </View>
         ) : (
-          <View className="gap-std grid">
-            <Text className="h1 font-serif text-white">Loading...</Text>
-            <OText className="text-white">Loading...</OText>
+          <View className={`gap-std grid`}>
+            <Text className={`h1 font-serif text-white`}>Loading...</Text>
+            <OText className={`text-white`}>Loading...</OText>
           </View>
         )}
       </ImageBackground>
 
-      <View className="w-full h-2 bg-green relative"></View>
+      <View className={`w-full h-2 bg-green relative`}></View>
 
       {recipe && (
-        <View className="gap-std p-std grid">
-          <View className="grid-3 gap-std">
-            <View className="gap-std span-2 bg-secondary p-xs grid">
-              <Text className="h2 font-serif">About this recipe</Text>
+        <View className={`gap-std p-std grid`}>
+          <View className={`grid-3 gap-std`}>
+            <View className={`gap-std span-2 bg-secondary p-xs grid`}>
+              <Text className={`h2 font-serif`}>About this recipe</Text>
               <OText>{(recipe.description?.trim()==="")?("Looks like the author didn't upload a description!"):recipe.description }</OText>
               <View className={`border-t-2 border-neutral-200 mt-2 text-xs`}></View>
               <OText className={`txt-xs`}>
@@ -195,8 +201,8 @@ export default function App() {
                 &nbsp;Recipe information uploaded by the author, OurCookbook cannot guarantee the accuracy or completeness of any information on this page.
               </OText>
             </View>
-            <View className="gap-std bg-secondary p-xs grid">
-              <Text className="h2 font-serif">Cooking</Text>
+            <View className={`gap-std bg-secondary p-xs grid`}>
+              <Text className={`h2 font-serif`}>Cooking</Text>
               <OText>This recipe serves {recipe.servings} people.</OText>
               <OText>
                 {recipe.author.name} estimates that this recipe takes {recipe.time.prep} minutes to
@@ -207,9 +213,9 @@ export default function App() {
                 steps={['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert']}
               />
             </View>
-            <View className="gap-std flex">
+            <View className={`gap-std flex`}>
               <View className={`gap-std bg-secondary p-xs grid ${ !recipe.tips && (`flex-grow`)}`}>
-                <Text className="h2 font-serif">Ingredients</Text>
+                <Text className={`h2 font-serif`}>Ingredients</Text>
                 { ingredients ? (
                   <View className={`flex-row divide-x-2 divide-neutral-200/75`}>
                     <View className={`grid gap-1 flex-grow divide-y-2 divide-neutral-300`}>
@@ -240,51 +246,40 @@ export default function App() {
                 )}
               </View>
               { recipe.tips && (
-              <View className="mobile-span-2 gap-std bg-secondary p-xs grid flex-grow">
-                <Text className="h2 font-serif">Chef&apos;s Tips</Text>
+              <View className={`mobile-span-2 gap-std bg-secondary p-xs grid flex-grow`}>
+                <Text className={`h2 font-serif`}>Chef&apos;s Tips</Text>
                   <OText>{recipe.tips}</OText>
               </View>
               )}
             </View>
-            <View className="span-2 gap-std bg-secondary p-xs flex">
-              <Text className="h2 font-serif">Steps</Text>
+            <View className={`span-2 gap-std bg-secondary p-xs`}>
+              <Text className={`h2 font-serif`}>Steps</Text>
               {(steps != null) ? (steps.map((step, index) => (
-                <View key={step} className="flex flex-row gap-">
-                  <Text className="txt-4xl font-serif">{index + 1}.&nbsp;&nbsp;</Text>
+                <View key={step} className={`flex flex-row gap-std`}>
+                  <Text className={`txt-4xl font-serif dark:text-white`}>{index + 1}.&nbsp;&nbsp;</Text>
                   <OText className={`self-center`}>{step}</OText>
                 </View>
               ))) : (<OText>This recipe doesn&apos;t have any steps, is it even a recipe???</OText>)}
-              <View className="flex-grow"></View>
+              <View className={`flex-grow`}></View>
             </View>
-            <View className="span-2 gap-std bg-secondary p-xs grid">
-              <Text className="h2 font-serif">Reviews</Text>
-              <View className="grid-2">
-                {reviews !== null ? (
-                  reviews.map((review, index) => (
-                    <View key={'review' + index} className={`px-4 py-3 border-4 ${(review.rating === '1') ? "border-green-800" : "border-red-800"}`}>
-                      {review.rating === '1' ? (
-                        <View className="flex flex-row gap-2">
-                          <OLink
-                            href={`/@${review.author.username}`}
-                            className="h3 font-serif underline">
-                            {review.author.name}
-                          </OLink>
-                          <Text className="h3 font-serif">liked this recipe.</Text>
-                        </View>
-                      ) : (
-                        <View className="flex flex-row gap-2">
-                          <OLink
-                            href={`/@${review.author.username}`}
-                            className="h3 font-serif underline">
-                            {review.author.name}
-                          </OLink>
-                          <Text className="h3 font-serif">disliked this recipe.</Text>
-                        </View>
-                      )}
+            <View className={`span-2 gap-std bg-secondary p-xs grid`}>
+              <Text className={`h2 font-serif`}>Reviews</Text>
+              <View className={`grid-2 gap-std`}>
+                {reviews?.reviews && reviews?.score !== -1 ? (
+                  reviews.reviews.map((review, index) => (
+                    <View key={'review' + index} className={`px-4 py-3 border-4 ${(review.rating === 5 || review.rating === 4) ? "border-green-800" : (review.rating === 3) ? "border-yellow-700" : "border-red-800"}`}>
+                      <View className={`flex flex-row gap-2`}>
+                        <OLink
+                          href={`/@${review.author.username}`}
+                          className={`h3 font-serif underline`}>
+                          {review.author.name}
+                        </OLink>
+                        <Text className={`h3 font-serif`}>{review.rating}/5</Text>
+                      </View>
                       {review.comment !== null && review.comment !== '' ? (
-                        <OText className="italic">&quot;{review.comment}&quot;</OText>
+                        <OText className={`italic`}>&quot;{review.comment}&quot;</OText>
                       ) : (
-                        <OText className="italic">They didn&apos;t leave a comment.</OText>
+                        <OText className={`italic`}>They didn&apos;t leave a comment.</OText>
                       )}
                     </View>
                   ))
@@ -295,8 +290,9 @@ export default function App() {
                 )}
               </View>
             </View>
-            <View className="mobile-span-2 gap-std bg-secondary p-xs grid">
-              <Text className="h2 font-serif">Recipes like this</Text>
+            <View className={`mobile-span-2 gap-std bg-secondary p-xs grid`}>
+              <Text className={`h2 font-serif`}>Recipes like this</Text>
+              <OText className={`italic`}>Coming soon, check back later!</OText>
             </View>
           </View>
         </View>

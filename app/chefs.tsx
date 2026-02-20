@@ -1,6 +1,6 @@
 import "./../global.css";
 import { Text, View, ScrollView, Image } from "react-native";
-import { Footer, Navbar } from '../components/Commons';
+import Navbar, { Footer } from '../components/Commons';
 import {OLink, OText} from "../components/Overrides";
 import { useState, useEffect } from "react";
 import { usersType } from '../utils/types';

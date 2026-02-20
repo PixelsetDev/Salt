@@ -90,13 +90,18 @@ export type recipeIngredientsType = {
 }[] | null;
 
 export type reviewsType = {
-  rating: string;
-  comment: string | null;
-  author: {
-    username: string;
-    name: string;
-  };
-}[] | null;
+  score: number;
+  reviews: [
+    {
+      rating: number;
+      comment: string | null;
+      author: {
+        username: string;
+        name: string;
+      };
+      },
+  ];
+} | null;
 
 export type stepsType = [string] | null;
 

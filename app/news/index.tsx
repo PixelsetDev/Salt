@@ -1,6 +1,6 @@
 import "./../../global.css"
 import {Text, View, ScrollView} from "react-native";
-import { Footer, Navbar } from '../../components/Commons';
+import Navbar, { Footer } from '../../components/Commons';
 import { OLink, OText } from '../../components/Overrides';
 
 export default function App() {
@@ -16,10 +16,6 @@ export default function App() {
         <OLink className={`btn btn-primary grid`} href={`/news/2025-08-07-our-second-yearly-update`}>
           <Text className={`h3 font-serif`}>Our Second Yearly Update</Text>
           <OText>7th August 2025</OText>
-        </OLink>
-        <OLink className={`btn btn-primary grid`} href={`/news/2025-02-27-our-environmental-impact`}>
-          <Text className={`h3 font-serif`}>Our Environmental Impact</Text>
-          <OText>27th May 2025</OText>
         </OLink>
         <OLink className={`btn btn-primary grid`} href={`/news/2025-02-19-go-ad-free-for-free`}>
           <Text className={`h3 font-serif`}>Go Ad-free, for free!</Text>

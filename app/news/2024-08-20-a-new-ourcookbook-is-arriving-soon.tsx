@@ -1,7 +1,7 @@
 import "./../../global.css"
 import {Text, View, ScrollView} from "react-native";
 import { OText, OLink } from '../../components/Overrides';
-import { Footer, Navbar } from '../../components/Commons';
+import Navbar, { Footer } from '../../components/Commons';
 
 export default function App() {
   return (
@@ -127,10 +127,14 @@ export default function App() {
             </Text>
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
-              <Text className={`chip-red`}>Late 2025</Text>
+              <Text className={`chip-red`}>Postponed</Text>
               <View className={`flex-grow`}></View>
             </View>
           </View>
+          <OText className={`italic`}>
+            Update: We&apos;ve unfortunately had to postpone this feature as we continue to review our service offerings.
+            We will provide an update later on when you can expect this feature.
+          </OText>
           <OText>
             We love our rating system, but we thought it could do with an extra thing or two, so we&apos;re moving from
             ratings to reviews! You can now leave a comment alongside your review (previously rating) which will appear
@@ -149,10 +153,14 @@ export default function App() {
             </Text>
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
-              <Text className={`chip-red`}>Late 2025</Text>
+              <Text className={`chip-red`}>Postponed</Text>
               <View className={`flex-grow`}></View>
             </View>
           </View>
+          <OText className={`italic`}>
+            Update: We&apos;ve unfortunately had to postpone this feature as we continue to review our service offerings.
+            We will provide an update later on when you can expect this feature.
+          </OText>
           <OText>
             Currently, to manage your account you need to go to Portal&apos;s website. We&apos;re working with Portal to
             bring this functionality straight to OurCookbook! Soon, you&apos;ll be able to change certain bits of your
@@ -167,10 +175,14 @@ export default function App() {
             </Text>
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
-              <Text className={`chip-red`}>Late 2025</Text>
+              <Text className={`chip-red`}>Postponed</Text>
               <View className={`flex-grow`}></View>
             </View>
           </View>
+          <OText className={`italic`}>
+            Update: We&apos;ve unfortunately had to postpone this feature as we continue to review our service offerings.
+            We will provide an update later on when you can expect this feature.
+          </OText>
           <OText>
             We know that sometimes you&apos;ll see a picture for a recipe that won&apos;t quite turn out how you
             expected, or that sometimes there&apos;s no picture at all. We&apos;re working on adding a new Communiy

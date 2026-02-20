@@ -1,7 +1,7 @@
 import "./../../global.css";
 import { Text, View, ScrollView, Pressable } from 'react-native';
 import { useEffect, useState } from 'react';
-import { Footer, Navbar } from '../../components/Commons';
+import Navbar, { Footer } from '../../components/Commons';
 import { categoriesType, categoryType, ingredientsType, ingredientType } from '../../utils/types';
 import { API_BASE } from '../../utils/settings';
 

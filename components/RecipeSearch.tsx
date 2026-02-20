@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { RecipeLink } from './RecipeLink';
 import { OPressable, OText } from './Overrides';
 import { API_BASE } from '../utils/settings';
+import { FontAwesome } from '@expo/vector-icons';
 
 interface Recipe {
   slug: string;
@@ -16,13 +17,14 @@ interface Recipe {
 }
 
 interface RecipeSearchProps {
+  showButton?: boolean;
   navigateToRecipe?: boolean;
   onRecipePress?: (recipe: Recipe) => void;
   user?: string;
   doSearch?: string;
 }
 
-const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch }: RecipeSearchProps) => {
+const RecipeSearch = ({ showButton = false, navigateToRecipe = true, onRecipePress, user, doSearch }: RecipeSearchProps) => {
   const [search, setSearch] = useState(doSearch || '');
   const [loading, setLoading] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -48,12 +50,14 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch }
   }, [recipes, columnCount]);
 
   useEffect(() => {
+    if (showButton) return;
+
     const delayDebounce = setTimeout(() => {
       fetchRecipes(search);
     }, 300);
 
     return () => clearTimeout(delayDebounce);
-  }, [search, user]);
+  }, [search, user, showButton]);
 
   useEffect(() => {
     fetchRecipes();
@@ -95,15 +99,23 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch }
 
   return (
     <View className="gap-std">
-      <TextInput
-        id={`searchbar`}
-        placeholder="Search recipes..."
-        placeholderTextColor="#ccc"
-        value={search}
-        onChangeText={setSearch}
-        className="input"
-        returnKeyType="search"
-      />
+      <View className={`flex-row gap-std`}>
+        <TextInput
+          id={`searchbar`}
+          placeholder="Search recipes..."
+          placeholderTextColor="#ccc"
+          value={search}
+          onChangeText={setSearch}
+          className="input flex-grow"
+          returnKeyType="search"
+        />
+        <OPressable
+          className={`btn btn-primary`}
+          onPress={() => fetchRecipes(search)}
+        >
+          <FontAwesome name={`search`} size={16} className={`dark:text-white py-2`} />
+        </OPressable>
+      </View>
 
       {showSpinner && <ActivityIndicator size="large" color="#ffffff" className="mt-5" />}
 

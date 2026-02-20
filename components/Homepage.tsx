@@ -1,16 +1,16 @@
 import { Button, ImageBackground, ScrollView, Text, View } from 'react-native';
-import { Footer, Navbar } from './Commons';
+import Navbar, { Footer } from './Commons';
 import { Desktop } from './Exclusions';
 import { OLink, OText } from './Overrides';
 import RecipeSearch from './RecipeSearch';
 
 export const Homepage = () => {
   return (
-    <ScrollView>
+    <ScrollView className={`body`}>
       <Navbar/>
 
       <Desktop className="nomobile">
-        <View className="header grid-2 gap-std">
+        <View className="header grid gap-std">
           <View className="grid">
             <View className="grid">
               <Text className="h1 font-serif text-white">Let&#39;s cook</Text>
@@ -21,72 +21,6 @@ export const Homepage = () => {
               OurCookbook.
             </OText>
           </View>
-        </View>
-        <View className="grid-3 px-std py-std">
-          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@lewis/chicken-korma-couscous.webp' }} resizeMode="cover" className="span-2 p-sm">
-            <View className="bg-white p-8 grid gap-std">
-              <Text className="h2 font-serif">Chicken Korma Couscous</Text>
-              <OText>
-                By Lewis
-              </OText>
-              <OText>
-                This demo recipe is available on OurCookbook BETA.
-              </OText>
-              <View>
-                <OLink href="/@lewis/chicken-korma-couscous" className="btn btn-primary">
-                  Let&apos;s get cooking!
-                </OLink>
-              </View>
-            </View>
-          </ImageBackground>
-          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@lewis/chicken-korma-couscous.webp' }} resizeMode="cover" className="p-sm">
-            <View className="bg-white p-8 grid gap-std">
-              <Text className="h2 font-serif">Chicken Korma Couscous</Text>
-              <OText>
-                By Lewis
-              </OText>
-              <OText>
-                This demo recipe is available on OurCookbook BETA.
-              </OText>
-              <View>
-                <OLink href="/@lewis/chicken-korma-couscous" className="btn btn-primary">
-                  Let&apos;s get cooking!
-                </OLink>
-              </View>
-            </View>
-          </ImageBackground>
-          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@lewis/chicken-korma-couscous.webp' }} resizeMode="cover" className="p-sm">
-            <View className="bg-white p-8 grid gap-std">
-              <Text className="h2 font-serif">Chicken Korma Couscous</Text>
-              <OText>
-                By Lewis
-              </OText>
-              <OText>
-                This demo recipe is available on OurCookbook BETA.
-              </OText>
-              <View>
-                <OLink href="/@lewis/chicken-korma-couscous" className="btn btn-primary">
-                  Let&apos;s get cooking!
-                </OLink>
-              </View>
-            </View>
-          </ImageBackground>
-          <ImageBackground source={{ uri: 'https://ourcookbook.org/storage/images/recipes/@lewis/chicken-korma-couscous.webp' }} resizeMode="cover" className="span-2 p-sm">
-            <View className="bg-white p-8 grid gap-std">
-              <Text className="h2 font-serif">Chicken Korma Couscous</Text>
-              <OText>
-                By Lewis
-              </OText>
-              <OText>
-                This demo recipe is available on OurCookbook BETA.
-              </OText>
-              <View>
-                <OLink href="/@lewis/chicken-korma-couscous" className="btn btn-primary">
-                  Let&apos;s get cooking!
-                </OLink>
-              </View>
-            </View>
-          </ImageBackground>
         </View>
       </Desktop>
         {/*

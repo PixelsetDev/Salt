@@ -6,6 +6,16 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["src/*"]
-    }
-  }
+    },
+    "types": ["nativewind/types"],
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
+  ]
 }

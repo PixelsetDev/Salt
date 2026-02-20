@@ -6,7 +6,7 @@ import { SignOutButton, SignInButton } from './auth/Auth';
 import { useLogto } from '@logto/rn';
 import { useUser } from './auth/UserProvider';
 
-export const Navbar = () => {
+const Navbar = () => {
   const [visible, setVisible] = useState(false);
   const { isAuthenticated } = useLogto();
   const { user } = useUser();
@@ -91,6 +91,7 @@ export const Navbar = () => {
     </View>
   );
 }
+export default Navbar
 
 export const Footer = () => {
   return (

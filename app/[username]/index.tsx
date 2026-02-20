@@ -1,11 +1,12 @@
 import "./../../global.css";
-import {Text, View, ScrollView } from 'react-native';
+import {Text, View, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {OLink, OText} from "../../components/Overrides";
-import { Footer, Navbar } from '../../components/Commons';
+import Navbar, { Footer } from '../../components/Commons';
 import { API_BASE } from '../../utils/settings';
 import { usersType } from '../../utils/types';
+import * as url from 'node:url';
 
 export default function App() {
   const { username } = useLocalSearchParams();
@@ -29,9 +30,12 @@ export default function App() {
       <Navbar/>
       <View className="header grid-2">
         {user ? (
-          <View className="grid gap-std">
-            <Text className="h1 font-serif text-white" key={"user-header-name"}>{user.name}</Text>
-            <Text className="h3 text-white" key={"user-header-username"}>@{user.username}</Text>
+          <View className="flex-row gap-std">
+            <Image source={{uri:`https://data.portalsso.com/avatar/${user.uuid}.webp`}} className={`lg:w-36 lg:h-36 md:w-28 md:h-28 w-20 h-20 rounded-full`}></Image>
+            <View className="grid gap-std self-center">
+              <Text className="h1 font-serif text-white" key={"user-header-name"}>{user.name}</Text>
+              <Text className="h3 text-white" key={"user-header-username"}>@{user.username}</Text>
+            </View>
           </View>
         ) : (
           <View className="grid gap-std">
@@ -45,19 +49,21 @@ export default function App() {
         <View className="grid gap-std">
           <Text className="h2 font-serif text-center">Recipes</Text>
           {(user?.recipes && user.recipes.length > 0) ? (
-          <View className="grid-2 gap-std">
+          <View className="grid-2-1 gap-std">
             {user.recipes.map((recipe) => (
               <OLink
                 href={`/@${user.username}/${recipe.slug}`}
                 key={recipe.slug}
                 className="btn-np btn-primary flex flex-row space-x-2"
               >
-                <View className="grid gap-2 px-4 py-2">
+                <View className="grid gap-2">
                   <View className="flex flex-row space-x-2">
-                    <Text className="font-serif txt-2xl text-white">{recipe.name}</Text>
-                    <View className="flex-grow"></View>
+                    <Image source={{uri:`https://api.ourcookbook.org/storage/recipes/@${user.username}/${recipe.slug}.webp`}} className={`lg:w-24 lg:h-24 w-16 h-16 rounded-l-md`}></Image>
+                    <View className={`px-4 py-2`}>
+                      <Text className="font-serif txt-2xl text-white">{recipe.name}</Text>
+                      <OText className="txt-xl text-white">{recipe?.description}</OText>
+                    </View>
                   </View>
-                  <OText className="txt-xl text-white">{recipe?.description}</OText>
                 </View>
               </OLink>
             ))}

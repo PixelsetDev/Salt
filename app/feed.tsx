@@ -1,6 +1,6 @@
 import "./../global.css";
 import { Text, View, ScrollView } from "react-native";
-import { Footer, Navbar } from '../components/Commons';
+import Navbar, { Footer } from '../components/Commons';
 import { useLogto } from '@logto/rn';
 import { Unauthed } from '../components/Boxes';
 
