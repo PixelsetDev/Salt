@@ -19,6 +19,15 @@
           "project": "react-native",
           "organization": "pixelset"
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/merriweather/400Regular/Merriweather_400Regular.ttf",
+            "node_modules/@expo-google-fonts/roboto/400Regular/Roboto_400Regular.ttf"
+          ]
+        }
       ]
     ],
     "userInterfaceStyle": "light",

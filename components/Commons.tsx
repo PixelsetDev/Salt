@@ -5,6 +5,8 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { SignOutButton, SignInButton } from './auth/Auth';
 import { useLogto } from '@logto/rn';
 import { useUser } from './auth/UserProvider';
+import { Header } from '@react-navigation/elements';
+import { Helmet } from 'expo-router/vendor/react-helmet-async/lib';
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
@@ -15,74 +17,121 @@ const Navbar = () => {
 
   return (
     <View className={`dark:bg-black`}>
-      <View className="bg-red-800 flex flex-row gap-2 px-std py-1">
-        <Text className={`text-white text-xs`}>
-          You&apos;re on our BETA website, it&apos;s under active development and is likely to behave unexpectedly.
-          Please report any bugs, crashes, or issues to ocb-app-issues@pixelset.dev
+      <Helmet>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Merriweather:opsz@18..144&family=Roboto:ital@0;1&display=swap"
+          rel="stylesheet"
+        />
+      </Helmet>
+      <View className="px-std flex flex-row gap-2 bg-red-800 py-1">
+        <Text className={`text-xs text-white`}>
+          You&apos;re on our BETA website, it&apos;s under active development and is likely to
+          behave unexpectedly. Please report any bugs, crashes, or issues to
+          ocb-app-issues@pixelset.dev
         </Text>
       </View>
-      <View className="bg-green-d sm:flex hidden flex-row gap-2 px-std">
-        <OLink href="/" className="link-nav font-serif">OurCookbook</OLink>
+      <View className="bg-green-d px-std hidden flex-row gap-2 sm:flex">
+        <OLink href="/" className="link-nav font-serif">
+          OurCookbook
+        </OLink>
 
-        <View className="flex-grow"/>
+        <View className="flex-grow" />
 
-        {(!isAuthenticated) ? (
+        {!isAuthenticated ? (
           <View className={`flex flex-row gap-2 pt-1`}>
-            <SignInButton className={`link-nav`}/>
-            <OLink href={`/join`} className={`link-nav`}>Join</OLink>
+            <SignInButton className={`link-nav`} />
+            <OLink href={`/join`} className={`link-nav`}>
+              Join
+            </OLink>
           </View>
         ) : (
           <View className={`flex flex-row gap-2 pt-1`}>
-            <OLink href={`/account`} className={`link-nav`}>{name}</OLink>
-            <SignOutButton className={`link-nav`}/>
+            <OLink href={`/account`} className={`link-nav`}>
+              {name}
+            </OLink>
+            <SignOutButton className={`link-nav`} />
           </View>
         )}
       </View>
-      <View className="bg-white dark:text-white dark:bg-neutral-900 sm:flex hidden flex-row px-std">
-        <OLink href="/recipes" className="btn-nav">Recipes</OLink>
-        <OLink href="/collections" className="btn-nav">Collections</OLink>
-        {(isAuthenticated) && (
+      <View className="px-std hidden flex-row bg-white sm:flex dark:bg-neutral-900 dark:text-white">
+        <OLink href="/recipes" className="btn-nav">
+          Recipes
+        </OLink>
+        <OLink href="/collections" className="btn-nav">
+          Collections
+        </OLink>
+        {isAuthenticated && (
           <View className={`flex flex-row`}>
-            <OLink href="/meal-plans" className="btn-nav">Meal Plans</OLink>
-            <OLink href="/shopping-list" className="btn-nav">Shopping List</OLink>
+            <OLink href="/meal-plans" className="btn-nav">
+              Meal Plans
+            </OLink>
+            <OLink href="/shopping-list" className="btn-nav">
+              Shopping List
+            </OLink>
           </View>
         )}
-        <OLink href="/chefs" className="btn-nav">Chefs</OLink>
-        <OLink href="/news" className="btn-nav">News</OLink>
+        <OLink href="/chefs" className="btn-nav">
+          Chefs
+        </OLink>
+        <OLink href="/news" className="btn-nav">
+          News
+        </OLink>
 
-        <View className="flex-grow"/>
+        <View className="flex-grow" />
 
-        <OLink href="/recipes" className="btn-nav">Search</OLink>
+        <OLink href="/recipes" className="btn-nav">
+          Search
+        </OLink>
       </View>
-      <View className="bg-green-d flex flex-row sm:hidden gap-2 px-std py-1">
-        <OLink href="/" className="btn-nav-active font-serif">OurCookbook</OLink>
-        <View className="flex-grow"/>
+      <View className="bg-green-d px-std flex flex-row gap-2 py-1 sm:hidden">
+        <OLink href="/" className="btn-nav-active font-serif">
+          OurCookbook
+        </OLink>
+        <View className="flex-grow" />
         <OPressable onPress={() => setVisible((prev) => !prev)} className="btn-nav">
           <FontAwesome6 name="bars" size={16} color="white" />
         </OPressable>
       </View>
       {visible && (
-        <View className="p-4 bg-gray-200 rounded">
-          <View className="grid gap-std p-std">
-            <OLink href="/recipes" className="btn btn-primary text-white">Recipes</OLink>
-            <OLink href="/collections" className="btn btn-primary text-white">Collections</OLink>
-            {(isAuthenticated) && (
-              <View className="grid gap-std">
-                <OLink href="/meal-plans" className="btn btn-primary text-white">Meal Plans</OLink>
-                <OLink href="/shopping-list" className="btn btn-primary text-white">Shopping List</OLink>
+        <View className="rounded bg-gray-200 p-4">
+          <View className="gap-std p-std grid">
+            <OLink href="/recipes" className="btn btn-primary text-white">
+              Recipes
+            </OLink>
+            <OLink href="/collections" className="btn btn-primary text-white">
+              Collections
+            </OLink>
+            {isAuthenticated && (
+              <View className="gap-std grid">
+                <OLink href="/meal-plans" className="btn btn-primary text-white">
+                  Meal Plans
+                </OLink>
+                <OLink href="/shopping-list" className="btn btn-primary text-white">
+                  Shopping List
+                </OLink>
               </View>
             )}
-            <OLink href="/chefs" className="btn btn-primary text-white">Chefs</OLink>
-            <OLink href="/news" className="btn btn-primary text-white">News</OLink>
-            {(isAuthenticated) ? (
-              <View className="grid gap-std">
-                <OLink href={`/account`} className={`btn btn-primary text-white`}>{name}</OLink>
-                <SignOutButton className={`btn btn-primary text-white`}/>
+            <OLink href="/chefs" className="btn btn-primary text-white">
+              Chefs
+            </OLink>
+            <OLink href="/news" className="btn btn-primary text-white">
+              News
+            </OLink>
+            {isAuthenticated ? (
+              <View className="gap-std grid">
+                <OLink href={`/account`} className={`btn btn-primary text-white`}>
+                  {name}
+                </OLink>
+                <SignOutButton className={`btn btn-primary text-white`} />
               </View>
             ) : (
-              <View className="grid gap-std">
-                <SignInButton className={`btn btn-primary text-white`}/>
-                <OLink href={`/join`} className={`btn btn-primary text-white`}>Join</OLink>
+              <View className="gap-std grid">
+                <SignInButton className={`btn btn-primary text-white`} />
+                <OLink href={`/join`} className={`btn btn-primary text-white`}>
+                  Join
+                </OLink>
               </View>
             )}
           </View>

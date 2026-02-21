@@ -7,6 +7,9 @@ import { useFonts } from 'expo-font';
 import { Merriweather_400Regular } from '@expo-google-fonts/merriweather';
 import { Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { UserProvider } from '../components/auth/UserProvider';
+import { Platform } from 'react-native';
+import { WebFontsLoader } from '../components/WebFontsLoader.tsx';
+import { OText } from '../components/Overrides.tsx';
 
 //      ██████  ██████  ██    ██████
 //      ██      ██  ██  ██      ██
