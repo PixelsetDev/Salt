@@ -9,7 +9,7 @@
 
 /* Global */
 
-@utility body { @apply dark:bg-neutral-900 dark:text-white; }
+@utility body { @apply dark:bg-neutral-900 dark:text-white; font-family: 'Roboto', sans-serif !important; }
 
 @utility px-std { @apply lg:px-32 md:px-16 sm:px-8 px-6; }
 @utility py-std { @apply lg:py-24 md:py-12 sm:py-6 py-4; }

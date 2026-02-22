@@ -20,18 +20,17 @@ export default function App() {
   const { username, recipe_slug } = useLocalSearchParams();
   const cleanUsername = (typeof username === 'string' ? username : '').replace(/^@/, '');
   const { showToast } = useToast();
-
   const [recipe, setRecipe] = useState<recipeType>(null);
   const [steps, setSteps] = useState<stepsType>(null);
   const [reviews, setReviews] = useState<reviewsType>(null);
   const [ingredients, setIngredients] = useState<recipeIngredientsType>(null);
   const [dietary, setDietary] = useState<dietaryType>(null);
   const [disclaimers, setDisclaimers] = useState<string[]>([]);
-
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [editingReview, setEditingReview] = useState<any>(null);
+  const [deletingReview, setDeletingReview] = useState<any>(null);
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [loading, setLoading] = useState(false);
-
   const apiCall = useApiCall();
 
   const fetchReviews = () => {
@@ -60,11 +59,44 @@ export default function App() {
         showToast({ type: 'error', message: data.message });
         setShowReviewModal(false);
       }
-    } catch (err: any) {
-      showToast({ type: 'error', message: 'Connection error.' });
-    } finally {
-      setLoading(false);
-    }
+    } catch (err: any) { showToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingReview || !recipe || loading) return;
+    setLoading(true);
+    try {
+      const res = await apiCall(API_BASE + `/v1/recipes/${recipe.id}/reviews`, true, { method: 'DELETE' });
+      const data = await res.json();
+      if (res.status === 200) {
+        setDeletingReview(null);
+        showToast({ type: 'success', message: data.message || 'Review deleted successfully.' });
+        fetchReviews();
+      } else {
+        showToast({ type: 'error', message: data.message });
+        setDeletingReview(null);
+      }
+    } catch (err: any) { showToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
+  };
+
+  const saveEdit = async () => {
+    if (!editingReview || !recipe || loading) return;
+    setLoading(true);
+    try {
+      const res = await apiCall(API_BASE + `/v1/recipes/${recipe.id}/reviews`, true, {
+        method: 'PUT',
+        body: JSON.stringify({ rating: editingReview.rating, comment: editingReview.comment })
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        setEditingReview(null);
+        showToast({ type: 'success', message: data.message || 'Review updated successfully.' });
+        fetchReviews();
+      } else {
+        showToast({ type: 'error', message: data.message });
+        setEditingReview(null);
+      }
+    } catch (err: any) { showToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
   };
 
   useEffect(() => {
@@ -89,12 +121,7 @@ export default function App() {
             data.data.map((item: any) =>
               fetch(`${API_BASE}/v1/ingredients/${item.ingredient}`, { method: "GET" })
                 .then((res) => res.json())
-                .then(({ data }) => ({
-                  ...item,
-                  name: data.name,
-                  dietary: data.dietary,
-                  disclaimer: data.disclaimer,
-                }))
+                .then(({ data }) => ({ ...item, name: data.name, dietary: data.dietary, disclaimer: data.disclaimer }))
             )
           )
         )
@@ -105,9 +132,7 @@ export default function App() {
           ingredientsWithNames.forEach(({ dietary, disclaimer }) => {
             if (disclaimer) disclaimers.add(disclaimer);
             if (!dietary) return;
-            Object.keys(aggregatedDietary).forEach(key => {
-              if (dietary[key] > aggregatedDietary[key as keyof typeof aggregatedDietary]) aggregatedDietary[key as keyof typeof aggregatedDietary] = dietary[key];
-            });
+            Object.keys(aggregatedDietary).forEach(key => { if (dietary[key] > aggregatedDietary[key as keyof typeof aggregatedDietary]) aggregatedDietary[key as keyof typeof aggregatedDietary] = dietary[key]; });
           });
           setDietary(aggregatedDietary);
           setDisclaimers([...disclaimers]);
@@ -116,6 +141,7 @@ export default function App() {
     }
   }, [recipe]);
 
+  const userReview = reviews?.reviews?.find((r: any) => r.author.username === user?.username);
   const backgroundImage = { uri: 'https://api.ourcookbook.org/storage/recipes/' + username + '/' + recipe_slug + '.webp' };
 
   return (
@@ -126,14 +152,12 @@ export default function App() {
           <View className={`gap-std p-sm grid`} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <Text className={`h1 font-serif text-white`}>{recipe.name}</Text>
             <View className={`flex flex-row gap-2`}>
-              <OLink className={`txt-2xl text-white`} href={`/@${recipe.author.username}`}>Created by <Text className={`underline`}>{recipe.author.name}</Text>.</OLink>
+              <OText className="txt-2xl text-white">Created by <OLink className={`txt-2xl text-white underline`} href={`/@${recipe.author.username}`}>{recipe.author.name}</OLink> on {new Date(recipe.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}.</OText>
             </View>
             {reviews?.score !== -1 ? (
               <View className={`flex flex-row gap-4`}>
                 <View className={`flex flex-row gap-1`}>
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <FontAwesome key={star} name={star <= Math.round(reviews?.score || 0) ? "star" : "star-o"} size={24} color="#fff" />
-                  ))}
+                  {[1, 2, 3, 4, 5].map((star) => <FontAwesome key={star} name={star <= Math.round(reviews?.score || 0) ? "star" : "star-o"} size={24} color="#fff" />)}
                 </View>
                 <OText className={`text-white`}>|</OText>
                 <OText className={`text-white`}>{reviews?.score }</OText>
@@ -225,9 +249,14 @@ export default function App() {
               <View className="flex-row gap-std">
                 <Text className={`h2 font-serif grow`}>Reviews</Text>
                 {user?.name && (
-                  <OPressable onPress={() => setShowReviewModal(true)} className="btn btn-secondary">
-                    Post Review
-                  </OPressable>
+                  userReview ? (
+                    <View className="flex-row gap-2">
+                      <OPressable disabled={loading} onPress={() => setEditingReview({ ...userReview })} className="btn btn-info px-4">Edit Review</OPressable>
+                      <OPressable disabled={loading} onPress={() => setDeletingReview({ ...userReview })} className="btn btn-danger px-4">Delete Review</OPressable>
+                    </View>
+                  ) : (
+                    <OPressable onPress={() => setShowReviewModal(true)} className="btn btn-secondary">Post Review</OPressable>
+                  )
                 )}
               </View>
               <View className={`grid-2 gap-std`}>
@@ -238,17 +267,15 @@ export default function App() {
                         <OLink href={`/@${review.author.username}`} className={`h3 font-serif underline`}>{review.author.name}</OLink>
                         <Text className={`h3 font-serif`}>{review.rating}/5</Text>
                       </View>
-                      {review.comment !== null && review.comment !== '' ? (
-                        <OText className={`italic`}>&quot;{review.comment}&quot;</OText>
-                      ) : (
-                        <OText className={`italic`}>They didn&apos;t leave a comment.</OText>
-                      )}
+                      {review.comment ? <OText className={`italic`}>&quot;{review.comment}&quot;</OText> : <OText className={`italic`}>They didn&apos;t leave a comment.</OText>}
+                      <OText className="txt-xs txt-subtle">
+                        Posted {new Date(review.created.replace(' ', 'T')).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        {review.edited && ` (Edited ${new Date(review.edited.replace(' ', 'T')).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })})`}
+                      </OText>
                     </View>
                   ))
                 ) : (
-                  <View className={`span-2`}>
-                    <OText>Nobody has reviewed this recipe, why not be the first?</OText>
-                  </View>
+                  <View className={`span-2`}><OText>Nobody has reviewed this recipe, why not be the first?</OText></View>
                 )}
               </View>
             </View>
@@ -264,24 +291,36 @@ export default function App() {
         <View className="gap-4">
           <StarRating rating={newReview.rating} disabled={loading} onRatingChange={(n) => setNewReview({ ...newReview, rating: n })} />
           <View>
-            <TextInput
-              multiline
-              numberOfLines={4}
-              maxLength={128}
-              editable={!loading}
-              className="input"
-              placeholder="Share your thoughts (optional)..."
-              style={{ textAlignVertical: 'top', minHeight: 100 }}
-              value={newReview.comment}
-              onChangeText={(text) => setNewReview({ ...newReview, comment: text })}
-            />
+            <TextInput multiline numberOfLines={4} maxLength={128} editable={!loading} className="input" placeholder="Share your thoughts (optional)..." style={{ textAlignVertical: 'top', minHeight: 100 }} value={newReview.comment} onChangeText={(text) => setNewReview({ ...newReview, comment: text })} />
             <OText className="txt-xs text-right mt-1 opacity-60">{newReview.comment.length}/128</OText>
           </View>
           <View className="mt-2 flex-row gap-std">
-            <OPressable disabled={loading} onPress={submitReview} className="btn btn-primary">
-              {loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Submit Review"}
-            </OPressable>
+            <OPressable disabled={loading} onPress={submitReview} className="btn btn-primary">{loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Submit Review"}</OPressable>
             <OPressable disabled={loading} onPress={() => setShowReviewModal(false)} className="btn btn-secondary">Cancel</OPressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={!!editingReview} title="Edit Review" onClose={() => !loading && setEditingReview(null)}>
+        <View className="gap-4">
+          <StarRating rating={editingReview?.rating || 0} disabled={loading} onRatingChange={(n) => setEditingReview({ ...editingReview, rating: n })} />
+          <View>
+            <TextInput multiline numberOfLines={4} maxLength={128} editable={!loading} className="input" style={{ textAlignVertical: 'top', minHeight: 100 }} value={editingReview?.comment || ''} onChangeText={(text) => setEditingReview({ ...editingReview, comment: text })} />
+            <OText className="txt-xs text-right mt-1 opacity-60">{(editingReview?.comment || '').length}/128</OText>
+          </View>
+          <View className="mt-2 flex-row gap-std">
+            <OPressable disabled={loading} onPress={saveEdit} className="btn btn-primary">{loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Save Changes"}</OPressable>
+            <OPressable disabled={loading} onPress={() => setEditingReview(null)} className="btn btn-secondary">Cancel</OPressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={!!deletingReview} title="Delete Review" onClose={() => !loading && setDeletingReview(null)}>
+        <View className="gap-4">
+          <OText className="text-center txt-xl">Are you sure you want to delete your review for <OText className="font-bold">{recipe?.name}</OText>?</OText>
+          <View className="mt-4 flex-row gap-std">
+            <OPressable disabled={loading} onPress={confirmDelete} className="btn btn-danger flex-1 items-center justify-center">{loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Delete Forever"}</OPressable>
+            <OPressable disabled={loading} onPress={() => setDeletingReview(null)} className="btn btn-secondary flex-1 items-center">Keep It</OPressable>
           </View>
         </View>
       </Modal>

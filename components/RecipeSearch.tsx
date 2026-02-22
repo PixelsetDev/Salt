@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, TextInput, View, Image, useWindowDimensions, ScrollView } from 'react-native';
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { RecipeLink } from './RecipeLink';
 import { OPressable, OText } from './Overrides';
 import { API_BASE } from '../utils/settings';
@@ -8,7 +8,7 @@ import { WarningBox } from './Boxes.tsx';
 import { useApiCall } from '../utils/api.ts';
 import { useLogto } from '@logto/rn';
 
-interface Recipe { slug: string; name: string; author: { uuid: string; name: string; username: string; }; description: string; visibility: number; }
+interface Recipe { id: number; slug: string; name: string; author: { uuid: string; name: string; username: string; }; description: string; visibility: number; }
 interface Category { id: number; name: string; parent?: number | null; }
 
 const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, onSearchPerformed }: any) => {
@@ -29,22 +29,13 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
   const { isAuthenticated } = useLogto();
   const apiCall = useApiCall();
 
-  const columns = useMemo(() => {
-    const count = !navigateToRecipe ? 2 : width >= 1280 ? 4 : width >= 768 ? 3 : 2;
-    const cols: Recipe[][] = Array.from({ length: count }, () => []);
-    recipes.forEach((r, i) => cols[i % count].push(r));
-    return cols;
-  }, [recipes, width, navigateToRecipe]);
-
   useEffect(() => {
     const fetchMeta = async (path: string, setter: any) => {
       try {
         const res = await apiCall(`${API_BASE}${path}`, false);
         const d = await res.json();
         setter(d.data || []);
-      } catch {
-        setter([]);
-      }
+      } catch { setter([]); }
     };
     fetchMeta('/v1/recipes/categories', setCategories);
     fetchMeta('/v1/ingredients/dietary', setDietaryOptions);
@@ -56,16 +47,12 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
     const timeout = setTimeout(() => setShowSpinner(true), 300);
 
     try {
-      // Fetch UI/Button metadata only
       if (selectedCategory !== null) {
         const catRes = await fetch(`${API_BASE}/v1/recipes/categories/${selectedCategory}`).then(r => r.json());
         if (catRes.data?.parent) setParentCategory(catRes.data.parent);
         else { setSubcategories(catRes.data?.subcategories || []); setParentCategory(null); }
-      } else {
-        setSubcategories([]); setParentCategory(null);
-      }
+      } else { setSubcategories([]); setParentCategory(null); }
 
-      // Unified Search Fetching
       const p = new URLSearchParams();
       if (query) p.append('search', query);
       if (user) p.append('user', user);
@@ -73,18 +60,9 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
       if (selectedDietary.length) p.append('dietary', JSON.stringify(selectedDietary));
 
       const res = await apiCall(`${API_BASE}/v1/recipes?${p.toString()}`, false);
-      if (res.status === 204 || res.status === 404) {
-        setRecipes([]);
-      } else {
-        const data = await res.json();
-        setRecipes(Array.isArray(data) ? data : (data.data || []));
-      }
-    } catch {
-      setRecipes([]);
-    } finally {
-      clearTimeout(timeout);
-      setShowSpinner(false);
-    }
+      if (res.status === 204 || res.status === 404) { setRecipes([]); }
+      else { const data = await res.json(); setRecipes(Array.isArray(data) ? data : (data.data || [])); }
+    } catch { setRecipes([]); } finally { clearTimeout(timeout); setShowSpinner(false); }
   }, [selectedCategory, selectedDietary, user, onSearchPerformed, apiCall, isAuthenticated]);
 
   useEffect(() => {
@@ -101,7 +79,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
         <View className="grid gap-sm">
           {categories.map(c => (
             <OPressable key={c.id} className={btnStyle(selectedCategory === c.id || parentCategory === c.id)}
-                        onPress={() => { setSelectedCategory(selectedCategory === c.id || parentCategory === c.id ? null : c.id); setParentCategory(null); }}>
+                  onPress={() => { setSelectedCategory(selectedCategory === c.id || parentCategory === c.id ? null : c.id); setParentCategory(null); }}>
               {c.name}
             </OPressable>
           ))}
@@ -109,7 +87,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
       </View>
       <View className="p-4 bg-secondary grid gap-std">
         <Text className="txt-4xl font-serif dark:text-white">Dietary</Text>
-        <Text className="txt-subtle italic">Always check product labels, this is for guidance only and may be incorrect.</Text>
+        <Text className="txt-subtle italic">Always check product labels.</Text>
         <View className="grid gap-sm">
           {dietaryOptions.map(o => (
             <OPressable key={o} className={btnStyle(selectedDietary.includes(o), 'danger')} onPress={() => setSelectedDietary(d => d.includes(o) ? d.filter(x => x !== o) : [...d, o])}>
@@ -146,21 +124,23 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
             </View>
           )}
           {showSpinner && <ActivityIndicator size="large" color="#fff" className="mb-5" />}
-          <View className="flex-row gap-std">
-            {recipes.length > 0 ? (columns.map((col, i) => (
-              <View key={i} className="flex-1 gap-std">
-                {col.map(r => (
-                  <View key={r.slug}>
-                    {navigateToRecipe ? <RecipeLink recipe={r} /> : (
-                      <OPressable onPress={() => onRecipePress?.(r)} className="btn-np btn-primary overflow-hidden">
-                        <Image source={{ uri: `https://api.ourcookbook.org/storage/recipes/@${r.author.username}/${r.slug}.webp` }} className="w-full aspect-square" />
-                        <View className="gap-2 px-4 py-3"><Text className="txt-xl font-serif dark:text-white">{r.name}</Text><OText className="dark:text-white">By {r.author.name}</OText></View>
-                      </OPressable>
-                    )}
-                  </View>
-                ))}
-              </View>
-            ))) : (<View className={`grow`}><WarningBox message={`No results found.`}/></View>)}
+
+          <View className="grid-2 md:grid-3 xl:grid-4 gap-std">
+            {recipes.length > 0 ? (
+              recipes.map(r => (
+                <View key={r.slug}>
+                  {navigateToRecipe ? <RecipeLink recipe={r} /> : (
+                    <OPressable onPress={() => onRecipePress?.(r)} className="btn-np btn-primary overflow-hidden">
+                      <Image source={{ uri: `https://api.ourcookbook.org/storage/recipes/@${r.author.username}/${r.slug}.webp` }} className="w-full aspect-square" />
+                      <View className="gap-2 px-4 py-3">
+                        <Text className="txt-xl font-serif dark:text-white">{r.name}</Text>
+                        <OText className="dark:text-white">By {r.author.name}</OText>
+                      </View>
+                    </OPressable>
+                  )}
+                </View>
+              ))
+            ) : (<WarningBox message={`No results found.`}/>)}
           </View>
         </View>
       </View>

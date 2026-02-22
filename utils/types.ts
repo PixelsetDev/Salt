@@ -37,6 +37,7 @@ export type collectionType = {
   name: string;
   slug: string;
   author: {
+    uuid: string;
     name: string;
     username: string;
   };
@@ -112,6 +113,8 @@ export type reviewsType = {
         username: string;
         name: string;
       };
+      created: string;
+      edited: string|null;
     },
   ];
 } | null;
