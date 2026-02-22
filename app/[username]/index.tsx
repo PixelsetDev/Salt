@@ -54,15 +54,18 @@ export default function App() {
     setLoading(true);
     try {
       const res = await apiCall(API_BASE + `/v1/recipes/${deletingReview.recipe_id}/reviews`, true, {
-        method: 'DELETE',
-        body: JSON.stringify({ id: deletingReview.id })
+        method: 'DELETE'
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.status === 200) {
         setUser({ ...user, reviews: user.reviews.filter((r: any) => r.id !== deletingReview.id) });
         setDeletingReview(null);
-        setToast({ type: 'success', message: 'Review deleted successfully.' });
+        setToast({ type: 'success', message: data.message || 'Review deleted successfully.' });
+      } else {
+        setToast({ type: 'error', message: data.message });
+        setDeletingReview(null);
       }
-    } catch (err: any) { setToast({ type: 'error', message: err.message }); } finally { setLoading(false); }
+    } catch (err: any) { setToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
   };
 
   const saveEdit = async () => {
@@ -71,14 +74,18 @@ export default function App() {
     try {
       const res = await apiCall(API_BASE + `/v1/recipes/${editingReview.recipe_id}/reviews`, true, {
         method: 'PUT',
-        body: JSON.stringify({ id: editingReview.id, rating: editingReview.rating, comment: editingReview.comment })
+        body: JSON.stringify({ rating: editingReview.rating, comment: editingReview.comment })
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.status === 200) {
         setUser({ ...user, reviews: user.reviews.map((r: any) => r.id === editingReview.id ? editingReview : r) });
         setEditingReview(null);
-        setToast({ type: 'success', message: 'Review updated successfully.' });
+        setToast({ type: 'success', message: data.message || 'Review updated successfully.' });
+      } else {
+        setToast({ type: 'error', message: data.message });
+        setEditingReview(null);
       }
-    } catch (err: any) { setToast({ type: 'error', message: err.message }); } finally { setLoading(false); }
+    } catch (err: any) { setToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
   };
 
   return (
@@ -200,7 +207,10 @@ export default function App() {
                 disabled={loading}
                 onRatingChange={(n) => setEditingReview({ ...editingReview, rating: n })}
               />
-              <TextInput multiline numberOfLines={4} editable={!loading} className="input" style={{ textAlignVertical: 'top', minHeight: 100 }} value={editingReview?.comment || ''} onChangeText={(text) => setEditingReview({ ...editingReview, comment: text })} />
+              <View>
+                <TextInput multiline numberOfLines={4} maxLength={128} editable={!loading} className="input" style={{ textAlignVertical: 'top', minHeight: 100 }} value={editingReview?.comment || ''} onChangeText={(text) => setEditingReview({ ...editingReview, comment: text })} />
+                <OText className="txt-xs text-right mt-1 opacity-60">{(editingReview?.comment || '').length}/128</OText>
+              </View>
               <View className="mt-2 flex-row gap-std">
                 <OPressable disabled={loading} onPress={saveEdit} className="btn btn-primary flex-1 items-center justify-center">
                   {loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Save Changes"}
