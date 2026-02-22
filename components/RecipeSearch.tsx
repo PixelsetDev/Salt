@@ -6,6 +6,7 @@ import { API_BASE } from '../utils/settings';
 import { FontAwesome } from '@expo/vector-icons';
 import { WarningBox } from './Boxes.tsx';
 import { useApiCall } from '../utils/api.ts';
+import { useLogto } from '@logto/rn';
 
 interface Recipe { slug: string; name: string; author: { uuid: string; name: string; username: string; }; description: string; visibility: number; }
 interface Category { id: number; name: string; parent?: number | null; }
@@ -25,6 +26,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
   const { width } = useWindowDimensions();
   const isDesktop = width >= 1024;
 
+  const { isAuthenticated } = useLogto();
   const apiCall = useApiCall();
 
   const columns = useMemo(() => {
@@ -46,7 +48,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
     };
     fetchMeta('/v1/recipes/categories', setCategories);
     fetchMeta('/v1/ingredients/dietary', setDietaryOptions);
-  }, []);
+  }, [apiCall, isAuthenticated]);
 
   const fetchRecipes = useCallback(async (query = '') => {
     onSearchPerformed?.(true);
@@ -83,7 +85,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
       clearTimeout(timeout);
       setShowSpinner(false);
     }
-  }, [selectedCategory, selectedDietary, user, onSearchPerformed]);
+  }, [selectedCategory, selectedDietary, user, onSearchPerformed, apiCall, isAuthenticated]);
 
   useEffect(() => {
     const t = setTimeout(() => fetchRecipes(search), 300);

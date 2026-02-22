@@ -42,6 +42,7 @@ export type collectionType = {
   };
   description: string;
   featured: boolean;
+  visibility: number;
 } | null;
 
 export type ingredientType = {
@@ -117,19 +118,33 @@ export type reviewsType = {
 
 export type stepsType = [string] | null;
 
-export type usersType = {
+export type userType = {
   name: string;
   username: string;
   uuid: string;
-  recipes?: [{
+  recipes?: {
     slug: string;
     name: string;
     description: string|null;
-  }];
-  collections?: [{
+    visibility: number;
+  }[];
+  collections?: {
     slug: string;
     name: string;
     description: string|null;
     featured: boolean;
-  }]
+    visibility: number;
+  }[];
+  self: boolean;
+  reviews: {
+    rating: number;
+    comment: string|null;
+    recipe_id: string;
+    recipe_name: string;
+    recipe_slug: string;
+    recipe_author: {
+      name: string;
+      username: string;
+    };
+  }[];
 } | null;

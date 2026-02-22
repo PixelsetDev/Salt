@@ -1,17 +1,22 @@
 import './../../global.css';
-import { ImageBackground, ScrollView, Text, View } from 'react-native';
+import { ImageBackground, ScrollView, Text, View, TextInput } from 'react-native';
 import Navbar, { Footer } from '../../components/Commons';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { OLink, OText } from '../../components/Overrides';
+import { OLink, OPressable, OText } from '../../components/Overrides';
 import { Difficulty } from '../../components/Scales';
 import { API_BASE } from '../../utils/settings';
 import { dietaryType, recipeIngredientsType, recipeType, reviewsType, stepsType } from '../../utils/types';
 import { parseAmount, parseUnit } from '../../utils/parser';
 import { FontAwesome } from '@expo/vector-icons';
-import { apiCall } from '../../utils/api.ts';
+import { useApiCall } from '../../utils/api.ts';
+import { useUser } from '../../components/auth/UserProvider.tsx';
+import { Modal } from '../../components/Modal.tsx';
+import { StarRating } from '../../components/StarRating.tsx';
+import { ErrorBox, SuccessBox } from '../../components/Boxes.tsx';
 
 export default function App() {
+  const { user } = useUser();
   const { username, recipe_slug } = useLocalSearchParams();
   const cleanUsername = (typeof username === 'string' ? username : '').replace(/^@/, '');
 
@@ -22,10 +27,56 @@ export default function App() {
   const [dietary, setDietary] = useState<dietaryType>(null);
   const [disclaimers, setDisclaimers] = useState<string[]>([]);
 
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+
+  const apiCall = useApiCall();
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  const fetchReviews = () => {
+    if (!recipe?.id) return;
+    fetch(`${API_BASE}/v1/recipes/${recipe.id}/reviews`, { method: 'GET' })
+      .then((res) => res.json())
+      .then((data) => setReviews(data.data))
+      .catch(console.error);
+  };
+
+  const submitReview = async () => {
+    if (!recipe?.id || loading) return;
+    setLoading(true);
+    try {
+      const res = await apiCall(`${API_BASE}/v1/recipes/${recipe.id}/reviews`, true, {
+        method: 'POST',
+        body: JSON.stringify(newReview)
+      });
+      const data = await res.json();
+      if (res.status === 201) {
+        setToast({ type: 'success', message: 'Review submitted successfully!' });
+        setShowReviewModal(false);
+        setNewReview({ rating: 5, comment: '' });
+        fetchReviews();
+      } else {
+        setToast({ type: 'error', message: data.message });
+        setShowReviewModal(false);
+      }
+    } catch (err: any) {
+      setToast({ type: 'error', message: 'Connection error.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!cleanUsername || typeof recipe_slug !== 'string') return;
-
-    apiCall()(`${API_BASE}/v1/recipes/${cleanUsername}/${recipe_slug}`)
+    apiCall(`${API_BASE}/v1/recipes/${cleanUsername}/${recipe_slug}`)
       .then((res) => res.json())
       .then((data) => setRecipe(data.data))
       .catch(console.error);
@@ -35,17 +86,9 @@ export default function App() {
     if (recipe?.id !== undefined) {
       fetch(`${API_BASE}/v1/recipes/${recipe?.id}/steps`, { method: 'GET' })
         .then((res) => res.json())
-        .then((data) => {
-          setSteps(data.data);
-        })
-        .catch((err) => console.error(err));
-      fetch(`${API_BASE}/v1/recipes/${recipe?.id}/reviews`, { method: 'GET' })
-        .then((res) => res.json())
-        .then((data) => {
-          setReviews(data.data);
-          console.log(data.data);
-        })
-        .catch((err) => console.error(err));
+        .then((data) => setSteps(data.data))
+        .catch(console.error);
+      fetchReviews();
       fetch(`${API_BASE}/v1/recipes/${recipe?.id}/ingredients`, { method: "GET" })
         .then((res) => res.json())
         .then((data) =>
@@ -64,57 +107,19 @@ export default function App() {
         )
         .then((ingredientsWithNames) => {
           setIngredients(ingredientsWithNames);
-
-          const aggregatedDietary = {
-            celery: 0,
-            gluten: 0,
-            crustaceans: 0,
-            eggs: 0,
-            fish: 0,
-            lupin: 0,
-            milk: 0,
-            molluscs: 0,
-            mustard: 0,
-            peanuts: 0,
-            sesame: 0,
-            soybeans: 0,
-            sulphites: 0,
-            treenuts: 0,
-            animal_products: 0,
-            meat: 0,
-          };
-
+          const aggregatedDietary = { celery: 0, gluten: 0, crustaceans: 0, eggs: 0, fish: 0, lupin: 0, milk: 0, molluscs: 0, mustard: 0, peanuts: 0, sesame: 0, soybeans: 0, sulphites: 0, treenuts: 0, animal_products: 0, meat: 0 };
           const disclaimers = new Set<string>();
-
           ingredientsWithNames.forEach(({ dietary, disclaimer }) => {
-            if (disclaimer) {
-              disclaimers.add(disclaimer);
-            }
-
+            if (disclaimer) disclaimers.add(disclaimer);
             if (!dietary) return;
-
-            if (dietary.celery > aggregatedDietary.celery) aggregatedDietary.celery = dietary.celery;
-            if (dietary.gluten > aggregatedDietary.gluten) aggregatedDietary.gluten = dietary.gluten;
-            if (dietary.crustaceans > aggregatedDietary.crustaceans) aggregatedDietary.crustaceans = dietary.crustaceans;
-            if (dietary.eggs > aggregatedDietary.eggs) aggregatedDietary.eggs = dietary.eggs;
-            if (dietary.fish > aggregatedDietary.fish) aggregatedDietary.fish = dietary.fish;
-            if (dietary.lupin > aggregatedDietary.lupin) aggregatedDietary.lupin = dietary.lupin;
-            if (dietary.milk > aggregatedDietary.milk) aggregatedDietary.milk = dietary.milk;
-            if (dietary.molluscs > aggregatedDietary.molluscs) aggregatedDietary.molluscs = dietary.molluscs;
-            if (dietary.mustard > aggregatedDietary.mustard) aggregatedDietary.mustard = dietary.mustard;
-            if (dietary.peanuts > aggregatedDietary.peanuts) aggregatedDietary.peanuts = dietary.peanuts;
-            if (dietary.sesame > aggregatedDietary.sesame) aggregatedDietary.sesame = dietary.sesame;
-            if (dietary.soybeans > aggregatedDietary.soybeans) aggregatedDietary.soybeans = dietary.soybeans;
-            if (dietary.sulphites > aggregatedDietary.sulphites) aggregatedDietary.sulphites = dietary.sulphites;
-            if (dietary.treenuts > aggregatedDietary.treenuts) aggregatedDietary.treenuts = dietary.treenuts;
-            if (dietary.animal_products > aggregatedDietary.animal_products) aggregatedDietary.animal_products = dietary.animal_products;
-            if (dietary.meat > aggregatedDietary.meat) aggregatedDietary.meat = dietary.meat;
+            Object.keys(aggregatedDietary).forEach(key => {
+              if (dietary[key] > aggregatedDietary[key as keyof typeof aggregatedDietary]) aggregatedDietary[key as keyof typeof aggregatedDietary] = dietary[key];
+            });
           });
-
           setDietary(aggregatedDietary);
           setDisclaimers([...disclaimers]);
         })
-        .catch((err) => console.error(err));
+        .catch(console.error);
     }
   }, [recipe]);
 
@@ -123,6 +128,11 @@ export default function App() {
   return (
     <ScrollView className={`body`}>
       <Navbar />
+      {toast && (
+        <View className="fixed top-20 left-4 right-4 z-[100]">
+          {toast.type === 'success' ? <SuccessBox message={toast.message} /> : <ErrorBox message={toast.message} />}
+        </View>
+      )}
       <ImageBackground source={backgroundImage} className={`px-std py-sm`}>
         {recipe ? (
           <View className={`gap-std p-sm grid`} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
@@ -131,22 +141,17 @@ export default function App() {
               <OLink className={`txt-2xl text-white`} href={`/@${recipe.author.username}`}>Created by <Text className={`underline`}>{recipe.author.name}</Text>.</OLink>
             </View>
             {reviews?.score !== -1 ? (
-            <View className={`flex flex-row gap-4`}>
-              <View className={`flex flex-row gap-1`}>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <FontAwesome
-                    key={star}
-                    name={star <= Math.round(reviews?.score || 0) ? "star" : "star-o"}
-                    size={24}
-                    color="#fff"
-                  />
-                ))}
+              <View className={`flex flex-row gap-4`}>
+                <View className={`flex flex-row gap-1`}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <FontAwesome key={star} name={star <= Math.round(reviews?.score || 0) ? "star" : "star-o"} size={24} color="#fff" />
+                  ))}
+                </View>
+                <OText className={`text-white`}>|</OText>
+                <OText className={`text-white`}>{reviews?.score }</OText>
+                <OText className={`text-white`}>|</OText>
+                <OText className={`text-white`}>{reviews?.reviews?.length} Ratings</OText>
               </View>
-              <OText className={`text-white`}>|</OText>
-              <OText className={`text-white`}>{reviews?.score }</OText>
-              <OText className={`text-white`}>|</OText>
-              <OText className={`text-white`}>{reviews?.reviews?.length} Ratings</OText>
-            </View>
             ) : (<OText className={`text-white italic`}>This recipe doesn&apos;t have any reviews yet.</OText>)}
           </View>
         ) : (
@@ -168,33 +173,15 @@ export default function App() {
               <View className={`border-t-2 border-neutral-200 mt-2 text-xs`}></View>
               <OText className={`txt-xs`}>
                 {dietary && (() => {
-                  if (!dietary) return null;
-
-                  const contains: string[] = [];
-                  const mayContain: string[] = [];
-                  const allergens: (keyof typeof dietary)[] = [
-                    "celery","gluten","crustaceans","eggs","fish","lupin","milk","molluscs",
-                    "mustard","peanuts","sesame","soybeans","sulphites","treenuts"
-                  ];
-
-                  allergens.forEach((key) => {
-                    const value = dietary[key];
-                    if (value === 2) contains.push(key);
-                    else if (value === 1) mayContain.push(key);
-                  });
-
+                  const contains: string[] = []; const mayContain: string[] = [];
+                  const allergens: (keyof typeof dietary)[] = ["celery","gluten","crustaceans","eggs","fish","lupin","milk","molluscs","mustard","peanuts","sesame","soybeans","sulphites","treenuts"];
+                  allergens.forEach((key) => { if (dietary[key] === 2) contains.push(key); else if (dietary[key] === 1) mayContain.push(key); });
                   const sentences: string[] = [];
                   if (contains.length) sentences.push(`Contains ${contains.join(", ")}.`);
                   if (mayContain.length) sentences.push(`May contain ${mayContain.join(", ")}.`);
-
-                  if (dietary.animal_products === 2) sentences.push("Not suitable for vegans.");
-                  else if (dietary.animal_products === 1) sentences.push("May not be suitable for vegans.");
-
-                  if (dietary.meat === 2) sentences.push("Not suitable for vegetarians.");
-                  else if (dietary.meat === 1) sentences.push("May not be suitable for vegetarians.");
-
-                  if (sentences.length !== 0) { sentences.unshift("Dietary information:"); }
-
+                  if (dietary.animal_products === 2) sentences.push("Not suitable for vegans."); else if (dietary.animal_products === 1) sentences.push("May not be suitable for vegans.");
+                  if (dietary.meat === 2) sentences.push("Not suitable for vegetarians."); else if (dietary.meat === 1) sentences.push("May not be suitable for vegetarians.");
+                  if (sentences.length !== 0) sentences.unshift("Dietary information:");
                   return sentences.join(" ");
                 })()}
               </OText>
@@ -206,14 +193,8 @@ export default function App() {
             <View className={`gap-std bg-secondary p-xs grid`}>
               <Text className={`h2 font-serif`}>Cooking</Text>
               <OText>This recipe serves {recipe.servings} people.</OText>
-              <OText>
-                {recipe.author.name} estimates that this recipe takes {recipe.time.prep} minutes to
-                prepare, and {recipe.time.cook} minutes to cook.
-              </OText>
-              <Difficulty
-                currentStep={2}
-                steps={['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert']}
-              />
+              <OText>{recipe.author.name} estimates that this recipe takes {recipe.time.prep} minutes to prepare, and {recipe.time.cook} minutes to cook.</OText>
+              <Difficulty currentStep={2} steps={['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert']} />
             </View>
             <View className={`gap-std flex`}>
               <View className={`gap-std bg-secondary p-xs grid ${ !recipe.tips && (`flex-grow`)}`}>
@@ -221,37 +202,25 @@ export default function App() {
                 { ingredients ? (
                   <View className={`flex-row divide-x-2 divide-neutral-200/75`}>
                     <View className={`grid gap-1 flex-grow divide-y-2 divide-neutral-300`}>
-                      { ingredients.map((ingredient, index) => (
-                        <OText key={'ingredient-name' + index} className={`flex-grow pr-2 pt-1`}>{ingredient.name}</OText>
-                      ))}
+                      { ingredients.map((ingredient, index) => <OText key={'ingredient-name' + index} className={`flex-grow pr-2 pt-1`}>{ingredient.name}</OText>)}
                     </View>
                     <View className={`grid gap-1 divide-y-2 divide-neutral-300`}>
-                      { ingredients.map((ingredient, index) => (
-                        <OText key={'ingredient-amount' + index} className={`pl-2 pt-1`}>{parseAmount(ingredient.amount)} {parseUnit(ingredient.amount, ingredient.unit)}</OText>
-                      ))}
+                      { ingredients.map((ingredient, index) => <OText key={'ingredient-amount' + index} className={`pl-2 pt-1`}>{parseAmount(ingredient.amount)} {parseUnit(ingredient.amount, ingredient.unit)}</OText>)}
                     </View>
                   </View>
                 ) : (
                   <>
-                    <OText>
-                      Looks like {recipe.author.name} didn&apos;t give us a list of ingredients...
-                      that&apos;s awkward.
-                    </OText>
-                    <OText>
-                      Try messaging them to ask, or see what&apos;s mentioned in the steps to the
-                      right.
-                    </OText>
-                    <OText>
-                      Sorry for any inconvenience caused!
-                    </OText>
+                    <OText>Looks like {recipe.author.name} didn&apos;t give us a list of ingredients... that&apos;s awkward.</OText>
+                    <OText>Try messaging them to ask, or see what&apos;s mentioned in the steps to the right.</OText>
+                    <OText>Sorry for any inconvenience caused!</OText>
                   </>
                 )}
               </View>
               { recipe.tips && (
-              <View className={`mobile-span-2 gap-std bg-secondary p-xs grid flex-grow`}>
-                <Text className={`h2 font-serif`}>Chef&apos;s Tips</Text>
+                <View className={`mobile-span-2 gap-std bg-secondary p-xs grid flex-grow`}>
+                  <Text className={`h2 font-serif`}>Chef&apos;s Tips</Text>
                   <OText>{recipe.tips}</OText>
-              </View>
+                </View>
               )}
             </View>
             <View className={`span-2 gap-std bg-secondary p-xs`}>
@@ -265,17 +234,20 @@ export default function App() {
               <View className={`flex-grow`}></View>
             </View>
             <View className={`span-2 gap-std bg-secondary p-xs grid`}>
-              <Text className={`h2 font-serif`}>Reviews</Text>
+              <View className="flex-row gap-std">
+                <Text className={`h2 font-serif grow`}>Reviews</Text>
+                {user?.name && (
+                  <OPressable onPress={() => setShowReviewModal(true)} className="btn btn-secondary">
+                    Post Review
+                  </OPressable>
+                )}
+              </View>
               <View className={`grid-2 gap-std`}>
                 {reviews?.reviews && reviews?.score !== -1 ? (
                   reviews.reviews.map((review, index) => (
                     <View key={'review' + index} className={`px-4 py-3 border-4 ${(review.rating === 5 || review.rating === 4) ? "border-green-800" : (review.rating === 3) ? "border-yellow-700" : "border-red-800"}`}>
                       <View className={`flex flex-row gap-2`}>
-                        <OLink
-                          href={`/@${review.author.username}`}
-                          className={`h3 font-serif underline`}>
-                          {review.author.name}
-                        </OLink>
+                        <OLink href={`/@${review.author.username}`} className={`h3 font-serif underline`}>{review.author.name}</OLink>
                         <Text className={`h3 font-serif`}>{review.rating}/5</Text>
                       </View>
                       {review.comment !== null && review.comment !== '' ? (
@@ -299,6 +271,33 @@ export default function App() {
           </View>
         </View>
       )}
+
+      <Modal visible={showReviewModal} title="Leave Review" onClose={() => !loading && setShowReviewModal(false)}>
+        <View className="gap-4">
+          <StarRating rating={newReview.rating} disabled={loading} onRatingChange={(n) => setNewReview({ ...newReview, rating: n })} />
+          <View>
+            <TextInput
+              multiline
+              numberOfLines={4}
+              maxLength={128}
+              editable={!loading}
+              className="input"
+              placeholder="Share your thoughts (optional)..."
+              style={{ textAlignVertical: 'top', minHeight: 100 }}
+              value={newReview.comment}
+              onChangeText={(text) => setNewReview({ ...newReview, comment: text })}
+            />
+            <OText className="txt-xs text-right mt-1 txt-subtle">{newReview.comment.length}/128</OText>
+          </View>
+          <View className="mt-2 flex-row gap-std">
+            <OPressable disabled={loading} onPress={submitReview} className="btn btn-primary">
+              {loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Submit Review"}
+            </OPressable>
+            <OPressable disabled={loading} onPress={() => setShowReviewModal(false)} className="btn btn-secondary">Cancel</OPressable>
+          </View>
+        </View>
+      </Modal>
+
       <Footer/>
     </ScrollView>
   );

@@ -38,17 +38,23 @@ export const OLink = ({
   );
 };
 
-export const OPressable = ({
-  className = '', children, onPress, ...props
+export const OPressable = ({ className = '', children, onPress, disabled = false, ...props
 }: {
-  className?: string; children: ReactNode; onPress: (event: GestureResponderEvent) => void;
+  className?: string; children?: ReactNode; onPress: (event: GestureResponderEvent) => void; disabled?: boolean;
 }) => {
   return (
-    <Pressable onPress={onPress} {...props}>
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      style={({ pressed }) => [
+        { transform: [{ scale: pressed && !disabled ? 0.96 : 1 }] }
+      ]}
+      {...props}
+    >
       {isValidElement(children) ? (
-        <View className={`${className}`}>{children}</View>
+        <View className={`${className} ${disabled ? 'opacity-50' : ''}`}>{children}</View>
       ) : (
-        <Text className={`${className}`}>{children}</Text>
+        <Text className={`${className} ${disabled ? 'opacity-50' : ''}`}>{children}</Text>
       )}
     </Pressable>
   );

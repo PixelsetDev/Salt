@@ -7,21 +7,25 @@ import { API_BASE } from '../../utils/settings';
 import { OLink, OText } from '../../components/Overrides.tsx';
 import { FontAwesome } from '@expo/vector-icons';
 import { ErrorBox, WarningBox } from '../../components/Boxes.tsx';
+import { useApiCall } from '../../utils/api.ts';
 
 export default function App() {
   const [error, setError] = useState<string|null>(null);
   const [collections, setCollections] = useState<collectionType[]>([]);
 
-  useEffect(() => { getCollections(); },[]);
+  const apiCall = useApiCall();
 
-  async function getCollections() {
-    fetch(API_BASE + '/v1/collections/', { method: 'GET' })
-      .then((response) => response.json())
-      .then((body) => {
-        setCollections(body.data);
-      })
-      .catch((err) => setError(err));
-  }
+  useEffect(() => {
+    const call = async () => {
+      apiCall(API_BASE + '/v1/collections/', false, { method: 'GET' })
+        .then((response) => response.json())
+        .then((body) => {
+          setCollections(body.data);
+        })
+        .catch((err) => setError(err));
+    };
+    call();
+  }, [apiCall]);
 
   // noinspection PointlessBooleanExpressionJS
   return (
@@ -47,12 +51,30 @@ export default function App() {
                     <FontAwesome name={`star`} size={16}/>&nbsp;
                     Featured
                   </OText>
+                  {collection.visibility === 0 && (<OText className={`bg-red-700 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
+                    <FontAwesome name={`lock`} size={16}/>&nbsp;Private
+                  </OText>)}
+                  {collection.visibility === 1 && (<OText className={`bg-orange-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
+                    <FontAwesome name={`users`} size={16}/>&nbsp;Friends Only
+                  </OText>)}
+                  {collection.visibility === 2 && (<OText className={`bg-yellow-400 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2`}>
+                    <FontAwesome name={`eye`} size={16}/>&nbsp;Unlisted
+                  </OText>)}
                 </OLink>
               )))}
               {collections?.map((collection) => ((collection && !collection?.featured) && (
                   <OLink href={`/collections/${collection.slug}`} className={`grid gap-2 px-4 py-2 btn btn-primary`} key={collection.id}>
                     <Text className={`txt-2xl font-serif`}>{collection.name}</Text>
                     <OText className={`text-white`}>By {collection.author.name}</OText>
+                    {collection.visibility === 0 && (<OText className={`bg-red-700 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
+                      <FontAwesome name={`lock`} size={16}/>&nbsp;Private
+                    </OText>)}
+                    {collection.visibility === 1 && (<OText className={`bg-orange-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
+                      <FontAwesome name={`users`} size={16}/>&nbsp;Friends Only
+                    </OText>)}
+                    {collection.visibility === 2 && (<OText className={`bg-yellow-400 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2`}>
+                      <FontAwesome name={`eye`} size={16}/>&nbsp;Unlisted
+                    </OText>)}
                   </OLink>
                 )
               ))}
