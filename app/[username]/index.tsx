@@ -6,12 +6,13 @@ import { OLink, OText, OPressable } from "../../components/Overrides";
 import Navbar, { Footer } from '../../components/Commons';
 import { API_BASE } from '../../utils/settings';
 import { userType } from '../../utils/types';
-import { ErrorBox, SuccessBox } from '../../components/Boxes.tsx';
+import { ErrorBox } from '../../components/Boxes.tsx';
 import { StarRating } from '../../components/StarRating.tsx';
 import { FontAwesome } from '@expo/vector-icons';
 import { RecipeLink } from '../../components/RecipeLink.tsx';
 import { useApiCall } from '../../utils/api.ts';
 import { Modal } from '../../components/Modal.tsx';
+import { useToast } from "../../components/ToastProvider";
 
 export default function App() {
   const { username } = useLocalSearchParams();
@@ -19,17 +20,10 @@ export default function App() {
   const [editingReview, setEditingReview] = useState<any>(null);
   const [deletingReview, setDeletingReview] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [toast, setToast] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<userType>(null);
   const apiCall = useApiCall();
-
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setToast(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const call = async () => {
@@ -60,12 +54,12 @@ export default function App() {
       if (res.status === 200) {
         setUser({ ...user, reviews: user.reviews.filter((r: any) => r.id !== deletingReview.id) });
         setDeletingReview(null);
-        setToast({ type: 'success', message: data.message || 'Review deleted successfully.' });
+        showToast({ type: 'success', message: data.message || 'Review deleted successfully.' });
       } else {
-        setToast({ type: 'error', message: data.message });
+        showToast({ type: 'error', message: data.message });
         setDeletingReview(null);
       }
-    } catch (err: any) { setToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
+    } catch (err: any) { showToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
   };
 
   const saveEdit = async () => {
@@ -80,22 +74,17 @@ export default function App() {
       if (res.status === 200) {
         setUser({ ...user, reviews: user.reviews.map((r: any) => r.id === editingReview.id ? editingReview : r) });
         setEditingReview(null);
-        setToast({ type: 'success', message: data.message || 'Review updated successfully.' });
+        showToast({ type: 'success', message: data.message || 'Review updated successfully.' });
       } else {
-        setToast({ type: 'error', message: data.message });
+        showToast({ type: 'error', message: data.message });
         setEditingReview(null);
       }
-    } catch (err: any) { setToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
+    } catch (err: any) { showToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
   };
 
   return (
     <ScrollView className="body">
       <Navbar />
-      {toast && (
-        <View className="fixed top-20 left-4 right-4 z-[100]">
-          {toast.type === 'success' ? <SuccessBox message={toast.message} /> : <ErrorBox message={toast.message} />}
-        </View>
-      )}
       <View className="header grid-2">
         {user ? (
           <View className="gap-std flex-row">
@@ -212,10 +201,10 @@ export default function App() {
                 <OText className="txt-xs text-right mt-1 opacity-60">{(editingReview?.comment || '').length}/128</OText>
               </View>
               <View className="mt-2 flex-row gap-std">
-                <OPressable disabled={loading} onPress={saveEdit} className="btn btn-primary flex-1 items-center justify-center">
+                <OPressable disabled={loading} onPress={saveEdit} className="btn btn-primary">
                   {loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Save Changes"}
                 </OPressable>
-                <OPressable disabled={loading} onPress={() => setEditingReview(null)} className="btn btn-secondary flex-1 items-center">Cancel</OPressable>
+                <OPressable disabled={loading} onPress={() => setEditingReview(null)} className="btn btn-secondary">Cancel</OPressable>
               </View>
             </View>
           </Modal>
@@ -224,10 +213,10 @@ export default function App() {
             <View className="gap-4">
               <OText className="text-center txt-xl">Are you sure you want to delete your review for <OText className="font-bold">{deletingReview?.recipe_name}</OText>?</OText>
               <View className="mt-4 flex-row gap-std">
-                <OPressable disabled={loading} onPress={confirmDelete} className="btn btn-danger flex-1 items-center justify-center">
+                <OPressable disabled={loading} onPress={confirmDelete} className="btn btn-danger">
                   {loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Delete Forever"}
                 </OPressable>
-                <OPressable disabled={loading} onPress={() => setDeletingReview(null)} className="btn btn-secondary flex-1 items-center">Keep It</OPressable>
+                <OPressable disabled={loading} onPress={() => setDeletingReview(null)} className="btn btn-secondary">Keep It</OPressable>
               </View>
             </View>
           </Modal>

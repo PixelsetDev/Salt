@@ -7,6 +7,7 @@ import { useFonts } from 'expo-font';
 import { Merriweather_400Regular } from '@expo-google-fonts/merriweather';
 import { Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { UserProvider } from '../components/auth/UserProvider';
+import { ToastProvider } from '../components/ToastProvider.tsx';
 
 //      ██████  ██████  ██    ██████
 //      ██      ██  ██  ██      ██
@@ -53,7 +54,9 @@ export default Sentry.wrap(() => {
   return (
     <LogtoProvider config={config}>
       <UserProvider>
-        <Slot />
+        <ToastProvider>
+          <Slot />
+        </ToastProvider>
       </UserProvider>
     </LogtoProvider>
   );

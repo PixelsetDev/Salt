@@ -13,12 +13,13 @@ import { useApiCall } from '../../utils/api.ts';
 import { useUser } from '../../components/auth/UserProvider.tsx';
 import { Modal } from '../../components/Modal.tsx';
 import { StarRating } from '../../components/StarRating.tsx';
-import { ErrorBox, SuccessBox } from '../../components/Boxes.tsx';
+import { useToast } from '../../components/ToastProvider';
 
 export default function App() {
   const { user } = useUser();
   const { username, recipe_slug } = useLocalSearchParams();
   const cleanUsername = (typeof username === 'string' ? username : '').replace(/^@/, '');
+  const { showToast } = useToast();
 
   const [recipe, setRecipe] = useState<recipeType>(null);
   const [steps, setSteps] = useState<stepsType>(null);
@@ -30,16 +31,8 @@ export default function App() {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   const apiCall = useApiCall();
-
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setToast(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
 
   const fetchReviews = () => {
     if (!recipe?.id) return;
@@ -59,16 +52,16 @@ export default function App() {
       });
       const data = await res.json();
       if (res.status === 201) {
-        setToast({ type: 'success', message: 'Review submitted successfully!' });
+        showToast({ type: 'success', message: 'Review submitted successfully!' });
         setShowReviewModal(false);
         setNewReview({ rating: 5, comment: '' });
         fetchReviews();
       } else {
-        setToast({ type: 'error', message: data.message });
+        showToast({ type: 'error', message: data.message });
         setShowReviewModal(false);
       }
     } catch (err: any) {
-      setToast({ type: 'error', message: 'Connection error.' });
+      showToast({ type: 'error', message: 'Connection error.' });
     } finally {
       setLoading(false);
     }
@@ -128,11 +121,6 @@ export default function App() {
   return (
     <ScrollView className={`body`}>
       <Navbar />
-      {toast && (
-        <View className="fixed top-20 left-4 right-4 z-[100]">
-          {toast.type === 'success' ? <SuccessBox message={toast.message} /> : <ErrorBox message={toast.message} />}
-        </View>
-      )}
       <ImageBackground source={backgroundImage} className={`px-std py-sm`}>
         {recipe ? (
           <View className={`gap-std p-sm grid`} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
@@ -287,7 +275,7 @@ export default function App() {
               value={newReview.comment}
               onChangeText={(text) => setNewReview({ ...newReview, comment: text })}
             />
-            <OText className="txt-xs text-right mt-1 txt-subtle">{newReview.comment.length}/128</OText>
+            <OText className="txt-xs text-right mt-1 opacity-60">{newReview.comment.length}/128</OText>
           </View>
           <View className="mt-2 flex-row gap-std">
             <OPressable disabled={loading} onPress={submitReview} className="btn btn-primary">
