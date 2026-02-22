@@ -1,24 +1,37 @@
 import { useLogto } from '@logto/rn';
+import { useCallback } from 'react';
 
-export const useAuthenticatedFetch = () => {
+export const useApiCall = () => {
   const { getAccessToken, getIdToken, isAuthenticated } = useLogto();
+  return useCallback(
+    async (url: string, requiredAuth = false, options: RequestInit = {}) => {
+      console.log(`Is authenticated for ${url}: ${isAuthenticated}`);
 
-  return async (url: string, options: RequestInit = {}): Promise<Response> => {
-    if (!isAuthenticated) {
-      return Promise.reject(new Error('User is not authenticated'));
-    }
+      if (!isAuthenticated && requiredAuth) {
+        throw new Error('User is not authenticated');
+      }
 
-    const accessToken = await getAccessToken('https://api.ourcookbook.org');
-    const idToken = await getIdToken();
+      let accessToken, idToken;
 
-    return fetch(url, {
-      ...options,
-      headers: {
-        ...(options.headers ?? {}),
-        Authorization: `Bearer ${accessToken}`,
-        'X-PIXELSET-IDENTITY': idToken ?? '',
-      },
-    });
-  };
+      if (isAuthenticated) {
+        accessToken = await getAccessToken('https://api.ourcookbook.org');
+        idToken = await getIdToken();
+
+        return fetch(url, {
+          ...options,
+          headers: {
+            ...(options.headers ?? {}),
+            Authorization: `Bearer ${accessToken}`,
+            'X-PIXELSET-IDENTITY': idToken ?? '',
+          },
+        });
+      } else {
+        return fetch(url, {
+          ...options,
+          headers: {...(options.headers ?? {})},
+        });
+      }
+    },
+    []
+  );
 };
-

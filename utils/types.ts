@@ -32,6 +32,18 @@ export type categoriesType = [{
   name: string;
 }] | null;
 
+export type collectionType = {
+  id: number;
+  name: string;
+  slug: string;
+  author: {
+    name: string;
+    username: string;
+  };
+  description: string;
+  featured: boolean;
+} | null;
+
 export type ingredientType = {
   alias_of: number;
   name: string;
@@ -99,7 +111,7 @@ export type reviewsType = {
         username: string;
         name: string;
       };
-      },
+    },
   ];
 } | null;
 
@@ -114,4 +126,10 @@ export type usersType = {
     name: string;
     description: string|null;
   }];
+  collections?: [{
+    slug: string;
+    name: string;
+    description: string|null;
+    featured: boolean;
+  }]
 } | null;

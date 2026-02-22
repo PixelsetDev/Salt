@@ -184,6 +184,7 @@ export default function App() {
         <View className={`grid-3 gap-std`}>
           <OLink className={`text-center btn btn-secondary`} href={`/news/2025-05-27-our-environmental-impact`}>Previous Article</OLink>
           <OLink className={`text-center btn btn-secondary`} href={`/news`}>All News</OLink>
+          <OLink className={`text-center btn btn-secondary`} href={`/news/2026-03-07-spice-up-ya-life`}>Next Article</OLink>
         </View>
       </View>
       <Footer/>

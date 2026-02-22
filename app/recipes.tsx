@@ -11,9 +11,6 @@ export default function App() {
 
   const [hasSearched, setHasSearched] = useState(false);
 
-  console.log("RAW:", search);
-  console.log("NORMALIZED:", searchValue);
-
   return (
     <ScrollView className={`body`}>
       <Navbar />

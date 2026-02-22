@@ -39,6 +39,7 @@
 @utility txt-lg { @apply md:text-base text-sm; }
 @utility txt-sm { @apply text-sm; }
 @utility txt-xs { @apply text-xs; }
+@utility txt-subtle { @apply text-xs text-neutral-500; }
 
 @utility h1 { @apply txt-7xl dark:text-white; }
 @utility h2 { @apply txt-5xl dark:text-white; }
@@ -62,8 +63,9 @@
 
 @utility tc-white { @apply text-white; }
 
-@utility btn { @apply px-4 py-2 btn-np; }
-@utility btn-np { @apply rounded-lg border-2 transition duration-200 cursor-pointer; }
+@utility btn { @apply px-4 py-2 btn-np rounded-lg; }
+@utility btn-sm { @apply px-2 py-1 btn-np rounded-lg; }
+@utility btn-np { @apply border-2 transition duration-200 cursor-pointer; }
 
 @utility btn-primary { @apply text-white border-green-800 bg-green-800 hover:border-green-700 hover:bg-green-700 text-lg sm:text-sm; }
 @utility btn-danger { @apply text-white border-red-800 bg-red-800 hover:border-red-700 hover:bg-red-700 text-lg sm:text-sm; }
@@ -74,8 +76,9 @@
 @utility link-nav { @apply text-white px-4 underline decoration-2 decoration-green-800 hover:text-green-200 hover:decoration-green-700 transition duration-200 text-lg; }
 @utility btn-nav { @apply px-4 py-2 dark:text-white hover:bg-green-800 hover:text-white transition duration-200 text-lg; }
 
-@utility link-inline { @apply underline hover:text-green-800 transition duration-200; }
-@utility link-inline-red { @apply underline text-red-900 hover:text-red-700 transition duration-200; }
+@utility link-inline { @apply underline hover:text-green-800 transition duration-200 dark:text-white; }
+@utility link-inline-subtle { @apply underline hover:text-green-800 transition duration-200 txt-subtle; }
+@utility link-inline-red { @apply underline text-red-900 hover:text-red-700 transition duration-200 dark:text-white; }
 
 @utility input { @apply border-green-800 dark:bg-neutral-800 bg-green-100 text-lg sm:text-sm border-2 px-4 py-2; }
 

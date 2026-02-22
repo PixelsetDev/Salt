@@ -4,7 +4,6 @@ import Navbar, { Footer } from '../components/Commons';
 import { useLogto } from '@logto/rn';
 import { SignInButton } from '../components/auth/Auth';
 import { OLink, OText } from '../components/Overrides';
-import { useEffect, useState } from 'react';
 import { useUser } from '../components/auth/UserProvider';
 
 export default function App() {

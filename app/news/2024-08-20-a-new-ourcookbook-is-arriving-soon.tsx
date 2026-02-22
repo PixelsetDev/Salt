@@ -127,7 +127,7 @@ export default function App() {
             </Text>
             <View className={`flex gap-2`}>
               <View className={`flex-grow`}></View>
-              <Text className={`chip-red`}>Postponed</Text>
+              <Text className={`chip-yellow`}>Mid 2026</Text>
               <View className={`flex-grow`}></View>
             </View>
           </View>
@@ -144,55 +144,6 @@ export default function App() {
             Unfortunately due to the high costs associated with developing an app for iOS devices, we&apos;re not yet
             planning to release one but are considering this for the future. iOS users will be able to add our website
             to their home screen as an app, but it may not always work offline.
-          </OText>
-        </View>
-
-        <View className={`grid gap-std`}>
-          <View className={`flex flex-row gap-2`}>
-            <Text className={`h2 font-serif`}>Improved Account Support
-            </Text>
-            <View className={`flex gap-2`}>
-              <View className={`flex-grow`}></View>
-              <Text className={`chip-red`}>Postponed</Text>
-              <View className={`flex-grow`}></View>
-            </View>
-          </View>
-          <OText className={`italic`}>
-            Update: We&apos;ve unfortunately had to postpone this feature as we continue to review our service offerings.
-            We will provide an update later on when you can expect this feature.
-          </OText>
-          <OText>
-            Currently, to manage your account you need to go to Portal&apos;s website. We&apos;re working with Portal to
-            bring this functionality straight to OurCookbook! Soon, you&apos;ll be able to change certain bits of your
-            profile directly on your account page here. Don&apos;t worry, we&apos;re still supporting Portal Account
-            Data and you&apos;ll still be able to manage your account there if you&apos;d prefer.
-          </OText>
-        </View>
-
-        <View className={`grid gap-std`}>
-          <View className={`flex flex-row gap-2`}>
-            <Text className={`h2 font-serif`}>Community Gallery
-            </Text>
-            <View className={`flex gap-2`}>
-              <View className={`flex-grow`}></View>
-              <Text className={`chip-red`}>Postponed</Text>
-              <View className={`flex-grow`}></View>
-            </View>
-          </View>
-          <OText className={`italic`}>
-            Update: We&apos;ve unfortunately had to postpone this feature as we continue to review our service offerings.
-            We will provide an update later on when you can expect this feature.
-          </OText>
-          <OText>
-            We know that sometimes you&apos;ll see a picture for a recipe that won&apos;t quite turn out how you
-            expected, or that sometimes there&apos;s no picture at all. We&apos;re working on adding a new Communiy
-            Gallery feature that will allow anyone to upload pictures to any recipe. Any images uploaded can be selected
-            by the author to be that recipe&apos;s main image.
-          </OText>
-          <OText>
-            With more content comes more responsibility. We&apos;re making it easier to report content that may be
-            inappropriate for our website. Thankfully we&apos;ve never had a case of this, but having the tools on-site
-            rather than at our support centre will make it easier to remove bad content faster.
           </OText>
         </View>
 

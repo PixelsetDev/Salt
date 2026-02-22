@@ -1,14 +1,15 @@
-import "./../../global.css";
-import { Text, View, ScrollView, ImageBackground } from 'react-native';
+import './../../global.css';
+import { ImageBackground, ScrollView, Text, View } from 'react-native';
 import Navbar, { Footer } from '../../components/Commons';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { OText, OLink } from '../../components/Overrides';
+import { OLink, OText } from '../../components/Overrides';
 import { Difficulty } from '../../components/Scales';
 import { API_BASE } from '../../utils/settings';
 import { dietaryType, recipeIngredientsType, recipeType, reviewsType, stepsType } from '../../utils/types';
 import { parseAmount, parseUnit } from '../../utils/parser';
 import { FontAwesome } from '@expo/vector-icons';
+import { apiCall } from '../../utils/api.ts';
 
 export default function App() {
   const { username, recipe_slug } = useLocalSearchParams();
@@ -24,11 +25,10 @@ export default function App() {
   useEffect(() => {
     if (!cleanUsername || typeof recipe_slug !== 'string') return;
 
-    fetch(`${API_BASE}/v1/recipes/${cleanUsername}/${recipe_slug}`)
-      .then(res => res.json())
-      .then(data => setRecipe(data.data))
+    apiCall()(`${API_BASE}/v1/recipes/${cleanUsername}/${recipe_slug}`)
+      .then((res) => res.json())
+      .then((data) => setRecipe(data.data))
       .catch(console.error);
-
   }, [cleanUsername, recipe_slug]);
 
   useEffect(() => {
@@ -87,6 +87,10 @@ export default function App() {
           const disclaimers = new Set<string>();
 
           ingredientsWithNames.forEach(({ dietary, disclaimer }) => {
+            if (disclaimer) {
+              disclaimers.add(disclaimer);
+            }
+
             if (!dietary) return;
 
             if (dietary.celery > aggregatedDietary.celery) aggregatedDietary.celery = dietary.celery;
@@ -105,8 +109,6 @@ export default function App() {
             if (dietary.treenuts > aggregatedDietary.treenuts) aggregatedDietary.treenuts = dietary.treenuts;
             if (dietary.animal_products > aggregatedDietary.animal_products) aggregatedDietary.animal_products = dietary.animal_products;
             if (dietary.meat > aggregatedDietary.meat) aggregatedDietary.meat = dietary.meat;
-
-            if (disclaimer) disclaimers.add(disclaimer);
           });
 
           setDietary(aggregatedDietary);

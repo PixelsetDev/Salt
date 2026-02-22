@@ -1,11 +1,17 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useLogto } from '@logto/rn';
-import { useAuthenticatedFetch } from '../../utils/api';
+import { LogtoClient, useLogto } from '@logto/rn';
+import { useApiCall } from '../../utils/api';
 import { API_BASE } from '../../utils/settings';
 
 interface UserContextType {
   user: any;
   loading: boolean;
+  logto: {
+    client: LogtoClient;
+    isAuthenticated: boolean;
+    getAccessToken: Function;
+    getIdToken: Function;
+  };
 }
 
 interface UserProviderProps {
@@ -15,10 +21,13 @@ interface UserProviderProps {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
+  const logto = useLogto();
+  const { isAuthenticated } = logto;
+
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const { isAuthenticated } = useLogto();
-  const authFetch = useAuthenticatedFetch();
+
+  const apiCall = useApiCall();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -28,9 +37,19 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
     const getMe = async () => {
       try {
-        const res = await authFetch(`${API_BASE}/v1/users/[me]`);
-        const json = await res.json();
-        setUser(json.data);
+        const fetchUser = async () => {
+          try {
+            const res = await apiCall(`${API_BASE}/v1/users/[me]`, true); // true = requires auth
+            if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+            const json = await res.json();
+            setUser(json.data);
+          } catch (err: any) {
+            console.error(err);
+          }
+        };
+
+        await fetchUser();
       } catch (e) {
         console.error(e);
       } finally {
