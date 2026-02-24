@@ -24,7 +24,7 @@ export default function EditRecipe() {
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddIngModal, setShowAddIngModal] = useState(false);
-  const [Error, setError] = useState<string|null>(null);
+  const [newStepText, setNewStepText] = useState('');
   const [ingSearch, setIngSearch] = useState<{query: string, results: any[]}>({query: '', results: []});
   const [ingToDelete, setIngToDelete] = useState<any>(null);
   const [stepToDelete, setStepToDelete] = useState<{index: number, text: string} | null>(null);
@@ -33,29 +33,44 @@ export default function EditRecipe() {
   const difficulties = ['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert'];
   const visibilities = [{id: 3, name: 'Public'}, {id: 2, name: 'Unlisted'}, {id: 1, name: 'Friends'}, {id: 0, name: 'Private'}];
 
+
   useEffect(() => {
-    apiCall(`${API_BASE}/v1/recipes/${recipe_id}`).then(res => res.json()).then(data => setRecipe(data.data));
-    fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`).then(res => res.json()).then(async (data) => {
+    apiCall(`${API_BASE}/v1/recipes/${recipe_id}`).then(res => res.status === 200 ? res.json() : Promise.reject(res)).then(data => setRecipe(data.data)).catch(() => showToast({type: 'error', message: 'Failed to load recipe.'}));
+    fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`).then(res => res.status === 200 ? res.json() : Promise.reject(res)).then(async (data) => {
       const ingList = data.data || [];
       setIngredients(ingList);
       const names: {[key: number]: string} = {};
       await Promise.all(ingList.map(async (ing: any) => {
         const res = await fetch(`${API_BASE}/v1/ingredients/${ing.ingredient}`);
-        const details = await res.json();
-        names[ing.ingredient] = details.data.name;
+        if (res.status === 200) { const details = await res.json(); names[ing.ingredient] = details.data.name; }
       }));
       setIngredientNames(names);
-    });
-    fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`).then(res => res.json()).then(data => setSteps(data.data || []));
+    }).catch(() => showToast({type: 'error', message: 'Failed to load ingredients.'}));
+    fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`).then(res => res.status === 200 ? res.json() : Promise.reject(res)).then(data => setSteps(data.data || [])).catch(() => showToast({type: 'error', message: 'Failed to load steps.'}));
   }, [recipe_id]);
 
   useEffect(() => {
+    if (!ingSearch.query) {
+      setIngSearch(prev => ({ ...prev, results: [] }));
+      return;
+    }
     const delayDebounceFn = setTimeout(() => {
-      if (ingSearch.query.length >= 2) {
-        fetch(`${API_BASE}/v1/ingredients?search=${ingSearch.query}&lang=GB`)
-          .then(res => res.json())
-          .then(data => setIngSearch(prev => ({ ...prev, results: data.data.results })));
-      }
+      fetch(`${API_BASE}/v1/ingredients?search=${encodeURIComponent(ingSearch.query)}&lang=GB`)
+        .then(res => {
+          if (!res.ok) {showToast({ type: 'error', message: `Search failed (${res.status})` });return null;}
+          return res.json();
+        })
+        .then(data => {
+          if (data) {
+            const results = data.data?.results || [];
+            setIngSearch(prev => ({ ...prev, results }));
+            if (results.length === 0) {showToast({ type: 'error', message: 'No ingredients found.' });}
+          }
+        })
+        .catch(() => {
+          showToast({ type: 'error', message: 'Network error during search.' });
+          setIngSearch(prev => ({ ...prev, results: [] }));
+        });
     }, 500);
     return () => clearTimeout(delayDebounceFn);
   }, [ingSearch.query]);
@@ -64,43 +79,57 @@ export default function EditRecipe() {
     setLoading(true);
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}`, true, { method: 'PUT', body: JSON.stringify({ ...recipe, prep_time: recipe?.time.prep, cook_time: recipe?.time.cook }) });
     if (res.status === 200) showToast({ type: 'success', message: 'Recipe updated.' });
-    else setError('Error '+res.status);
+    else showToast({ type: 'error', message: 'Save failed (' + res.status + ')' });
     setLoading(false);
   };
 
   const addIngredient = async (ingredientId: number) => {
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'POST', body: JSON.stringify({ ingredient: ingredientId, amount: 0, unit: '' }) });
     if (res.status === 201) { setShowAddIngModal(false); router.reload(); }
-    else setError('Error ' + res.status);
+    else showToast({ type: 'error', message: 'Failed to add ingredient.' });
   };
 
   const deleteIngredient = async () => {
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'DELETE', body: JSON.stringify({ id: ingToDelete.id }) });
-    if (res.status === 204) router.reload(); else setError('Error ' + res.status);
+    if (res.status === 204) router.reload(); else showToast({ type: 'error', message: 'Delete failed.' });
   };
 
   const addStep = async () => {
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'POST', body: JSON.stringify({ step: steps.length + 1, text: '' }) });
-    if (res.status === 201) router.reload(); else setError('Error ' + res.status);
+    if (!newStepText.trim()) return;
+    setLoading(true);
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, {
+      method: 'POST',
+      body: JSON.stringify({ step: steps.length + 1, text: newStepText })
+    });
+
+    if (res.status === 201) {
+      setNewStepText('');
+      const updatedSteps = await fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`).then(r => r.json());
+      setSteps(updatedSteps.data || []);
+      showToast({ type: 'success', message: 'Step added.' });
+    } else {
+      showToast({ type: 'error', message: 'Failed to add step.' });
+    }
+    setLoading(false);
   };
 
   const deleteStep = async () => {
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'DELETE', body: JSON.stringify({ step: stepToDelete!.index + 1 }) });
-    if (res.status === 204) router.reload(); else setError('Error ' + res.status);
+    if (res.status === 204) router.reload(); else showToast({ type: 'error', message: 'Delete failed.' });
   };
 
   const saveIngredient = async (id: number) => {
     const item = ingredients.find(i => i.id === id);
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'PUT', body: JSON.stringify(item) });
     if (res.status === 200) showToast({ type: 'success', message: 'Ingredient saved.' });
-    else setError('Error '+res.status);
+    else showToast({ type: 'error', message: 'Save failed.' });
   };
 
   const saveStep = async (index: number) => {
     const text = steps[index];
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'PUT', body: JSON.stringify({ step: index + 1, text }) });
     if (res.status === 200) showToast({ type: 'success', message: 'Step saved.' });
-    else setError('Error '+res.status);
+    else showToast({ type: 'error', message: 'Save failed.' });
   };
 
   return (
@@ -174,17 +203,39 @@ export default function EditRecipe() {
           </View>
 
           <View className="bg-secondary p-xs grid gap-std">
-            <View className="flex-row justify-between"><Text className="h2 font-serif">Steps</Text><OPressable onPress={addStep} className="btn btn-secondary">+ Add</OPressable></View>
-            {steps.length === 0 ? (
-              <OText>This recipe has no steps, please add some!</OText>
-            ) : steps.map((step: any, idx: number) => (
+            <Text className="h2 font-serif">Steps</Text>
+
+            {steps.map((step: any, idx: number) => (
               <View key={idx} className="flex-row gap-sm items-center">
-                <Text className="font-serif txt-4xl dark:text-white w-12">{idx + 1}.</Text>
-                <TextInput className="input flex-1 txt-lg" multiline value={typeof step === 'object' ? step.text : step} onChangeText={t => setSteps(steps.map((s, i) => i === idx ? t : s))} />
-                <OPressable onPress={() => saveStep(idx)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
-                <OPressable onPress={() => setStepToDelete({index: idx, text: steps[idx]})} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
+                <Text className="font-serif txt-xl dark:text-white w-8">{idx + 1}.</Text>
+                <TextInput
+                  className="input flex-1"
+                  multiline
+                  value={typeof step === 'object' ? step.text : step}
+                  onChangeText={t => setSteps(steps.map((s, i) => i === idx ? (typeof s === 'object' ? {...s, text: t} : t) : s))}
+                />
+                <OPressable onPress={() => saveStep(idx)} className="btn btn-primary">
+                  <FontAwesome name="save" size={16} color="white" />
+                </OPressable>
+                <OPressable onPress={() => setStepToDelete({index: idx, text: typeof step === 'object' ? step.text : step})} className="btn btn-danger">
+                  <FontAwesome name="trash" size={16} color="white" />
+                </OPressable>
               </View>
             ))}
+
+            <View className="flex-row gap-sm items-start border-t border-neutral-700 pt-std mt-sm">
+              <Text className="font-serif txt-xl dark:text-white w-8">{steps.length + 1}.</Text>
+              <TextInput
+                className="input flex-1"
+                placeholder="Type instructions for the next step..."
+                multiline
+                value={newStepText}
+                onChangeText={setNewStepText}
+              />
+              <OPressable onPress={addStep} disabled={loading} className="btn btn-secondary h-10 px-4">
+                <OText>Add Step</OText>
+              </OPressable>
+            </View>
           </View>
 
           <View className="border-2 border-red-500 p-xs grid gap-std">
@@ -196,13 +247,23 @@ export default function EditRecipe() {
 
       <Modal visible={showAddIngModal} title="Add Ingredient" onClose={() => setShowAddIngModal(false)}>
         <View className="gap-std">
-          <TextInput className="input" placeholder="Search ingredients..." onChangeText={(t) => setIngSearch(prev => ({ ...prev, query: t }))} />
+          <TextInput
+            className="input"
+            placeholder="Search ingredients..."
+            onChangeText={(t) => setIngSearch(prev => ({ ...prev, query: t }))}
+          />
           <ScrollView style={{maxHeight: 200}}>
-            {ingSearch.results.map((res: any) => (
-              <OPressable key={res.id} className="p-2 border-b border-neutral-200" onPress={() => addIngredient(res.id)}>
-                <OText>{res.name}</OText>
-              </OPressable>
-            ))}
+            {ingSearch.results.length > 0 ? (
+              ingSearch.results.map((res: any) => (
+                <OPressable key={res.id} className="p-2 border-b border-neutral-200" onPress={() => addIngredient(res.id)}>
+                  <OText>{res.name}</OText>
+                </OPressable>
+              ))
+            ) : ingSearch.query.length > 0 && (
+              <View className="p-4 items-center">
+                <OText className="opacity-50">No results found for "{ingSearch.query}"</OText>
+              </View>
+            )}
           </ScrollView>
           <OPressable onPress={() => setShowAddIngModal(false)} className="btn btn-secondary">Cancel</OPressable>
         </View>
