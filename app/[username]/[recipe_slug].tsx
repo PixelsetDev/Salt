@@ -1,7 +1,7 @@
 import './../../global.css';
 import { ImageBackground, ScrollView, Text, View, TextInput } from 'react-native';
 import Navbar, { Footer } from '../../components/Commons';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { OLink, OPressable, OText } from '../../components/Overrides';
 import { Difficulty } from '../../components/Scales';
@@ -59,7 +59,7 @@ export default function App() {
         showToast({ type: 'error', message: data.message });
         setShowReviewModal(false);
       }
-    } catch (err: any) { showToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
+    } catch (err: any) { showToast({ type: 'error', message: err.message }); } finally { setLoading(false); }
   };
 
   const confirmDelete = async () => {
@@ -76,7 +76,7 @@ export default function App() {
         showToast({ type: 'error', message: data.message });
         setDeletingReview(null);
       }
-    } catch (err: any) { showToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
+    } catch (err: any) { showToast({ type: 'error', message: err.message }); } finally { setLoading(false); }
   };
 
   const saveEdit = async () => {
@@ -96,7 +96,7 @@ export default function App() {
         showToast({ type: 'error', message: data.message });
         setEditingReview(null);
       }
-    } catch (err: any) { showToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
+    } catch (err: any) { showToast({ type: 'error', message: err.message }); } finally { setLoading(false); }
   };
 
   useEffect(() => {
@@ -150,7 +150,10 @@ export default function App() {
       <ImageBackground source={backgroundImage} className={`px-std py-sm`}>
         {recipe ? (
           <View className={`gap-std p-sm grid`} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <Text className={`h1 font-serif text-white`}>{recipe.name}</Text>
+            <View className="flex-row gap-sm items-center">
+              <Text className={`h1 font-serif text-white grow`}>{recipe.name}</Text>
+              { recipe.isOwned && (<OPressable onPress={() => {router.push(`/edit/recipe/${recipe.id}`)}} className="btn btn-info">Edit</OPressable>)}
+            </View>
             <View className={`flex flex-row gap-2`}>
               <OText className="txt-2xl text-white">Created by <OLink className={`txt-2xl text-white underline`} href={`/@${recipe.author.username}`}>{recipe.author.name}</OLink> on {new Date(recipe.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}.</OText>
             </View>

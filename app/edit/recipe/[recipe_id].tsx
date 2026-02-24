@@ -33,7 +33,12 @@ export default function EditRecipe() {
   const visibilities = [{id: 3, name: 'Public'}, {id: 2, name: 'Unlisted'}, {id: 1, name: 'Friends'}, {id: 0, name: 'Private'}];
 
   useEffect(() => {
-    apiCall(`${API_BASE}/v1/recipes/${recipe_id}`).then(res => res.ok ? res.json() : null).then(data => data && setRecipe(data.data));
+    apiCall(`${API_BASE}/v1/recipes/${recipe_id}`).then(res => res.ok ? res.json() : null).then(data => {
+      if (data) {
+        if (!data.data.isOwned) { showToast({ type: 'error', message: 'You do not have permission to edit this recipe.' }); router.push(`/@${data.data.author.username}/${data.data.slug}`); return; }
+        setRecipe(data.data);
+      }
+    });
     fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`).then(res => res.ok ? res.json() : null).then(async (data) => {
       const ingList = data?.data || [];
       setIngredients(ingList);

@@ -94,6 +94,7 @@ export type recipeType = {
     prep: number;
     cook: number;
   }
+  isOwned: string;
 } | null;
 
 export type recipeIngredientsType = {
