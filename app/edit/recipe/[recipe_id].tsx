@@ -17,7 +17,7 @@ export default function EditRecipe() {
   const { showToast } = useToast();
   const apiCall = useApiCall();
   const [recipe, setRecipe] = useState<recipeType | null>(null);
-  const [ingredients, setIngredients] = useState<any[]>([]);
+  const [ingredients, setIngredients] = useState<{id: number, ingredient: number, amount: number, unit: string}[]>([]);
   const [ingredientNames, setIngredientNames] = useState<{[key: number]: string}>({});
   const [steps, setSteps] = useState<any[]>([]);
   const [newStepText, setNewStepText] = useState('');
@@ -25,7 +25,7 @@ export default function EditRecipe() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddIngModal, setShowAddIngModal] = useState(false);
   const [ingSearch, setIngSearch] = useState<{query: string, results: any[]}>({query: '', results: []});
-  const [ingToDelete, setIngToDelete] = useState<any>(null);
+  const [ingToDelete, setIngToDelete] = useState<{id: number, ingredient: number, name: string} | null>(null);
   const [stepToDelete, setStepToDelete] = useState<{index: number, text: string} | null>(null);
 
   const units = ['', 'g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup', 'pcs', 'oz', 'lb'];
@@ -78,41 +78,41 @@ export default function EditRecipe() {
 
   const addIngredient = async (ingredientId: number) => {
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'POST', body: JSON.stringify({ ingredient: ingredientId, amount: 0, unit: '' }) });
-    if (res.status === 201) { setShowAddIngModal(false); loadData(); }
+    if (res.status === 201) { loadData(); setShowAddIngModal(false); }
     else showToast({ type: 'error', message: 'Failed to add ingredient.' });
   };
 
   const deleteIngredient = async () => {
-    if (!ingToDelete) {
-      showToast({ type: 'warning', message: 'No ingredient selected to delete.' });
+    if (!ingToDelete?.id) {
+      console.log("DEBUG: deleteIngredient FAILED - State missing junction ID:", ingToDelete);
+      showToast({ type: 'error', message: 'Delete failed: Missing record ID.' });
       return;
     }
+    console.log("DEBUG: Sending DELETE for junction ID:", ingToDelete.id);
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'DELETE', body: JSON.stringify({ id: ingToDelete.id }) });
-    if (res.status === 200) {
-      setIngToDelete(null);
-      loadData();
-    } else {
-      showToast({ type: 'error', message: 'Delete failed.' });
-    }
+    if (res.status === 200) { loadData(); setIngToDelete(null); }
+    else showToast({ type: 'error', message: 'Delete failed.' });
   };
 
   const addStep = async () => {
     if (!newStepText.trim()) return;
     setLoading(true);
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'POST', body: JSON.stringify({ step: steps.length + 1, text: newStepText }) });
-    if (res.status === 201) { setNewStepText(''); loadData(); showToast({ type: 'success', message: 'Step added.' }); }
+    if (res.status === 201) { loadData(); setNewStepText(''); showToast({ type: 'success', message: 'Step added.' }); }
     else showToast({ type: 'error', message: 'Failed to add step.' });
     setLoading(false);
   };
 
   const deleteStep = async () => {
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'DELETE', body: JSON.stringify({ step: stepToDelete!.index + 1 }) });
-    if (res.status === 200) { setStepToDelete(null); loadData(); }
+    if (!stepToDelete) return;
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'DELETE', body: JSON.stringify({ step: stepToDelete.index + 1 }) });
+    if (res.status === 200) { loadData(); setStepToDelete(null); }
     else showToast({ type: 'error', message: 'Delete failed.' });
   };
 
   const saveIngredient = async (id: number) => {
     const item = ingredients.find(i => i.id === id);
+    if (!item) { console.log("DEBUG: saveIngredient FAILED - item not found for ID:", id); return; }
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'PUT', body: JSON.stringify(item) });
     if (res.status === 200) showToast({ type: 'success', message: 'Ingredient saved.' });
     else showToast({ type: 'error', message: 'Save failed.' });
@@ -120,7 +120,8 @@ export default function EditRecipe() {
 
   const saveStep = async (index: number) => {
     const text = steps[index];
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'PUT', body: JSON.stringify({ step: index + 1, text: typeof text === 'object' ? text.text : text }) });
+    const stepText = typeof text === 'object' ? text.text : text;
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'PUT', body: JSON.stringify({ step: index + 1, text: stepText }) });
     if (res.status === 200) showToast({ type: 'success', message: 'Step saved.' });
     else showToast({ type: 'error', message: 'Save failed.' });
   };
@@ -153,13 +154,13 @@ export default function EditRecipe() {
 
           <View className="bg-secondary p-xs grid gap-std">
             <View className="flex-row justify-between"><Text className="h2 font-serif">Ingredients</Text><OPressable onPress={() => setShowAddIngModal(true)} className="btn btn-secondary">+ Add</OPressable></View>
-            {ingredients.length === 0 ? <OText>This recipe has no ingredients, please add some!</OText> : ingredients.map((ing) => (
-              <View key={ing.id} className="flex-row gap-sm items-center">
+            {ingredients.length === 0 ? <OText>This recipe has no ingredients, please add some!</OText> : ingredients.map((ing, idx) => (
+              <View key={ing.id || idx} className="flex-row gap-sm items-center">
                 <View className="flex-1 input justify-center bg-neutral-200 dark:bg-neutral-800 h-10 px-2 rounded"><OText>{ingredientNames[ing.ingredient] || "Loading..."}</OText></View>
                 <TextInput className="input flex-1" placeholder="Qty" keyboardType="numeric" value={ing.amount.toString()} onChangeText={t => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, amount: parseFloat(t) || 0} : i))} />
                 <Picker style={{ height: 40, flex: 1 }} className="input" selectedValue={ing.unit} onValueChange={(v) => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, unit: v} : i))}>{units.map(u => <Picker.Item key={u} label={u || 'Unit'} value={u} />)}</Picker>
                 <OPressable onPress={() => saveIngredient(ing.id)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
-                <OPressable onPress={() => setIngToDelete({id: ing.id, name: ingredientNames[ing.ingredient]})} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
+                <OPressable onPress={() => setIngToDelete({...ing, name: ingredientNames[ing.ingredient]})} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
               </View>
             ))}
           </View>
@@ -199,14 +200,20 @@ export default function EditRecipe() {
       <Modal visible={!!ingToDelete} title="Delete Ingredient" onClose={() => setIngToDelete(null)}>
         <View className="grid gap-std">
           <OText>Remove <OText>{ingToDelete?.name}</OText> from this recipe?</OText>
-          <View className="flex-row gap-std mt-2"><OPressable onPress={deleteIngredient} className="btn btn-danger">Delete</OPressable><OPressable onPress={() => setIngToDelete(null)} className="btn btn-secondary">Cancel</OPressable></View>
+          <View className="flex-row gap-std mt-2">
+            <OPressable onPress={deleteIngredient} className="btn btn-danger">Delete</OPressable>
+            <OPressable onPress={() => setIngToDelete(null)} className="btn btn-secondary">Cancel</OPressable>
+          </View>
         </View>
       </Modal>
 
       <Modal visible={!!stepToDelete} title={`Delete Step ${stepToDelete ? stepToDelete.index + 1 : ''}?`} onClose={() => setStepToDelete(null)}>
         <View className="grid gap-std">
           <OText>&quot;{stepToDelete?.text}&quot;</OText>
-          <View className="flex-row gap-std mt-2"><OPressable onPress={deleteStep} className="btn btn-danger">Delete</OPressable><OPressable onPress={() => setStepToDelete(null)} className="btn btn-secondary">Cancel</OPressable></View>
+          <View className="flex-row gap-std mt-2">
+            <OPressable onPress={deleteStep} className="btn btn-danger">Delete</OPressable>
+            <OPressable onPress={() => setStepToDelete(null)} className="btn btn-secondary">Cancel</OPressable>
+          </View>
         </View>
       </Modal>
 
