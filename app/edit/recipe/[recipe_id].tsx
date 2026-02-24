@@ -17,7 +17,7 @@ export default function EditRecipe() {
   const { showToast } = useToast();
   const apiCall = useApiCall();
   const [recipe, setRecipe] = useState<recipeType | null>(null);
-  const [ingredients, setIngredients] = useState<{id: number, ingredient: number, amount: number, unit: string}[]>([]);
+  const [ingredients, setIngredients] = useState<any[]>([]);
   const [ingredientNames, setIngredientNames] = useState<{[key: number]: string}>({});
   const [steps, setSteps] = useState<any[]>([]);
   const [newStepText, setNewStepText] = useState('');
@@ -25,7 +25,7 @@ export default function EditRecipe() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddIngModal, setShowAddIngModal] = useState(false);
   const [ingSearch, setIngSearch] = useState<{query: string, results: any[]}>({query: '', results: []});
-  const [ingToDelete, setIngToDelete] = useState<{id: number, ingredient: number, name: string} | null>(null);
+  const [ingToDelete, setIngToDelete] = useState<any | null>(null);
   const [stepToDelete, setStepToDelete] = useState<{index: number, text: string} | null>(null);
 
   const units = ['', 'g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup', 'pcs', 'oz', 'lb'];
@@ -69,8 +69,14 @@ export default function EditRecipe() {
   }, [ingSearch.query]);
 
   const saveMetadata = async () => {
+    if (!recipe) return;
     setLoading(true);
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}`, true, { method: 'PUT', body: JSON.stringify({ ...recipe, prep_time: recipe?.time.prep, cook_time: recipe?.time.cook }) });
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}`, true, { method: 'PUT', body: JSON.stringify({
+        ...recipe,
+        prep_time: Math.floor(recipe.time.prep),
+        cook_time: Math.floor(recipe.time.cook),
+        servings: Math.floor(recipe.servings)
+      }) });
     if (res.status === 200) showToast({ type: 'success', message: 'Recipe updated.' });
     else showToast({ type: 'error', message: 'Failed to save metadata.' });
     setLoading(false);
@@ -83,12 +89,7 @@ export default function EditRecipe() {
   };
 
   const deleteIngredient = async () => {
-    if (!ingToDelete?.id) {
-      console.log("DEBUG: deleteIngredient FAILED - State missing junction ID:", ingToDelete);
-      showToast({ type: 'error', message: 'Delete failed: Missing record ID.' });
-      return;
-    }
-    console.log("DEBUG: Sending DELETE for junction ID:", ingToDelete.id);
+    if (!ingToDelete?.id) { showToast({ type: 'error', message: 'Delete failed: Missing record ID.' }); return; }
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'DELETE', body: JSON.stringify({ id: ingToDelete.id }) });
     if (res.status === 200) { loadData(); setIngToDelete(null); }
     else showToast({ type: 'error', message: 'Delete failed.' });
@@ -97,7 +98,7 @@ export default function EditRecipe() {
   const addStep = async () => {
     if (!newStepText.trim()) return;
     setLoading(true);
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'POST', body: JSON.stringify({ step: steps.length + 1, text: newStepText }) });
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'POST', body: JSON.stringify({ step: steps.length + 1, text: newStepText.substring(0, 255) }) });
     if (res.status === 201) { loadData(); setNewStepText(''); showToast({ type: 'success', message: 'Step added.' }); }
     else showToast({ type: 'error', message: 'Failed to add step.' });
     setLoading(false);
@@ -112,15 +113,18 @@ export default function EditRecipe() {
 
   const saveIngredient = async (id: number) => {
     const item = ingredients.find(i => i.id === id);
-    if (!item) { console.log("DEBUG: saveIngredient FAILED - item not found for ID:", id); return; }
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'PUT', body: JSON.stringify(item) });
+    if (!item) return;
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'PUT', body: JSON.stringify({
+        ...item,
+        amount: parseFloat(item.amount) || 0
+      }) });
     if (res.status === 200) showToast({ type: 'success', message: 'Ingredient saved.' });
     else showToast({ type: 'error', message: 'Save failed.' });
   };
 
   const saveStep = async (index: number) => {
     const text = steps[index];
-    const stepText = typeof text === 'object' ? text.text : text;
+    const stepText = (typeof text === 'object' ? text.text : text).substring(0, 255);
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'PUT', body: JSON.stringify({ step: index + 1, text: stepText }) });
     if (res.status === 200) showToast({ type: 'success', message: 'Step saved.' });
     else showToast({ type: 'error', message: 'Save failed.' });
@@ -136,10 +140,22 @@ export default function EditRecipe() {
             <View className="flex-row justify-between"><Text className="h2 font-serif">Metadata</Text><OPressable disabled={loading} onPress={saveMetadata} className="btn btn-primary">Save</OPressable></View>
             <View className="grid-2 gap-std">
               <View className="grid gap-std">
-                <View className="grid gap-sm"><OText>Recipe Name</OText><TextInput className="input" placeholder="Recipe Name" value={recipe.name} onChangeText={t => setRecipe({...recipe, name: t})} /></View>
-                <View className="grid gap-sm"><OText>Tips</OText><TextInput className="input" placeholder="Chef's Tips" multiline value={recipe.tips} onChangeText={t => setRecipe({...recipe, tips: t})} /></View>
+                <View className="grid gap-sm">
+                  <OText>Recipe Name</OText>
+                  <TextInput maxLength={64} className="input" placeholder="Recipe Name" value={recipe.name} onChangeText={t => setRecipe({...recipe, name: t})} />
+                  <Text className="txt-xs txt-subtle text-right">{recipe.name?.length || 0}/64</Text>
+                </View>
+                <View className="grid gap-sm">
+                  <OText>Tips</OText>
+                  <TextInput maxLength={128} className="input" placeholder="Chef's Tips" multiline value={recipe.tips || ''} onChangeText={t => setRecipe({...recipe, tips: t})} />
+                  <Text className="txt-xs txt-subtle text-right">{recipe.tips?.length || 0}/128</Text>
+                </View>
               </View>
-              <View className="flex-col gap-sm"><OText>Description</OText><TextInput className="input flex-grow" placeholder="Description" multiline value={recipe.description} onChangeText={t => setRecipe({...recipe, description: t})} /></View>
+              <View className="flex-col gap-sm">
+                <OText>Description</OText>
+                <TextInput maxLength={255} className="input flex-grow" placeholder="Description" multiline value={recipe.description || ''} onChangeText={t => setRecipe({...recipe, description: t})} />
+                <Text className="txt-xs txt-subtle text-right">{recipe.description?.length || 0}/255</Text>
+              </View>
             </View>
             <View className="grid-3 gap-std">
               <View><OText>Servings</OText><TextInput className="input" keyboardType="numeric" value={recipe.servings.toString()} onChangeText={t => setRecipe({...recipe, servings: parseInt(t) || 0})} /></View>
@@ -167,18 +183,27 @@ export default function EditRecipe() {
 
           <View className="bg-secondary p-xs grid gap-std">
             <Text className="h2 font-serif">Steps</Text>
-            {steps.length === 0 ? <OText>This recipe has no steps, please add some!</OText> : steps.map((step: any, idx: number) => (
-              <View key={idx} className="flex-row gap-sm items-center">
-                <Text className="font-serif txt-4xl dark:text-white w-12">{idx + 1}.</Text>
-                <TextInput className="input flex-1 txt-lg" multiline value={typeof step === 'object' ? step.text : step} onChangeText={t => setSteps(steps.map((s, i) => i === idx ? (typeof s === 'object' ? {...s, text: t} : t) : s))} />
-                <OPressable onPress={() => saveStep(idx)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
-                <OPressable onPress={() => setStepToDelete({index: idx, text: typeof step === 'object' ? step.text : step})} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
+            {steps.length === 0 ? <OText>This recipe has no steps, please add some!</OText> : steps.map((step: any, idx: number) => {
+              const currentText = typeof step === 'object' ? step.text : step;
+              return (
+                <View key={idx} className="grid gap-xs">
+                  <View className="flex-row gap-sm items-center">
+                    <Text className="font-serif txt-4xl dark:text-white w-12">{idx + 1}.</Text>
+                    <TextInput maxLength={255} className="input flex-1 txt-lg" multiline value={currentText} onChangeText={t => setSteps(steps.map((s, i) => i === idx ? (typeof s === 'object' ? {...s, text: t} : t) : s))} />
+                    <OPressable onPress={() => saveStep(idx)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
+                    <OPressable onPress={() => setStepToDelete({index: idx, text: currentText})} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
+                  </View>
+                  <Text className="txt-xs txt-subtle text-right mr-20">{currentText?.length || 0}/255</Text>
+                </View>
+              );
+            })}
+            <View className="grid gap-xs mt-2">
+              <View className="flex-row gap-sm items-center">
+                <Text className="font-serif txt-4xl dark:text-white w-12">{steps.length + 1}.</Text>
+                <TextInput maxLength={255} className="input flex-1" placeholder="Add a new step..." multiline numberOfLines={1} value={newStepText} onChangeText={setNewStepText} />
+                <OPressable onPress={addStep} disabled={loading} className="btn btn-secondary">+ Add</OPressable>
               </View>
-            ))}
-            <View className="flex-row gap-sm items-center">
-              <Text className="font-serif txt-4xl dark:text-white w-12">{steps.length + 1}.</Text>
-              <TextInput className="input flex-1" placeholder="Add a new step..." multiline numberOfLines={1} value={newStepText} onChangeText={setNewStepText} />
-              <OPressable onPress={addStep} disabled={loading} className="btn btn-secondary">+ Add</OPressable>
+              <Text className="txt-xs txt-subtle text-right mr-20">{newStepText.length}/255</Text>
             </View>
           </View>
 
