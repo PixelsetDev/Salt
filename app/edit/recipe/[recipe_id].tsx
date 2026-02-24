@@ -2,7 +2,7 @@ import './../../../global.css';
 import { ScrollView, Text, View, TextInput } from 'react-native';
 import Navbar, { Footer } from '../../../components/Commons';
 import { useLocalSearchParams, router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { OPressable, OText } from '../../../components/Overrides';
 import { API_BASE } from '../../../utils/settings';
 import { useApiCall } from '../../../utils/api.ts';
@@ -32,14 +32,19 @@ export default function EditRecipe() {
   const difficulties = ['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert'];
   const visibilities = [{id: 3, name: 'Public'}, {id: 2, name: 'Unlisted'}, {id: 1, name: 'Friends'}, {id: 0, name: 'Private'}];
 
-  useEffect(() => {
-    apiCall(`${API_BASE}/v1/recipes/${recipe_id}`).then(res => res.ok ? res.json() : null).then(data => {
+  const loadData = useCallback(() => {
+    apiCall(`${API_BASE}/v1/recipes/${recipe_id}`).then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to load recipe'))).then(data => {
       if (data) {
-        if (!data.data.isOwned) { showToast({ type: 'error', message: 'You do not have permission to edit this recipe.' }); router.push(`/@${data.data.author.username}/${data.data.slug}`); return; }
+        if (!data.data.isOwned) {
+          showToast({ type: 'error', message: 'You do not have permission to edit this recipe.' });
+          router.push(`/@${data.data.author.username}/${data.data.slug}`);
+          return;
+        }
         setRecipe(data.data);
       }
-    });
-    fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`).then(res => res.ok ? res.json() : null).then(async (data) => {
+    }).catch(err => showToast({ type: 'error', message: err.message }));
+
+    fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`).then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to load ingredients'))).then(async (data) => {
       const ingList = data?.data || [];
       setIngredients(ingList);
       const names: {[key: number]: string} = {};
@@ -48,17 +53,17 @@ export default function EditRecipe() {
         if (res.ok) { const details = await res.json(); names[ing.ingredient] = details.data.name; }
       }));
       setIngredientNames(names);
-    });
-    fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`).then(res => res.ok ? res.json() : null).then(data => setSteps(data?.data || []));
+    }).catch(err => showToast({ type: 'error', message: err.message }));
+
+    fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`).then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to load steps'))).then(data => setSteps(data?.data || [])).catch(err => showToast({ type: 'error', message: err.message }));
   }, [recipe_id]);
+
+  useEffect(() => { loadData(); }, [loadData]);
 
   useEffect(() => {
     if (!ingSearch.query) { setIngSearch(prev => ({ ...prev, results: [] })); return; }
     const delayDebounceFn = setTimeout(() => {
-      fetch(`${API_BASE}/v1/ingredients?search=${encodeURIComponent(ingSearch.query)}&lang=GB`)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => setIngSearch(prev => ({ ...prev, results: data?.data?.results || [] })))
-        .catch(() => setIngSearch(prev => ({ ...prev, results: [] })));
+      fetch(`${API_BASE}/v1/ingredients?search=${encodeURIComponent(ingSearch.query)}&lang=GB`).then(res => res.ok ? res.json() : null).then(data => setIngSearch(prev => ({ ...prev, results: data?.data?.results || [] }))).catch(() => setIngSearch(prev => ({ ...prev, results: [] })));
     }, 400);
     return () => clearTimeout(delayDebounceFn);
   }, [ingSearch.query]);
@@ -73,30 +78,37 @@ export default function EditRecipe() {
 
   const addIngredient = async (ingredientId: number) => {
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'POST', body: JSON.stringify({ ingredient: ingredientId, amount: 0, unit: '' }) });
-    if (res.status === 201) { setShowAddIngModal(false); router.reload(); }
+    if (res.status === 201) { setShowAddIngModal(false); loadData(); }
     else showToast({ type: 'error', message: 'Failed to add ingredient.' });
   };
 
   const deleteIngredient = async () => {
+    if (!ingToDelete) {
+      showToast({ type: 'warning', message: 'No ingredient selected to delete.' });
+      return;
+    }
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'DELETE', body: JSON.stringify({ id: ingToDelete.id }) });
-    if (res.status === 204) router.reload(); else showToast({ type: 'error', message: 'Delete failed.' });
+    if (res.status === 200) {
+      setIngToDelete(null);
+      loadData();
+    } else {
+      showToast({ type: 'error', message: 'Delete failed.' });
+    }
   };
 
   const addStep = async () => {
     if (!newStepText.trim()) return;
     setLoading(true);
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'POST', body: JSON.stringify({ step: steps.length + 1, text: newStepText }) });
-    if (res.status === 201) {
-      setNewStepText('');
-      fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`).then(r => r.json()).then(d => setSteps(d.data || []));
-      showToast({ type: 'success', message: 'Step added.' });
-    } else showToast({ type: 'error', message: 'Failed to add step.' });
+    if (res.status === 201) { setNewStepText(''); loadData(); showToast({ type: 'success', message: 'Step added.' }); }
+    else showToast({ type: 'error', message: 'Failed to add step.' });
     setLoading(false);
   };
 
   const deleteStep = async () => {
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'DELETE', body: JSON.stringify({ step: stepToDelete!.index + 1 }) });
-    if (res.status === 204) router.reload(); else showToast({ type: 'error', message: 'Delete failed.' });
+    if (res.status === 200) { setStepToDelete(null); loadData(); }
+    else showToast({ type: 'error', message: 'Delete failed.' });
   };
 
   const saveIngredient = async (id: number) => {
@@ -116,31 +128,17 @@ export default function EditRecipe() {
   return (
     <ScrollView className="body">
       <Navbar />
-      <View className="header p-std">
-        <Text className="h1 font-serif text-white">Edit {recipe?.name}</Text>
-      </View>
+      <View className="header p-std"><Text className="h1 font-serif text-white">Edit {recipe?.name}</Text></View>
       {recipe && (
         <View className="p-std grid gap-std">
           <View className="bg-secondary p-xs grid gap-std">
-            <View className="flex-row justify-between">
-              <Text className="h2 font-serif">Metadata</Text>
-              <OPressable disabled={loading} onPress={saveMetadata} className="btn btn-primary">Save</OPressable>
-            </View>
+            <View className="flex-row justify-between"><Text className="h2 font-serif">Metadata</Text><OPressable disabled={loading} onPress={saveMetadata} className="btn btn-primary">Save</OPressable></View>
             <View className="grid-2 gap-std">
               <View className="grid gap-std">
-                <View className="grid gap-sm">
-                  <OText>Recipe Name</OText>
-                  <TextInput className="input" placeholder="Recipe Name" value={recipe.name} onChangeText={t => setRecipe({...recipe, name: t})} />
-                </View>
-                <View className="grid gap-sm">
-                  <OText>Tips</OText>
-                  <TextInput className="input" placeholder="Chef's Tips" multiline value={recipe.tips} onChangeText={t => setRecipe({...recipe, tips: t})} />
-                </View>
+                <View className="grid gap-sm"><OText>Recipe Name</OText><TextInput className="input" placeholder="Recipe Name" value={recipe.name} onChangeText={t => setRecipe({...recipe, name: t})} /></View>
+                <View className="grid gap-sm"><OText>Tips</OText><TextInput className="input" placeholder="Chef's Tips" multiline value={recipe.tips} onChangeText={t => setRecipe({...recipe, tips: t})} /></View>
               </View>
-              <View className="flex-col gap-sm">
-                <OText>Description</OText>
-                <TextInput className="input flex-grow" placeholder="Description" multiline value={recipe.description} onChangeText={t => setRecipe({...recipe, description: t})} />
-              </View>
+              <View className="flex-col gap-sm"><OText>Description</OText><TextInput className="input flex-grow" placeholder="Description" multiline value={recipe.description} onChangeText={t => setRecipe({...recipe, description: t})} /></View>
             </View>
             <View className="grid-3 gap-std">
               <View><OText>Servings</OText><TextInput className="input" keyboardType="numeric" value={recipe.servings.toString()} onChangeText={t => setRecipe({...recipe, servings: parseInt(t) || 0})} /></View>
@@ -193,11 +191,7 @@ export default function EditRecipe() {
       <Modal visible={showAddIngModal} title="Add Ingredient" onClose={() => setShowAddIngModal(false)}>
         <View className="gap-std">
           <TextInput className="input" autoFocus placeholder="Type to search..." onChangeText={(t) => setIngSearch(prev => ({ ...prev, query: t }))} />
-          <ScrollView style={{maxHeight: 200}} className="mt-2">
-            {ingSearch.results.length > 0 ? ingSearch.results.map((res: any) => (
-              <OPressable key={res.id} className="p-3 border-b border-neutral-200 dark:border-neutral-700" onPress={() => addIngredient(res.id)}><OText>{res.name}</OText></OPressable>
-            )) : <View className="p-8 items-center"><OText className="opacity-50 text-center">{ingSearch.query ? `No ingredients found for "${ingSearch.query}"` : "Start typing to find ingredients..."}</OText></View>}
-          </ScrollView>
+          <ScrollView style={{maxHeight: 200}} className="mt-2">{ingSearch.results.length > 0 ? ingSearch.results.map((res: any) => (<OPressable key={res.id} className="p-3 border-b border-neutral-200 dark:border-neutral-700" onPress={() => addIngredient(res.id)}><OText>{res.name}</OText></OPressable>)) : <View className="p-8 items-center"><OText className="opacity-50 text-center">{ingSearch.query ? `No ingredients found for "${ingSearch.query}"` : "Start typing to find ingredients..."}</OText></View>}</ScrollView>
           <OPressable onPress={() => setShowAddIngModal(false)} className="btn btn-secondary">Close</OPressable>
         </View>
       </Modal>

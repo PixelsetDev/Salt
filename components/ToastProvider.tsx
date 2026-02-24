@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { View } from 'react-native';
-import { ErrorBox, SuccessBox } from './Boxes';
+import { ErrorBox, InfoBox, SuccessBox, WarningBox } from './Boxes';
 
-type ToastType = { type: 'success' | 'error'; message: string };
+type ToastType = { type: 'success' | 'warning' | 'info' | 'error'; message: string };
 const ToastContext = createContext<{ showToast: (t: ToastType) => void } | undefined>(undefined);
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
@@ -13,7 +13,12 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
       {children}
       {toast && (
         <View className="fixed top-8 right-8 z-[100]">
-          {toast.type === 'success' ? <SuccessBox message={toast.message} /> : <ErrorBox message={toast.message} />}
+          {
+            (toast.type === 'success') ? <SuccessBox message={toast.message} /> :
+            (toast.type === 'warning') ? <WarningBox message={toast.message} /> :
+            (toast.type === 'info') ? <InfoBox message={toast.message} /> :
+            <ErrorBox message={toast.message} />
+          }
         </View>
       )}
     </ToastContext.Provider>

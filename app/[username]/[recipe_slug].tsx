@@ -36,30 +36,27 @@ export default function App() {
   const fetchReviews = () => {
     if (!recipe?.id) return;
     fetch(`${API_BASE}/v1/recipes/${recipe.id}/reviews`, { method: 'GET' })
-      .then((res) => res.json())
+      .then((res) => res.ok ? res.json() : Promise.reject(new Error('Failed to load reviews')))
       .then((data) => setReviews(data.data))
-      .catch(console.error);
+      .catch((err) => showToast({ type: 'error', message: err.message }));
   };
 
   const submitReview = async () => {
     if (!recipe?.id || loading) return;
     setLoading(true);
     try {
-      const res = await apiCall(`${API_BASE}/v1/recipes/${recipe.id}/reviews`, true, {
-        method: 'POST',
-        body: JSON.stringify(newReview)
-      });
-      const data = await res.json();
+      const res = await apiCall(`${API_BASE}/v1/recipes/${recipe.id}/reviews`, true, { method: 'POST', body: JSON.stringify(newReview) });
+      const data = await res.json().catch(() => ({ message: 'Server error occurred' }));
       if (res.status === 201) {
         showToast({ type: 'success', message: 'Review submitted successfully!' });
         setShowReviewModal(false);
         setNewReview({ rating: 5, comment: '' });
         fetchReviews();
       } else {
-        showToast({ type: 'error', message: data.message });
+        showToast({ type: 'error', message: data.message || 'Submission failed' });
         setShowReviewModal(false);
       }
-    } catch (err: any) { showToast({ type: 'error', message: err.message }); } finally { setLoading(false); }
+    } catch (err: any) { showToast({ type: 'error', message: err.message || 'Network error' }); } finally { setLoading(false); }
   };
 
   const confirmDelete = async () => {
@@ -67,13 +64,13 @@ export default function App() {
     setLoading(true);
     try {
       const res = await apiCall(API_BASE + `/v1/recipes/${recipe.id}/reviews`, true, { method: 'DELETE' });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({ message: 'Deletion failed' }));
       if (res.status === 200) {
         setDeletingReview(null);
         showToast({ type: 'success', message: data.message || 'Review deleted successfully.' });
         fetchReviews();
       } else {
-        showToast({ type: 'error', message: data.message });
+        showToast({ type: 'error', message: data.message || 'Could not delete review' });
         setDeletingReview(null);
       }
     } catch (err: any) { showToast({ type: 'error', message: err.message }); } finally { setLoading(false); }
@@ -83,17 +80,14 @@ export default function App() {
     if (!editingReview || !recipe || loading) return;
     setLoading(true);
     try {
-      const res = await apiCall(API_BASE + `/v1/recipes/${recipe.id}/reviews`, true, {
-        method: 'PUT',
-        body: JSON.stringify({ rating: editingReview.rating, comment: editingReview.comment })
-      });
-      const data = await res.json();
+      const res = await apiCall(API_BASE + `/v1/recipes/${recipe.id}/reviews`, true, { method: 'PUT', body: JSON.stringify({ rating: editingReview.rating, comment: editingReview.comment }) });
+      const data = await res.json().catch(() => ({ message: 'Update failed' }));
       if (res.status === 200) {
         setEditingReview(null);
         showToast({ type: 'success', message: data.message || 'Review updated successfully.' });
         fetchReviews();
       } else {
-        showToast({ type: 'error', message: data.message });
+        showToast({ type: 'error', message: data.message || 'Update failed' });
         setEditingReview(null);
       }
     } catch (err: any) { showToast({ type: 'error', message: err.message }); } finally { setLoading(false); }
@@ -102,25 +96,27 @@ export default function App() {
   useEffect(() => {
     if (!cleanUsername || typeof recipe_slug !== 'string') return;
     apiCall(`${API_BASE}/v1/recipes/${cleanUsername}/${recipe_slug}`)
-      .then((res) => res.json())
+      .then((res) => res.ok ? res.json() : Promise.reject(new Error('Recipe not found')))
       .then((data) => setRecipe(data.data))
-      .catch(console.error);
+      .catch((err) => showToast({ type: 'error', message: err.message }));
   }, [cleanUsername, recipe_slug]);
 
   useEffect(() => {
     if (recipe?.id !== undefined) {
       fetch(`${API_BASE}/v1/recipes/${recipe?.id}/steps`, { method: 'GET' })
-        .then((res) => res.json())
+        .then((res) => res.ok ? res.json() : Promise.reject(new Error('Failed to load steps')))
         .then((data) => setSteps(data.data))
-        .catch(console.error);
+        .catch((err) => showToast({ type: 'error', message: err.message }));
+
       fetchReviews();
+
       fetch(`${API_BASE}/v1/recipes/${recipe?.id}/ingredients`, { method: "GET" })
-        .then((res) => res.json())
+        .then((res) => res.ok ? res.json() : Promise.reject(new Error('Failed to load ingredients')))
         .then((data) =>
           Promise.all(
             data.data.map((item: any) =>
               fetch(`${API_BASE}/v1/ingredients/${item.ingredient}`, { method: "GET" })
-                .then((res) => res.json())
+                .then((res) => res.ok ? res.json() : { data: { name: 'Unknown', dietary: null, disclaimer: null } })
                 .then(({ data }) => ({ ...item, name: data.name, dietary: data.dietary, disclaimer: data.disclaimer }))
             )
           )
@@ -137,7 +133,7 @@ export default function App() {
           setDietary(aggregatedDietary);
           setDisclaimers([...disclaimers]);
         })
-        .catch(console.error);
+        .catch((err) => showToast({ type: 'error', message: 'Error loading ingredient details' }));
     }
   }, [recipe]);
 
