@@ -6,9 +6,10 @@ interface ModalProps {
   title: string;
   onClose: () => void;
   children: React.ReactNode;
+  maxw: string;
 }
 
-export const Modal = ({ visible, title, onClose, children }: ModalProps) => {
+export const Modal = ({ visible, title, onClose, children, maxw = 'max-w-md' }: ModalProps) => {
   return (
     <RNModal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable
@@ -17,7 +18,7 @@ export const Modal = ({ visible, title, onClose, children }: ModalProps) => {
       >
         <Pressable
           onPress={(e) => e.stopPropagation()}
-          className="w-full max-w-md rounded-lg border border-neutral-200 bg-white p-6 shadow-xl dark:border-neutral-800 dark:bg-neutral-900"
+          className={`w-full ${maxw} rounded-lg border border-neutral-200 bg-white p-6 shadow-xl dark:border-neutral-800 dark:bg-neutral-900`}
         >
           <View className="mb-4 flex-row items-center justify-between">
             <Text className="font-serif text-2xl text-neutral-900 dark:text-neutral-50">{title}</Text>

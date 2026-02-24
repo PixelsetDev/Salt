@@ -4,14 +4,13 @@ import { Desktop } from './Exclusions';
 import { OLink, OText } from './Overrides';
 import RecipeSearch from './RecipeSearch';
 import { useEffect, useState } from 'react';
-import { collectionsType } from '../utils/types.ts';
+import { collectionType } from '../utils/types.ts';
 import { API_BASE } from '../utils/settings.ts';
-import { FontAwesome } from '@expo/vector-icons';
 import { ErrorBox } from './Boxes.tsx';
 
 export const Homepage = () => {
-  const [collections, setCollections] = useState<collectionsType>(null);
-  const [popularRecipes, setPopularRecipes] = useState<collectionsType>(null);
+  const [collections, setCollections] = useState<collectionType[]>([]);
+  const [popularRecipes, setPopularRecipes] = useState<collectionType[]>([]);
 
   useEffect(() => { getData(); },[]);
 
@@ -93,7 +92,7 @@ export const Homepage = () => {
         {(collections && collections.length > 0) ? (
           <View className={`grid gap-std`}>
             <View className={`grid-4 gap-std`}>
-              {collections.map((collection) => (!!collection.featured && (
+              {collections.map((collection) => (!!collection?.featured && (
                 <OLink href={`/collections/${collection.slug}`} className={`grid gap-2 px-4 py-2 btn btn-secondary relative group`} key={collection.id}>
                   <Text className={`txt-4xl font-serif group-hover:text-white`}>{collection.name}</Text>
                   <OText className={`group-hover:text-white`}>{collection.description}</OText>
@@ -114,8 +113,18 @@ export const Homepage = () => {
 
       <View className={`p-std grid gap-std`}>
         <Text className={`h2 text-center font-serif`}>Join our community</Text>
-      </View>
 
+        <OLink
+          href="/join"
+          className="btn btn-primary text-center grid gap-2"
+        >
+          <Text className="font-serif txt-2xl text-white">Join OurCookbook</Text>
+          <OText className="text-white">
+            Join OurCookbook today and become one of our chefs. It&#39;s free and takes only a minute, and
+            you&#39;ll get access to loads of exclusive member-only features!
+          </OText>
+        </OLink>
+      </View>
       <Footer/>
     </ScrollView>
   );

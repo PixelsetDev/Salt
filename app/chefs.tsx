@@ -49,7 +49,7 @@ export default function App() {
             >
               <Image
                 source={{ uri: `https://data.portalsso.com/avatar/${user?.uuid}.webp` }}
-                className="h-full rounded-l-md w-20"
+                className="h-full w-20"
               />
               <View className="grid gap-2 px-4 py-2">
                 <Text className="font-serif txt-2xl text-white">{user?.name}</Text>

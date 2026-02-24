@@ -4,7 +4,12 @@ import { useApiCall } from '../../utils/api';
 import { API_BASE } from '../../utils/settings';
 
 interface UserContextType {
-  user: any;
+  user: {
+    username: string;
+    name: string;
+    email: string;
+    uuid: string;
+  };
   loading: boolean;
   logto: {
     client: LogtoClient;

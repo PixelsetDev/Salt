@@ -33,13 +33,13 @@ export default function App() {
                 method: 'POST',
                 body: JSON.stringify({ ...form, recipe_ids: selectedRecipes.map(r => r.id) })
             });
-            const data = await res.json();
+            const json = await res.json();
             if (res.status === 201) {
                 showToast({ type: 'success', message: 'Collection created!' });
-                router.replace(`/collections/${data}`);
+                router.replace(`/collections/${json.data}`);
             }
-            else { showToast({ type: 'error', message: data.message || 'Failed to create.' }); }
-        } catch (e) { showToast({ type: 'error', message: 'Connection error.' }); } finally { setLoading(false); }
+            else { showToast({ type: 'error', message: json.message || 'Failed to create.' }); }
+        } catch (e) { showToast({ type: 'error', message: e.message }); } finally { setLoading(false); }
     };
 
     return (
@@ -55,10 +55,12 @@ export default function App() {
                         <View className="gap-1">
                             <OText className="txt-xs txt-subtle">Name</OText>
                             <TextInput value={form.name} onChangeText={t => setForm({...form, name: t})} placeholder="e.g. Sunday Roasts" className="input" maxLength={27} />
+                            <OText className="txt-xs txt-subtle text-right">{form.name.length}/27</OText>
                         </View>
                         <View className="gap-1">
                             <OText className="txt-xs txt-subtle">Description</OText>
                             <TextInput value={form.description} onChangeText={t => setForm({...form, description: t})} placeholder="Optional description..." multiline numberOfLines={2} className="input" style={{ textAlignVertical: 'top' }} maxLength={128} />
+                            <OText className="txt-xs txt-subtle text-right">{form.description.length}/128</OText>
                         </View>
                         <View className="gap-1">
                             <OText className="txt-xs txt-subtle">Visibility</OText>
