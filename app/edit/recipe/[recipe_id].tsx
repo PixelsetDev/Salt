@@ -11,12 +11,13 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Modal } from '../../../components/Modal.tsx';
 import { recipeType } from '../../../utils/types';
 import { ErrorBox } from '../../../components/Boxes.tsx';
+import { Picker } from '@react-native-picker/picker';
 
 export default function EditRecipe() {
   const { recipe_id } = useLocalSearchParams();
   const { showToast } = useToast();
   const apiCall = useApiCall();
-  const [recipe, setRecipe] = useState<recipeType>(null);
+  const [recipe, setRecipe] = useState<recipeType | null>(null);
   const [ingredients, setIngredients] = useState<any[]>([]);
   const [ingredientNames, setIngredientNames] = useState<{[key: number]: string}>({});
   const [steps, setSteps] = useState<any[]>([]);
@@ -35,17 +36,29 @@ export default function EditRecipe() {
   useEffect(() => {
     apiCall(`${API_BASE}/v1/recipes/${recipe_id}`).then(res => res.json()).then(data => setRecipe(data.data));
     fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`).then(res => res.json()).then(async (data) => {
-      setIngredients(data.data);
+      const ingList = data.data || [];
+      setIngredients(ingList);
       const names: {[key: number]: string} = {};
-      await Promise.all(data.data.map(async (ing: any) => {
+      await Promise.all(ingList.map(async (ing: any) => {
         const res = await fetch(`${API_BASE}/v1/ingredients/${ing.ingredient}`);
         const details = await res.json();
         names[ing.ingredient] = details.data.name;
       }));
       setIngredientNames(names);
     });
-    fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`).then(res => res.json()).then(data => setSteps(data.data));
+    fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`).then(res => res.json()).then(data => setSteps(data.data || []));
   }, [recipe_id]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (ingSearch.query.length >= 2) {
+        fetch(`${API_BASE}/v1/ingredients?search=${ingSearch.query}&lang=GB`)
+          .then(res => res.json())
+          .then(data => setIngSearch(prev => ({ ...prev, results: data.data.results })));
+      }
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [ingSearch.query]);
 
   const saveMetadata = async () => {
     setLoading(true);
@@ -90,14 +103,6 @@ export default function EditRecipe() {
     else setError('Error '+res.status);
   };
 
-  const searchIngredients = async (query: string) => {
-    setIngSearch(prev => ({ ...prev, query }));
-    if (query.length < 2) return setIngSearch(prev => ({ ...prev, results: [] }));
-    const res = await fetch(`${API_BASE}/v1/ingredients?search=${query}&lang=GB`);
-    const data = await res.json();
-    setIngSearch(prev => ({ ...prev, results: data.data.results }));
-  };
-
   return (
     <ScrollView className="body">
       <Navbar />
@@ -134,22 +139,34 @@ export default function EditRecipe() {
               <View><OText>Cook (mins)</OText><TextInput className="input" keyboardType="numeric" value={recipe.time.cook.toString()} onChangeText={t => setRecipe({...recipe, time: {...recipe.time, cook: parseInt(t) || 0}})} /></View>
             </View>
             <View className="grid-2 gap-std">
-              <View><OText>Difficulty</OText><select className="input w-full" value={recipe.difficulty} onChange={(e) => setRecipe({...recipe, difficulty: parseInt(e.target.value)})}>{difficulties.map((d, i) => <option key={i} value={i + 1}>{d}</option>)}</select></View>
-              <View><OText>Visibility</OText><select className="input w-full" value={recipe.visibility} onChange={(e) => setRecipe({...recipe, visibility: parseInt(e.target.value)})}>{visibilities.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></View>
+              <View>
+                <OText>Difficulty</OText>
+                <Picker style={{ height: 40 }} className="input w-full" selectedValue={recipe.difficulty} onValueChange={(v) => setRecipe({...recipe, difficulty: v})}>
+                  {difficulties.map((d, i) => <Picker.Item key={i} label={d} value={i + 1} />)}
+                </Picker>
+              </View>
+              <View>
+                <OText>Visibility</OText>
+                <Picker style={{ height: 40 }} className="input w-full" selectedValue={recipe.visibility} onValueChange={(v) => setRecipe({...recipe, visibility: v})}>
+                  {visibilities.map(v => <Picker.Item key={v.id} label={v.name} value={v.id} />)}
+                </Picker>
+              </View>
             </View>
           </View>
 
           <View className="bg-secondary p-xs grid gap-std">
             <View className="flex-row justify-between"><Text className="h2 font-serif">Ingredients</Text><OPressable onPress={() => setShowAddIngModal(true)} className="btn btn-secondary">+ Add</OPressable></View>
-            {ingredients && ingredients.length > 0 ? (
+            {ingredients.length === 0 ? (
               <OText>This recipe has no ingredients, please add some!</OText>
-            ) : ingredients?.map((ing) => (
+            ) : ingredients.map((ing) => (
               <View key={ing.id} className="flex-row gap-sm items-center">
                 <View className="flex-1 input justify-center bg-neutral-200 dark:bg-neutral-800 h-10 px-2 rounded">
                   <OText>{ingredientNames[ing.ingredient] || "Loading..."}</OText>
                 </View>
                 <TextInput className="input flex-1" placeholder="Qty" keyboardType="numeric" value={ing.amount.toString()} onChangeText={t => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, amount: parseFloat(t) || 0} : i))} />
-                <select className="input flex-1" value={ing.unit} onChange={(e) => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, unit: e.target.value} : i))}>{units.map(u => <option key={u} value={u}>{u || 'Unit'}</option>)}</select>
+                <Picker style={{ height: 40, flex: 1 }} className="input" selectedValue={ing.unit} onValueChange={(v) => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, unit: v} : i))}>
+                  {units.map(u => <Picker.Item key={u} label={u || 'Unit'} value={u} />)}
+                </Picker>
                 <OPressable onPress={() => saveIngredient(ing.id)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
                 <OPressable onPress={() => setIngToDelete({id: ing.id, name: ingredientNames[ing.ingredient]})} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
               </View>
@@ -158,7 +175,7 @@ export default function EditRecipe() {
 
           <View className="bg-secondary p-xs grid gap-std">
             <View className="flex-row justify-between"><Text className="h2 font-serif">Steps</Text><OPressable onPress={addStep} className="btn btn-secondary">+ Add</OPressable></View>
-            {steps && steps.length > 0 ? (
+            {steps.length === 0 ? (
               <OText>This recipe has no steps, please add some!</OText>
             ) : steps.map((step: any, idx: number) => (
               <View key={idx} className="flex-row gap-sm items-center">
@@ -179,7 +196,7 @@ export default function EditRecipe() {
 
       <Modal visible={showAddIngModal} title="Add Ingredient" onClose={() => setShowAddIngModal(false)}>
         <View className="gap-std">
-          <TextInput className="input" placeholder="Search ingredients..." onChangeText={(t) => searchIngredients(t)} />
+          <TextInput className="input" placeholder="Search ingredients..." onChangeText={(t) => setIngSearch(prev => ({ ...prev, query: t }))} />
           <ScrollView style={{maxHeight: 200}}>
             {ingSearch.results.map((res: any) => (
               <OPressable key={res.id} className="p-2 border-b border-neutral-200" onPress={() => addIngredient(res.id)}>
