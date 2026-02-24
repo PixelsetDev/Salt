@@ -18,6 +18,7 @@ export default function EditRecipe() {
   const apiCall = useApiCall();
   const [recipe, setRecipe] = useState<recipeType>(null);
   const [ingredients, setIngredients] = useState<any[]>([]);
+  const [ingredientNames, setIngredientNames] = useState<{[key: number]: string}>({});
   const [steps, setSteps] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -31,7 +32,16 @@ export default function EditRecipe() {
 
   useEffect(() => {
     apiCall(`${API_BASE}/v1/recipes/${recipe_id}`).then(res => res.json()).then(data => setRecipe(data.data));
-    fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`).then(res => res.json()).then(data => setIngredients(data.data));
+    fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`).then(res => res.json()).then(async (data) => {
+      setIngredients(data.data);
+      const names: {[key: number]: string} = {};
+      await Promise.all(data.data.map(async (ing: any) => {
+        const res = await fetch(`${API_BASE}/v1/ingredients/${ing.ingredient}`);
+        const details = await res.json();
+        names[ing.ingredient] = details.data.name;
+      }));
+      setIngredientNames(names);
+    });
     fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`).then(res => res.json()).then(data => setSteps(data.data));
   }, [recipe_id]);
 
@@ -64,12 +74,18 @@ export default function EditRecipe() {
     if (res.status === 204) router.reload(); else setError('Error ' + res.status);
   };
 
-  const updateIngredient = async (id: number, field: string, value: any) => {
-    const updated = ingredients.map(i => i.id === id ? { ...i, [field]: value } : i);
-    setIngredients(updated);
-    const item = updated.find(i => i.id === id);
+  const saveIngredient = async (id: number) => {
+    const item = ingredients.find(i => i.id === id);
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'PUT', body: JSON.stringify(item) });
-    if (res.status !== 200) setError('Error '+res.status);
+    if (res.status === 200) showToast({ type: 'success', message: 'Ingredient saved.' });
+    else setError('Error '+res.status);
+  };
+
+  const saveStep = async (id: number) => {
+    const item = steps.find(s => s.id === id);
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'PUT', body: JSON.stringify(item) });
+    if (res.status === 200) showToast({ type: 'success', message: 'Step saved.' });
+    else setError('Error '+res.status);
   };
 
   const searchIngredients = async (query: string) => {
@@ -80,63 +96,65 @@ export default function EditRecipe() {
     setIngSearch(prev => ({ ...prev, results: data.data.results }));
   };
 
-  const updateStep = async (id: number, text: string) => {
-    const updated = steps.map(s => s.id === id ? { ...s, text } : s);
-    setSteps(updated);
-    const item = updated.find(s => s.id === id);
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'PUT', body: JSON.stringify(item) });
-    if (res.status !== 200) setError('Error '+res.status);
-  };
-
   return (
     <ScrollView className="body">
       <Navbar />
-      {Error && (<ErrorBox message={Error}/>)}
+      <View className="header p-std">
+        <Text className="h1 font-serif text-white">Edit {recipe?.name}</Text>
+      </View>
+      {Error && (<View className="p-std"><ErrorBox message={Error}/></View>)}
       {recipe && (
-        <View className="p-std gap-std">
-          <Text className="h1 font-serif">Edit {recipe.name}</Text>
+        <View className="p-std grid gap-std">
           <View className="bg-secondary p-xs gap-std">
-            <Text className="h2 font-serif">Metadata</Text>
+            <View className="flex-row justify-between">
+              <Text className="h2 font-serif">Metadata</Text>
+              <OPressable disabled={loading} onPress={saveMetadata} className="btn btn-primary">Save</OPressable>
+            </View>
             <TextInput className="input" placeholder="Recipe Name" value={recipe.name} onChangeText={t => setRecipe({...recipe, name: t})} />
-            <View className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded"><OText className="txt-subtle">Slug: {recipe.slug}</OText></View>
             <TextInput className="input" placeholder="Description" multiline value={recipe.description} onChangeText={t => setRecipe({...recipe, description: t})} />
             <TextInput className="input" placeholder="Chef's Tips" multiline value={recipe.tips} onChangeText={t => setRecipe({...recipe, tips: t})} />
             <View className="grid-3 gap-std">
-              <View><OText className="txt-xs mb-1">Servings</OText><TextInput className="input" keyboardType="numeric" value={recipe.servings.toString()} onChangeText={t => setRecipe({...recipe, servings: parseInt(t) || 0})} /></View>
-              <View><OText className="txt-xs mb-1">Prep (mins)</OText><TextInput className="input" keyboardType="numeric" value={recipe.time.prep.toString()} onChangeText={t => setRecipe({...recipe, time: {...recipe.time, prep: parseInt(t) || 0}})} /></View>
-              <View><OText className="txt-xs mb-1">Cook (mins)</OText><TextInput className="input" keyboardType="numeric" value={recipe.time.cook.toString()} onChangeText={t => setRecipe({...recipe, time: {...recipe.time, cook: parseInt(t) || 0}})} /></View>
+              <View><OText>Servings</OText><TextInput className="input" keyboardType="numeric" value={recipe.servings.toString()} onChangeText={t => setRecipe({...recipe, servings: parseInt(t) || 0})} /></View>
+              <View><OText>Prep (mins)</OText><TextInput className="input" keyboardType="numeric" value={recipe.time.prep.toString()} onChangeText={t => setRecipe({...recipe, time: {...recipe.time, prep: parseInt(t) || 0}})} /></View>
+              <View><OText>Cook (mins)</OText><TextInput className="input" keyboardType="numeric" value={recipe.time.cook.toString()} onChangeText={t => setRecipe({...recipe, time: {...recipe.time, cook: parseInt(t) || 0}})} /></View>
             </View>
             <View className="grid-2 gap-std">
-              <View><OText className="txt-xs mb-1">Difficulty</OText><select className="input w-full" value={recipe.difficulty} onChange={(e) => setRecipe({...recipe, difficulty: parseInt(e.target.value)})}>{difficulties.map((d, i) => <option key={i} value={i + 1}>{d}</option>)}</select></View>
-              <View><OText className="txt-xs mb-1">Visibility</OText><select className="input w-full" value={recipe.visibility} onChange={(e) => setRecipe({...recipe, visibility: parseInt(e.target.value)})}>{visibilities.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></View>
+              <View><OText>Difficulty</OText><select className="input w-full" value={recipe.difficulty} onChange={(e) => setRecipe({...recipe, difficulty: parseInt(e.target.value)})}>{difficulties.map((d, i) => <option key={i} value={i + 1}>{d}</option>)}</select></View>
+              <View><OText>Visibility</OText><select className="input w-full" value={recipe.visibility} onChange={(e) => setRecipe({...recipe, visibility: parseInt(e.target.value)})}>{visibilities.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></View>
             </View>
-            <OPressable disabled={loading} onPress={saveMetadata} className="btn btn-primary"><Text className="tc-white">Save General Info</Text></OPressable>
           </View>
 
           <View className="bg-secondary p-xs gap-std">
-            <View className="flex-row justify-between"><Text className="h2 font-serif">Ingredients</Text><OPressable onPress={() => setShowAddIngModal(true)} className="btn btn-secondary"><Text>+ Add</Text></OPressable></View>
+            <View className="flex-row justify-between"><Text className="h2 font-serif">Ingredients</Text><OPressable onPress={() => setShowAddIngModal(true)} className="btn btn-secondary">+ Add</OPressable></View>
             {ingredients?.map((ing) => (
               <View key={ing.id} className="flex-row gap-sm items-center">
-                <View className="flex-1 input justify-center bg-neutral-200 dark:bg-neutral-800 h-10 px-2 rounded"><OText>{ing.name}</OText></View>
-                <TextInput className="input flex-1" placeholder="Qty" keyboardType="numeric" value={ing.amount.toString()} onChangeText={t => updateIngredient(ing.id, 'amount', parseFloat(t) || 0)} />
-                <select className="input flex-1" value={ing.unit} onChange={(e) => updateIngredient(ing.id, 'unit', e.target.value)}>{units.map(u => <option key={u} value={u}>{u || 'Unit'}</option>)}</select>
+                <View className="flex-1 input justify-center bg-neutral-200 dark:bg-neutral-800 h-10 px-2 rounded">
+                  <OText>{ingredientNames[ing.ingredient] || "Loading..."}</OText>
+                </View>
+                <TextInput className="input flex-1" placeholder="Qty" keyboardType="numeric" value={ing.amount.toString()} onChangeText={t => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, amount: parseFloat(t) || 0} : i))} />
+                <select className="input flex-1" value={ing.unit} onChange={(e) => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, unit: e.target.value} : i))}>{units.map(u => <option key={u} value={u}>{u || 'Unit'}</option>)}</select>
+                <OPressable onPress={() => saveIngredient(ing.id)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
                 <OPressable onPress={() => deleteIngredient(ing.id)} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
               </View>
             ))}
           </View>
 
           <View className="bg-secondary p-xs gap-std">
-            <View className="flex-row justify-between"><Text className="h2 font-serif">Steps</Text><OPressable onPress={addStep} className="btn btn-secondary"><Text>+ Add</Text></OPressable></View>
+            <View className="flex-row justify-between"><Text className="h2 font-serif">Steps</Text><OPressable onPress={addStep} className="btn btn-secondary">+ Add</OPressable></View>
             {steps?.map((step: any, idx: number) => (
               <View key={step.id || idx} className="flex-row gap-sm items-center">
-                <View className="w-8"><OText className="font-bold">{idx + 1}.</OText></View>
-                <TextInput className="input flex-1" multiline value={typeof step === 'object' ? step.text : step} onChangeText={t => updateStep(step.id, t)} />
+                <Text className="font-serif txt-4xl dark:text-white w-12">{idx + 1}.</Text>
+                <TextInput className="input flex-1 txt-lg" multiline value={step.text} onChangeText={t => setSteps(steps.map(s => s.id === step.id ? {...s, text: t} : s))} />
+                <OPressable onPress={() => saveStep(step.id)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
                 <OPressable onPress={() => deleteStep(step.id)} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
               </View>
             ))}
           </View>
 
-          <OPressable onPress={() => setShowDeleteModal(true)} className="btn btn-danger"><Text className="tc-white font-bold">Delete Recipe Forever</Text></OPressable>
+          <View className="border-2 border-red-500 p-xs grid gap-std">
+            <Text className="h2 font-serif">Danger Zone</Text>
+            <OPressable onPress={() => setShowDeleteModal(true)} className="btn btn-danger">Delete Recipe Forever</OPressable>
+          </View>
         </View>
       )}
 
@@ -150,16 +168,16 @@ export default function EditRecipe() {
               </OPressable>
             ))}
           </ScrollView>
-          <OPressable onPress={() => setShowAddIngModal(false)} className="btn btn-secondary"><Text>Cancel</Text></OPressable>
+          <OPressable onPress={() => setShowAddIngModal(false)} className="btn btn-secondary">Cancel</OPressable>
         </View>
       </Modal>
 
       <Modal visible={showDeleteModal} title="Confirm Deletion" onClose={() => setShowDeleteModal(false)}>
         <View className="gap-4">
-          <OText className="text-center">Permanently delete <OText className="font-bold">{recipe?.name}</OText>?</OText>
+          <OText>Permanently delete <OText>{recipe?.name}</OText>?</OText>
           <View className="flex-row gap-std mt-2">
-            <OPressable onPress={() => apiCall(`${API_BASE}/v1/recipes/${recipe_id}`, true, { method: 'DELETE' }).then(() => router.replace('/'))} className="btn btn-danger flex-1"><Text className="tc-white">Confirm</Text></OPressable>
-            <OPressable onPress={() => setShowDeleteModal(false)} className="btn btn-secondary flex-1"><Text>Cancel</Text></OPressable>
+            <OPressable onPress={() => apiCall(`${API_BASE}/v1/recipes/${recipe_id}`, true, { method: 'DELETE' }).then(() => router.replace('/'))} className="btn btn-danger">Confirm</OPressable>
+            <OPressable onPress={() => setShowDeleteModal(false)} className="btn btn-secondary">Cancel</OPressable>
           </View>
         </View>
       </Modal>
