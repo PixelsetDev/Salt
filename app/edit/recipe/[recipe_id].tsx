@@ -25,6 +25,8 @@ export default function EditRecipe() {
   const [showAddIngModal, setShowAddIngModal] = useState(false);
   const [Error, setError] = useState<string|null>(null);
   const [ingSearch, setIngSearch] = useState<{query: string, results: any[]}>({query: '', results: []});
+  const [ingToDelete, setIngToDelete] = useState<any>(null);
+  const [stepToDelete, setStepToDelete] = useState<{index: number, text: string} | null>(null);
 
   const units = ['', 'g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup', 'pcs', 'oz', 'lb'];
   const difficulties = ['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert'];
@@ -59,8 +61,8 @@ export default function EditRecipe() {
     else setError('Error ' + res.status);
   };
 
-  const deleteIngredient = async (id: number) => {
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'DELETE', body: JSON.stringify({ id }) });
+  const deleteIngredient = async () => {
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'DELETE', body: JSON.stringify({ id: ingToDelete.id }) });
     if (res.status === 204) router.reload(); else setError('Error ' + res.status);
   };
 
@@ -69,8 +71,8 @@ export default function EditRecipe() {
     if (res.status === 201) router.reload(); else setError('Error ' + res.status);
   };
 
-  const deleteStep = async (id: number) => {
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'DELETE', body: JSON.stringify({ id }) });
+  const deleteStep = async () => {
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'DELETE', body: JSON.stringify({ step: stepToDelete!.index + 1 }) });
     if (res.status === 204) router.reload(); else setError('Error ' + res.status);
   };
 
@@ -81,9 +83,9 @@ export default function EditRecipe() {
     else setError('Error '+res.status);
   };
 
-  const saveStep = async (id: number) => {
-    const item = steps.find(s => s.id === id);
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'PUT', body: JSON.stringify(item) });
+  const saveStep = async (index: number) => {
+    const text = steps[index];
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'PUT', body: JSON.stringify({ step: index + 1, text }) });
     if (res.status === 200) showToast({ type: 'success', message: 'Step saved.' });
     else setError('Error '+res.status);
   };
@@ -105,14 +107,27 @@ export default function EditRecipe() {
       {Error && (<View className="p-std"><ErrorBox message={Error}/></View>)}
       {recipe && (
         <View className="p-std grid gap-std">
-          <View className="bg-secondary p-xs gap-std">
+          <View className="bg-secondary p-xs grid gap-std">
             <View className="flex-row justify-between">
               <Text className="h2 font-serif">Metadata</Text>
               <OPressable disabled={loading} onPress={saveMetadata} className="btn btn-primary">Save</OPressable>
             </View>
-            <TextInput className="input" placeholder="Recipe Name" value={recipe.name} onChangeText={t => setRecipe({...recipe, name: t})} />
-            <TextInput className="input" placeholder="Description" multiline value={recipe.description} onChangeText={t => setRecipe({...recipe, description: t})} />
-            <TextInput className="input" placeholder="Chef's Tips" multiline value={recipe.tips} onChangeText={t => setRecipe({...recipe, tips: t})} />
+            <View className="grid-2 gap-std">
+              <View className="grid gap-std">
+                <View className="grid gap-sm">
+                  <OText>Recipe Name</OText>
+                  <TextInput className="input" placeholder="Recipe Name" value={recipe.name} onChangeText={t => setRecipe({...recipe, name: t})} />
+                </View>
+                <View className="grid gap-sm">
+                  <OText>Tips</OText>
+                  <TextInput className="input" placeholder="Chef's Tips" multiline value={recipe.tips} onChangeText={t => setRecipe({...recipe, tips: t})} />
+                </View>
+              </View>
+              <View className="flex-col gap-sm">
+                <OText>Description</OText>
+                <TextInput className="input flex-grow" placeholder="Description" multiline value={recipe.description} onChangeText={t => setRecipe({...recipe, description: t})} />
+              </View>
+            </View>
             <View className="grid-3 gap-std">
               <View><OText>Servings</OText><TextInput className="input" keyboardType="numeric" value={recipe.servings.toString()} onChangeText={t => setRecipe({...recipe, servings: parseInt(t) || 0})} /></View>
               <View><OText>Prep (mins)</OText><TextInput className="input" keyboardType="numeric" value={recipe.time.prep.toString()} onChangeText={t => setRecipe({...recipe, time: {...recipe.time, prep: parseInt(t) || 0}})} /></View>
@@ -124,9 +139,11 @@ export default function EditRecipe() {
             </View>
           </View>
 
-          <View className="bg-secondary p-xs gap-std">
+          <View className="bg-secondary p-xs grid gap-std">
             <View className="flex-row justify-between"><Text className="h2 font-serif">Ingredients</Text><OPressable onPress={() => setShowAddIngModal(true)} className="btn btn-secondary">+ Add</OPressable></View>
-            {ingredients?.map((ing) => (
+            {ingredients && ingredients.length > 0 ? (
+              <OText>This recipe has no ingredients, please add some!</OText>
+            ) : ingredients?.map((ing) => (
               <View key={ing.id} className="flex-row gap-sm items-center">
                 <View className="flex-1 input justify-center bg-neutral-200 dark:bg-neutral-800 h-10 px-2 rounded">
                   <OText>{ingredientNames[ing.ingredient] || "Loading..."}</OText>
@@ -134,19 +151,21 @@ export default function EditRecipe() {
                 <TextInput className="input flex-1" placeholder="Qty" keyboardType="numeric" value={ing.amount.toString()} onChangeText={t => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, amount: parseFloat(t) || 0} : i))} />
                 <select className="input flex-1" value={ing.unit} onChange={(e) => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, unit: e.target.value} : i))}>{units.map(u => <option key={u} value={u}>{u || 'Unit'}</option>)}</select>
                 <OPressable onPress={() => saveIngredient(ing.id)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
-                <OPressable onPress={() => deleteIngredient(ing.id)} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
+                <OPressable onPress={() => setIngToDelete({id: ing.id, name: ingredientNames[ing.ingredient]})} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
               </View>
             ))}
           </View>
 
-          <View className="bg-secondary p-xs gap-std">
+          <View className="bg-secondary p-xs grid gap-std">
             <View className="flex-row justify-between"><Text className="h2 font-serif">Steps</Text><OPressable onPress={addStep} className="btn btn-secondary">+ Add</OPressable></View>
-            {steps?.map((step: any, idx: number) => (
-              <View key={step.id || idx} className="flex-row gap-sm items-center">
+            {steps && steps.length > 0 ? (
+              <OText>This recipe has no steps, please add some!</OText>
+            ) : steps.map((step: any, idx: number) => (
+              <View key={idx} className="flex-row gap-sm items-center">
                 <Text className="font-serif txt-4xl dark:text-white w-12">{idx + 1}.</Text>
-                <TextInput className="input flex-1 txt-lg" multiline value={step.text} onChangeText={t => setSteps(steps.map(s => s.id === step.id ? {...s, text: t} : s))} />
-                <OPressable onPress={() => saveStep(step.id)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
-                <OPressable onPress={() => deleteStep(step.id)} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
+                <TextInput className="input flex-1 txt-lg" multiline value={typeof step === 'object' ? step.text : step} onChangeText={t => setSteps(steps.map((s, i) => i === idx ? t : s))} />
+                <OPressable onPress={() => saveStep(idx)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
+                <OPressable onPress={() => setStepToDelete({index: idx, text: steps[idx]})} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
               </View>
             ))}
           </View>
@@ -172,12 +191,33 @@ export default function EditRecipe() {
         </View>
       </Modal>
 
-      <Modal visible={showDeleteModal} title="Confirm Deletion" onClose={() => setShowDeleteModal(false)}>
-        <View className="gap-4">
-          <OText>Permanently delete <OText>{recipe?.name}</OText>?</OText>
+      <Modal visible={!!ingToDelete} title="Delete Ingredient" onClose={() => setIngToDelete(null)}>
+        <View className="grid gap-std">
+          <OText>Remove <OText>{ingToDelete?.name}</OText> from this recipe?</OText>
           <View className="flex-row gap-std mt-2">
-            <OPressable onPress={() => apiCall(`${API_BASE}/v1/recipes/${recipe_id}`, true, { method: 'DELETE' }).then(() => router.replace('/'))} className="btn btn-danger">Confirm</OPressable>
-            <OPressable onPress={() => setShowDeleteModal(false)} className="btn btn-secondary">Cancel</OPressable>
+            <OPressable onPress={deleteIngredient} className="btn btn-danger">Delete</OPressable>
+            <OPressable onPress={() => setIngToDelete(null)} className="btn btn-secondary">Cancel</OPressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={!!stepToDelete} title={`Delete Step ${stepToDelete ? stepToDelete.index + 1 : ''}?`} onClose={() => setStepToDelete(null)}>
+        <View className="grid gap-std">
+          <OText>&quot;{stepToDelete?.text}&quot;</OText>
+          <View className="flex-row gap-std mt-2">
+            <OPressable onPress={deleteStep} className="btn btn-danger">Delete</OPressable>
+            <OPressable onPress={() => setStepToDelete(null)} className="btn btn-secondary">Cancel</OPressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={showDeleteModal} title="Confirm Deletion" onClose={() => setShowDeleteModal(false)}>
+        <View className="grid gap-std">
+          <View className={`border-red-500 border-4 border-dashed p-4`}><OText>Warning: This can not be undone!</OText></View>
+          <OText>Are you sure you want to permanently delete <OText>{recipe?.name}</OText>?</OText>
+          <View className="grid gap-sm">
+            <OPressable onPress={() => apiCall(`${API_BASE}/v1/recipes/${recipe_id}`, true, { method: 'DELETE' }).then(() => router.replace('/'))} className="btn btn-danger">Yes, I AM SURE, delete this recipe.</OPressable>
+            <OPressable onPress={() => setShowDeleteModal(false)} className="btn btn-primary">No, DO NOT delete this recipe.</OPressable>
           </View>
         </View>
       </Modal>
