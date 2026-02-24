@@ -14,9 +14,11 @@ import { useUser } from '../../components/auth/UserProvider.tsx';
 import { Modal } from '../../components/Modal.tsx';
 import { StarRating } from '../../components/StarRating.tsx';
 import { useToast } from '../../components/ToastProvider';
+import { useLogto } from '@logto/rn';
 
 export default function App() {
   const { user } = useUser();
+  const { isAuthenticated } = useLogto();
   const { username, recipe_slug } = useLocalSearchParams();
   const cleanUsername = (typeof username === 'string' ? username : '').replace(/^@/, '');
   const { showToast } = useToast();
@@ -99,7 +101,7 @@ export default function App() {
       .then((res) => res.ok ? res.json() : Promise.reject(new Error('Recipe not found')))
       .then((data) => setRecipe(data.data))
       .catch((err) => showToast({ type: 'error', message: err.message }));
-  }, [cleanUsername, recipe_slug]);
+  }, [cleanUsername, recipe_slug, isAuthenticated]);
 
   useEffect(() => {
     if (recipe?.id !== undefined) {

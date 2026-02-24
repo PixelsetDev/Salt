@@ -20,6 +20,7 @@ export default function EditRecipe() {
   const [ingredients, setIngredients] = useState<any[]>([]);
   const [ingredientNames, setIngredientNames] = useState<{[key: number]: string}>({});
   const [steps, setSteps] = useState<any[]>([]);
+  const [flatCategories, setFlatCategories] = useState<{id: number, name: string}[]>([]);
   const [newStepText, setNewStepText] = useState('');
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -32,30 +33,54 @@ export default function EditRecipe() {
   const difficulties = ['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert'];
   const visibilities = [{id: 3, name: 'Public'}, {id: 2, name: 'Unlisted'}, {id: 1, name: 'Friends'}, {id: 0, name: 'Private'}];
 
-  const loadData = useCallback(() => {
-    apiCall(`${API_BASE}/v1/recipes/${recipe_id}`).then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to load recipe'))).then(data => {
-      if (data) {
-        if (!data.data.isOwned) {
-          showToast({ type: 'error', message: 'You do not have permission to edit this recipe.' });
-          router.push(`/@${data.data.author.username}/${data.data.slug}`);
-          return;
-        }
-        setRecipe(data.data);
-      }
-    }).catch(err => showToast({ type: 'error', message: err.message }));
+  const loadData = useCallback(async () => {
+    try {
+      const recipeRes = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}`);
+      if (!recipeRes.ok) throw new Error('Failed to load recipe');
+      const recipeData = await recipeRes.json();
 
-    fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`).then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to load ingredients'))).then(async (data) => {
-      const ingList = data?.data || [];
-      setIngredients(ingList);
+      if (!recipeData.data.isOwned) {
+        showToast({ type: 'error', message: 'You do not have permission to edit this recipe.' });
+        router.push(`/@${recipeData.data.author.username}/${recipeData.data.slug}`);
+        return;
+      }
+
+      const catRes = await fetch(`${API_BASE}/v1/recipes/categories`);
+      const catData = await catRes.json();
+      const parents = catData?.data || [];
+
+      let flattened: {id: number, name: string}[] = [{ id: 0, name: "Uncategorised" }];
+      for (const cat of parents) {
+        flattened.push({ id: cat.id, name: cat.name });
+        const subRes = await fetch(`${API_BASE}/v1/recipes/categories/${cat.id}`);
+        if (subRes.ok) {
+          const subData = await subRes.json();
+          const subs = subData?.data?.subcategories || [];
+          subs.forEach((s: any) => flattened.push({ id: s.id, name: `└ ${s.name}` }));
+        }
+      }
+
+      setFlatCategories(flattened);
+      setRecipe(recipeData.data);
+
+      const ingRes = await fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`);
+      const ingData = await ingRes.json();
+      setIngredients(ingData?.data || []);
+
       const names: {[key: number]: string} = {};
-      await Promise.all(ingList.map(async (ing: any) => {
+      await Promise.all((ingData?.data || []).map(async (ing: any) => {
         const res = await fetch(`${API_BASE}/v1/ingredients/${ing.ingredient}`);
         if (res.ok) { const details = await res.json(); names[ing.ingredient] = details.data.name; }
       }));
       setIngredientNames(names);
-    }).catch(err => showToast({ type: 'error', message: err.message }));
 
-    fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`).then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to load steps'))).then(data => setSteps(data?.data || [])).catch(err => showToast({ type: 'error', message: err.message }));
+      const stepRes = await fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`);
+      const stepData = await stepRes.json();
+      setSteps(stepData?.data || []);
+
+    } catch (err: any) {
+      showToast({ type: 'error', message: err.message });
+    }
   }, [recipe_id]);
 
   useEffect(() => { loadData(); }, [loadData]);
@@ -70,15 +95,34 @@ export default function EditRecipe() {
 
   const saveMetadata = async () => {
     if (!recipe) return;
+
+    if (recipe.category === undefined || recipe.category === null) {
+      showToast({ type: 'error', message: 'Category is mandatory. Please select one.' });
+      return;
+    }
+
     setLoading(true);
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}`, true, { method: 'PUT', body: JSON.stringify({
-        ...recipe,
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}`, true, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: recipe.name,
+        description: recipe.description,
+        tips: recipe.tips,
+        category: recipe.category,
+        servings: Math.floor(recipe.servings),
         prep_time: Math.floor(recipe.time.prep),
         cook_time: Math.floor(recipe.time.cook),
-        servings: Math.floor(recipe.servings)
-      }) });
-    if (res.status === 200) showToast({ type: 'success', message: 'Recipe updated.' });
-    else showToast({ type: 'error', message: 'Failed to save metadata.' });
+        difficulty: recipe.difficulty,
+        visibility: recipe.visibility
+      })
+    });
+
+    if (res.status === 200) {
+      showToast({ type: 'success', message: 'Recipe updated.' });
+    } else {
+      showToast({ type: 'error', message: 'Failed to save metadata.' });
+    }
     setLoading(false);
   };
 
@@ -89,7 +133,7 @@ export default function EditRecipe() {
   };
 
   const deleteIngredient = async () => {
-    if (!ingToDelete?.id) { showToast({ type: 'error', message: 'Delete failed: Missing record ID.' }); return; }
+    if (!ingToDelete?.id) return;
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'DELETE', body: JSON.stringify({ id: ingToDelete.id }) });
     if (res.status === 200) { loadData(); setIngToDelete(null); }
     else showToast({ type: 'error', message: 'Delete failed.' });
@@ -162,7 +206,8 @@ export default function EditRecipe() {
               <View><OText>Prep (mins)</OText><TextInput className="input" keyboardType="numeric" value={recipe.time.prep.toString()} onChangeText={t => setRecipe({...recipe, time: {...recipe.time, prep: parseInt(t) || 0}})} /></View>
               <View><OText>Cook (mins)</OText><TextInput className="input" keyboardType="numeric" value={recipe.time.cook.toString()} onChangeText={t => setRecipe({...recipe, time: {...recipe.time, cook: parseInt(t) || 0}})} /></View>
             </View>
-            <View className="grid-2 gap-std">
+            <View className="grid-3 gap-std">
+              <View><OText>Category</OText><Picker style={{ height: 40 }} className="input w-full" selectedValue={recipe.category} onValueChange={(v) => setRecipe({...recipe, category: v})}>{flatCategories.map(c => <Picker.Item key={c.id} label={c.name} value={c.id} />)}</Picker></View>
               <View><OText>Difficulty</OText><Picker style={{ height: 40 }} className="input w-full" selectedValue={recipe.difficulty} onValueChange={(v) => setRecipe({...recipe, difficulty: v})}>{difficulties.map((d, i) => <Picker.Item key={i} label={d} value={i + 1} />)}</Picker></View>
               <View><OText>Visibility</OText><Picker style={{ height: 40 }} className="input w-full" selectedValue={recipe.visibility} onValueChange={(v) => setRecipe({...recipe, visibility: v})}>{visibilities.map(v => <Picker.Item key={v.id} label={v.name} value={v.id} />)}</Picker></View>
             </View>

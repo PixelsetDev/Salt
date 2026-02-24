@@ -79,6 +79,7 @@ export type recipeType = {
   id: number;
   slug: string;
   name: string;
+  category: number;
   description: string;
   servings: number;
   difficulty: number;
