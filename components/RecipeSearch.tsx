@@ -29,6 +29,28 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
   const { isAuthenticated } = useLogto();
   const apiCall = useApiCall();
 
+  const [showMore, setShowMore] = useState(false);
+
+  const presets = [
+    { name: 'Vegan', excludes: ['meat', 'animal_products', 'milk', 'eggs', 'fish', 'crustaceans', 'molluscs'] },
+    { name: 'Vegetarian', excludes: ['meat', 'fish', 'crustaceans', 'molluscs'] },
+    { name: 'Pescatarian', excludes: ['meat'] },
+    { name: 'Gluten Free', excludes: ['gluten'] },
+    { name: 'Dairy Free', excludes: ['milk'] },
+    { name: 'Nut Free', excludes: ['peanuts', 'treenuts'] },
+  ];
+
+  const togglePreset = (presetExcludes) => {
+    const allSelected = presetExcludes.every(e => selectedDietary.includes(e));
+    if (allSelected) {
+      setSelectedDietary(prev => prev.filter(item => !presetExcludes.includes(item)));
+    } else {
+      setSelectedDietary(prev => [...new Set([...prev, ...presetExcludes])]);
+    }
+  };
+
+  const isPresetActive = (presetExcludes) => presetExcludes.every(e => selectedDietary.includes(e));
+
   useEffect(() => {
     const fetchMeta = async (path: string, setter: any) => {
       try {
@@ -88,12 +110,27 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
       <View className="p-4 bg-secondary grid gap-std">
         <Text className="txt-4xl font-serif dark:text-white">Dietary</Text>
         <Text className="txt-subtle italic">Always check product labels.</Text>
+
         <View className="grid gap-sm">
-          {dietaryOptions.map(o => (
-            <OPressable key={o} className={btnStyle(selectedDietary.includes(o), 'danger')} onPress={() => setSelectedDietary(d => d.includes(o) ? d.filter(x => x !== o) : [...d, o])}>
-              {selectedDietary.includes(o) ? `Excludes ${o}` : `Includes ${o}`}
-            </OPressable>
-          ))}
+          <View className="grid gap-sm animate-fade-in">
+            {presets.map(p => (
+              <OPressable key={p.name} className={btnStyle(isPresetActive(p.excludes), 'primary')} onPress={() => togglePreset(p.excludes)}>
+                {p.name}
+              </OPressable>
+            ))}
+          </View>
+          <OPressable onPress={() => setShowMore(!showMore)} className="p-2 txt-subtle underline text-center">
+            {showMore ? 'Show less' : 'Show more'}
+          </OPressable>
+          {showMore && (
+            <View className="grid gap-sm animate-fade-in">
+              {dietaryOptions.map(o => (
+                <OPressable key={o} className={btnStyle(selectedDietary.includes(o), 'danger')} onPress={() => setSelectedDietary(d => d.includes(o) ? d.filter(x => x !== o) : [...d, o])}>
+                  {selectedDietary.includes(o) ? `Excludes ${o}` : `Includes ${o}`}
+                </OPressable>
+              ))}
+            </View>
+          )}
         </View>
       </View>
     </View>

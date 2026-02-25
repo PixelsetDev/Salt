@@ -46,7 +46,7 @@ export default function App() {
               {collections?.map((collection) => (!!collection?.featured && (
                 <OLink href={`/collections/${collection.slug}`} className={`grid gap-2 px-4 py-2 btn btn-primary relative`} key={collection.id}>
                   <Text className={`txt-2xl font-serif`}>{collection.name}</Text>
-                  <OText className={`text-white`}>By {collection.author.name}</OText>
+                  <OText className={`text-white`}>By {(collection.author.name === "SYSTEM") ? ('OurCookbook') : (collection.author.name)}</OText>
                   <OText className={`bg-yellow-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-yellow-900`}>
                     <FontAwesome name={`star`} size={16}/>&nbsp;
                     Featured
@@ -57,7 +57,7 @@ export default function App() {
                   {collection.visibility === 1 && (<OText className={`bg-orange-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
                     <FontAwesome name={`users`} size={16}/>&nbsp;Friends Only
                   </OText>)}
-                  {collection.visibility === 2 && (<OText className={`bg-yellow-400 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2`}>
+                  {collection.visibility === 2 && (<OText className={`bg-yellow-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2`}>
                     <FontAwesome name={`eye`} size={16}/>&nbsp;Unlisted
                   </OText>)}
                 </OLink>
@@ -65,14 +65,14 @@ export default function App() {
               {collections?.map((collection) => ((collection && !collection?.featured) && (
                   <OLink href={`/collections/${collection.slug}`} className={`grid gap-2 px-4 py-2 btn btn-primary`} key={collection.id}>
                     <Text className={`txt-2xl font-serif`}>{collection.name}</Text>
-                    <OText className={`text-white`}>By {collection.author.name}</OText>
+                    <OText className={`text-white`}>By {(collection.author.name === "SYSTEM") ? ('OurCookbook') : (collection.author.name)}</OText>
                     {collection.visibility === 0 && (<OText className={`bg-red-700 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
                       <FontAwesome name={`lock`} size={16}/>&nbsp;Private
                     </OText>)}
                     {collection.visibility === 1 && (<OText className={`bg-orange-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
                       <FontAwesome name={`users`} size={16}/>&nbsp;Friends Only
                     </OText>)}
-                    {collection.visibility === 2 && (<OText className={`bg-yellow-400 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2`}>
+                    {collection.visibility === 2 && (<OText className={`bg-yellow-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2`}>
                       <FontAwesome name={`eye`} size={16}/>&nbsp;Unlisted
                     </OText>)}
                   </OLink>

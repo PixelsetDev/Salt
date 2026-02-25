@@ -28,7 +28,7 @@ export const RecipeLink = ({ recipe, children }: { recipe: { author: { username:
         <OText className="absolute bg-orange-500 text-white top-0 left-0 right-0 txt-xs p-1 text-center">Friends Only</OText>
       )}
       { recipe.visibility === 2 && (
-        <OText className="absolute bg-yellow-400 top-0 left-0 right-0 txt-xs p-1 text-center">Unlisted</OText>
+        <OText className="absolute bg-yellow-500 top-0 left-0 right-0 txt-xs p-1 text-center">Unlisted</OText>
       )}
     </OLink>
   );

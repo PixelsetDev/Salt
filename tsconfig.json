@@ -9,9 +9,7 @@
         "src/*"
       ]
     },
-    "types": [
-      "nativewind/types"
-    ],
+    "types": ["nativewind/types"],
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true
   },

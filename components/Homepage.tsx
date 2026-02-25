@@ -4,13 +4,14 @@ import { Desktop } from './Exclusions';
 import { OLink, OText } from './Overrides';
 import RecipeSearch from './RecipeSearch';
 import { useEffect, useState } from 'react';
-import { collectionType } from '../utils/types.ts';
+import { collectionType, recipeType } from '../utils/types.ts';
 import { API_BASE } from '../utils/settings.ts';
 import { ErrorBox } from './Boxes.tsx';
+import { RecipeLink } from './RecipeLink.tsx';
 
 export const Homepage = () => {
   const [collections, setCollections] = useState<collectionType[]>([]);
-  const [popularRecipes, setPopularRecipes] = useState<collectionType[]>([]);
+  const [popularRecipes, setPopularRecipes] = useState<{recipes: recipeType[]}>();
 
   useEffect(() => { getData(); },[]);
 
@@ -24,6 +25,7 @@ export const Homepage = () => {
       .then((response) => response.json())
       .then((body) => {
         setPopularRecipes(body.data);
+        console.log(body.data);
       });
   }
 
@@ -71,14 +73,13 @@ export const Homepage = () => {
 
       <View className={`px-std grid gap-std`}>
         <Text className={`h2 text-center font-serif`}>Popular recipes</Text>
-        {(popularRecipes && popularRecipes.length > 0) ? (
+        {(popularRecipes && popularRecipes.recipes.length > 0) ? (
           <View className={`grid gap-std`}>
-            <View className={`grid-3 gap-std`}>
-              {popularRecipes.map((recipe) => (
-                <OLink href={`/collections/${recipe.slug}`} className={`grid gap-2 px-4 py-2 btn btn-primary relative`} key={recipe.id}>
-                  <Text className={`txt-2xl font-serif`}>{recipe.name}</Text>
-                  <OText className={`text-white`}>By {recipe.author.name}</OText>
-                </OLink>
+            <View className={`grid-5 gap-std`}>
+              {popularRecipes?.recipes.slice(0, 5).map((recipe) => (
+                recipe && (
+                  <RecipeLink recipe={recipe} key={recipe.slug}/>
+                )
               ))}
             </View>
           </View>
@@ -96,7 +97,7 @@ export const Homepage = () => {
                 <OLink href={`/collections/${collection.slug}`} className={`grid gap-2 px-4 py-2 btn btn-secondary relative group`} key={collection.id}>
                   <Text className={`txt-4xl font-serif group-hover:text-white`}>{collection.name}</Text>
                   <OText className={`group-hover:text-white`}>{collection.description}</OText>
-                  <OText className={`txt-subtle group-hover:text-white`}>By {collection.author.name}</OText>
+                  <OText className={`txt-subtle group-hover:text-white`}>By {(collection.author.name === 'SYSTEM') ? 'OurCookbook' : collection.author.name}</OText>
                 </OLink>
               )))}
             </View>

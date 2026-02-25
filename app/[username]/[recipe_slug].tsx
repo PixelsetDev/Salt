@@ -135,7 +135,7 @@ export default function App() {
           setDietary(aggregatedDietary);
           setDisclaimers([...disclaimers]);
         })
-        .catch((err) => showToast({ type: 'error', message: 'Error loading ingredient details' }));
+        .catch((err) => showToast({ type: 'error', message: err.message }));
     }
   }, [recipe]);
 
@@ -147,25 +147,36 @@ export default function App() {
       <Navbar />
       <ImageBackground source={backgroundImage} className={`px-std py-sm`}>
         {recipe ? (
-          <View className={`gap-std p-sm grid`} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <View className={`gap-sm p-sm grid`} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <View className="flex-row gap-sm items-center">
               <Text className={`h1 font-serif text-white grow`}>{recipe.name}</Text>
               { recipe.isOwned && (<OPressable onPress={() => {router.push(`/edit/recipe/${recipe.id}`)}} className="btn btn-info">Edit</OPressable>)}
             </View>
-            <View className={`flex flex-row gap-2`}>
-              <OText className="txt-2xl text-white">Created by <OLink className={`txt-2xl text-white underline`} href={`/@${recipe.author.username}`}>{recipe.author.name}</OLink> on {new Date(recipe.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}.</OText>
+            <View className={`flex flex-row gap-sm`}>
+              <OText className="txt-2xl text-white">By <OLink className={`txt-2xl text-white underline`} href={`/@${recipe.author.username}`}>{recipe.author.name}</OLink></OText>
+              <OText className="txt-2xl text-white">•</OText>
+              <OText className="txt-2xl text-white">{new Date(recipe.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</OText>
+              <OText className="txt-2xl text-white">•</OText>
+              <OText className="txt-2xl text-white">{recipe.views} views</OText>
             </View>
-            {reviews?.score !== -1 ? (
-              <View className={`flex flex-row gap-4`}>
-                <View className={`flex flex-row gap-1`}>
-                  {[1, 2, 3, 4, 5].map((star) => <FontAwesome key={star} name={star <= Math.round(reviews?.score || 0) ? "star" : "star-o"} size={24} color="#fff" />)}
+            {reviews && reviews?.score !== -1 ? (
+              <View className="flex flex-row gap-std items-center">
+                <View className="flex flex-row gap-1">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <FontAwesome
+                      key={i}
+                      name={((reviews?.score - i + 1) >= 0.8 ? "star" : (reviews?.score - i + 1) >= 0.3 ? "star-half-o" : "star-o") as any}
+                      size={18}
+                      color="#fff"
+                    />
+                  ))}
                 </View>
-                <OText className={`text-white`}>|</OText>
-                <OText className={`text-white`}>{reviews?.score }</OText>
-                <OText className={`text-white`}>|</OText>
-                <OText className={`text-white`}>{reviews?.reviews?.length} Ratings</OText>
+                <OText className="text-white">{Number(reviews?.score).toFixed(1)} / 5.0</OText>
+                <OText className="text-white">({reviews?.reviews?.length} reviews)</OText>
               </View>
-            ) : (<OText className={`text-white italic`}>This recipe doesn&apos;t have any reviews yet.</OText>)}
+            ) : (
+              <OText className="text-white italic opacity-70">This recipe doesn&apos;t have any reviews yet.</OText>
+            )}
           </View>
         ) : (
           <View className={`gap-std grid`}>

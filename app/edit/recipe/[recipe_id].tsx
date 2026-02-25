@@ -35,48 +35,50 @@ export default function EditRecipe() {
 
   const loadData = useCallback(async () => {
     try {
-      const recipeRes = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}`);
+      const [recipeRes, catRes] = await Promise.all([
+        apiCall(`${API_BASE}/v1/recipes/${recipe_id}`),
+        fetch(`${API_BASE}/v1/recipes/categories`)
+      ]);
+
       if (!recipeRes.ok) throw new Error('Failed to load recipe');
       const recipeData = await recipeRes.json();
+      const parents = (await catRes.json())?.data || [];
 
-      if (!recipeData.data.isOwned) {
-        showToast({ type: 'error', message: 'You do not have permission to edit this recipe.' });
-        router.push(`/@${recipeData.data.author.username}/${recipeData.data.slug}`);
-        return;
-      }
-
-      const catRes = await fetch(`${API_BASE}/v1/recipes/categories`);
-      const catData = await catRes.json();
-      const parents = catData?.data || [];
+      const subcategoryData = await Promise.all(
+        parents.map(cat =>
+          fetch(`${API_BASE}/v1/recipes/categories/${cat.id}`)
+            .then(res => res.ok ? res.json() : { data: { subcategories: [] } })
+        )
+      );
 
       let flattened: {id: number, name: string}[] = [{ id: 0, name: "Uncategorised" }];
-      for (const cat of parents) {
-        flattened.push({ id: cat.id, name: cat.name });
-        const subRes = await fetch(`${API_BASE}/v1/recipes/categories/${cat.id}`);
-        if (subRes.ok) {
-          const subData = await subRes.json();
-          const subs = subData?.data?.subcategories || [];
-          subs.forEach((s: any) => flattened.push({ id: s.id, name: `└ ${s.name}` }));
-        }
-      }
+      parents.forEach((cat, index) => {
+        flattened.push({ id: Number(cat.id), name: cat.name });
+        const subs = subcategoryData[index]?.data?.subcategories || [];
+        subs.forEach((s: any) => flattened.push({ id: Number(s.id), name: `└ ${s.name}` }));
+      });
 
       setFlatCategories(flattened);
-      setRecipe(recipeData.data);
+      setRecipe({
+        ...recipeData.data,
+        category: recipeData.data.category !== null ? Number(recipeData.data.category) : 0
+      });
 
-      const ingRes = await fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`);
-      const ingData = await ingRes.json();
-      setIngredients(ingData?.data || []);
+      const [ingRes, stepRes] = await Promise.all([
+        fetch(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`),
+        fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`)
+      ]);
+
+      const ingList = (await ingRes.json())?.data || [];
+      setIngredients(ingList);
+      setSteps((await stepRes.json())?.data || []);
 
       const names: {[key: number]: string} = {};
-      await Promise.all((ingData?.data || []).map(async (ing: any) => {
+      await Promise.all(ingList.map(async (ing: any) => {
         const res = await fetch(`${API_BASE}/v1/ingredients/${ing.ingredient}`);
         if (res.ok) { const details = await res.json(); names[ing.ingredient] = details.data.name; }
       }));
       setIngredientNames(names);
-
-      const stepRes = await fetch(`${API_BASE}/v1/recipes/${recipe_id}/steps`);
-      const stepData = await stepRes.json();
-      setSteps(stepData?.data || []);
 
     } catch (err: any) {
       showToast({ type: 'error', message: err.message });
