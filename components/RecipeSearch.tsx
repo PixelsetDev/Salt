@@ -4,7 +4,7 @@ import { RecipeLink } from './RecipeLink';
 import { OPressable, OText } from './Overrides';
 import { API_BASE } from '../utils/settings';
 import { FontAwesome } from '@expo/vector-icons';
-import { WarningBox } from './Boxes.tsx';
+import { InfoBox, WarningBox } from './Boxes.tsx';
 import { useApiCall } from '../utils/api.ts';
 import { useLogto } from '@logto/rn';
 
@@ -161,21 +161,21 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
             </View>
           )}
           {showSpinner && <ActivityIndicator size="large" color="#fff" className="mb-5" />}
-
-          <View className="grid-2 md:grid-3 xl:grid-4 gap-std">
+          <View className="mb-5">
+            <InfoBox message="We're still loading in dietary information right now, so some filters may not behave as expected."/>
+          </View>
+          <View className="grid-2 md:grid-3 xl:grid-4 gap-std items-stretch">
             {recipes.length > 0 ? (
               recipes.map(r => (
-                <View key={r.slug}>
-                  {navigateToRecipe ? <RecipeLink recipe={r} /> : (
-                    <OPressable onPress={() => onRecipePress?.(r)} className="btn-np btn-primary overflow-hidden">
+                navigateToRecipe ? <RecipeLink recipe={r} key={r.slug} /> : (
+                    <OPressable onPress={() => onRecipePress?.(r)} className="btn-np btn-primary overflow-hidden h-full" key={r.slug}>
                       <Image source={{ uri: `https://api.ourcookbook.org/storage/recipes/@${r.author.username}/${r.slug}.webp` }} className="w-full aspect-square" />
                       <View className="gap-2 px-4 py-3">
                         <Text className="txt-xl font-serif dark:text-white">{r.name}</Text>
                         <OText className="dark:text-white">By {r.author.name}</OText>
                       </View>
                     </OPressable>
-                  )}
-                </View>
+                  )
               ))
             ) : (<WarningBox message={`No results found.`}/>)}
           </View>

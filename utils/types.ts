@@ -46,6 +46,20 @@ export type collectionType = {
   visibility: number;
 } | null;
 
+export type feedType = {
+  following: { username: string; name: string; }[];
+  followers: { username: string; name: string; }[];
+  feed: {
+    name: string;
+    slug: string;
+    description: string;
+    visibility: number;
+    created: string;
+    type: "RECIPE"|"COLLECTION"|"POST";
+    author: { username: string; name: string; uuid: string; };
+  }[]
+}|null;
+
 export type ingredientType = {
   alias_of: number;
   name: string;
@@ -84,7 +98,8 @@ export type recipeType = {
   servings: number;
   difficulty: number;
   visibility: number;
-  date: string;
+  created: string;
+  edited: string;
   tips: string;
   author: {
     username: string;

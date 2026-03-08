@@ -40,7 +40,7 @@ export default function App() {
           </OText>
         </OLink>
 
-        <View className="grid-3 gap-std">
+        <View className="grid-3-1 gap-std">
           {users.map((user) => (
             <OLink
               href={"/@"+user?.username}

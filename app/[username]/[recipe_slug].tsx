@@ -155,7 +155,7 @@ export default function App() {
             <View className={`flex flex-row gap-sm`}>
               <OText className="txt-2xl text-white">By <OLink className={`txt-2xl text-white underline`} href={`/@${recipe.author.username}`}>{recipe.author.name}</OLink></OText>
               <OText className="txt-2xl text-white">•</OText>
-              <OText className="txt-2xl text-white">{new Date(recipe.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</OText>
+              <OText className="txt-2xl text-white">{new Date(recipe.created).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</OText>
               <OText className="txt-2xl text-white">•</OText>
               <OText className="txt-2xl text-white">{recipe.views} views</OText>
             </View>
@@ -194,33 +194,18 @@ export default function App() {
             <View className={`gap-std span-2 bg-secondary p-xs grid`}>
               <Text className={`h2 font-serif`}>About this recipe</Text>
               <OText>{(recipe.description?.trim()==="")?("Looks like the author didn't upload a description!"):recipe.description }</OText>
-              <View className={`border-t-2 border-neutral-200 mt-2 text-xs`}></View>
-              <OText className={`txt-xs`}>
-                {dietary && (() => {
-                  const contains: string[] = []; const mayContain: string[] = [];
-                  const allergens: (keyof typeof dietary)[] = ["celery","gluten","crustaceans","eggs","fish","lupin","milk","molluscs","mustard","peanuts","sesame","soybeans","sulphites","treenuts"];
-                  allergens.forEach((key) => { if (dietary[key] === 2) contains.push(key); else if (dietary[key] === 1) mayContain.push(key); });
-                  const sentences: string[] = [];
-                  if (contains.length) sentences.push(`Contains ${contains.join(", ")}.`);
-                  if (mayContain.length) sentences.push(`May contain ${mayContain.join(", ")}.`);
-                  if (dietary.animal_products === 2) sentences.push("Not suitable for vegans."); else if (dietary.animal_products === 1) sentences.push("May not be suitable for vegans.");
-                  if (dietary.meat === 2) sentences.push("Not suitable for vegetarians."); else if (dietary.meat === 1) sentences.push("May not be suitable for vegetarians.");
-                  if (sentences.length !== 0) sentences.unshift("Dietary information:");
-                  return sentences.join(" ");
-                })()}
-              </OText>
-              <OText className={`txt-xs`}>
-                Always follow proper food hygiene procedures when cooking.{ disclaimers.map((disclaimer) => (' '+disclaimer))}
-                &nbsp;Recipe information uploaded by the author, OurCookbook cannot guarantee the accuracy or completeness of any information on this page.
+              <OText>This recipe was created by {recipe.author.name}{recipe.edited && (<OText> - last updated {new Date(recipe.edited).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</OText>)}.</OText>
+              <OText className={`txt-xs italic`}>
+                Always follow proper food hygiene procedures when cooking. Recipe information uploaded by the author, OurCookbook cannot guarantee the accuracy or completeness of any information on this page.
               </OText>
             </View>
-            <View className={`gap-std bg-secondary p-xs grid`}>
+            <View className={`gap-std bg-secondary p-xs grid mobile-span-2`}>
               <Text className={`h2 font-serif`}>Cooking</Text>
               <OText>This recipe serves {recipe.servings} people.</OText>
               <OText>{recipe.author.name} estimates that this recipe takes {recipe.time.prep} minutes to prepare, and {recipe.time.cook} minutes to cook.</OText>
               <Difficulty currentStep={2} steps={['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert']} />
             </View>
-            <View className={`gap-std flex`}>
+            <View className={`gap-std flex mobile-span-2`}>
               <View className={`gap-std bg-secondary p-xs grid ${ !recipe.tips && (`flex-grow`)}`}>
                 <Text className={`h2 font-serif`}>Ingredients</Text>
                 { ingredients ? (
@@ -229,7 +214,7 @@ export default function App() {
                       { ingredients.map((ingredient, index) => <OText key={'ingredient-name' + index} className={`flex-grow pr-2 pt-1`}>{ingredient.name}</OText>)}
                     </View>
                     <View className={`grid gap-1 divide-y-2 divide-neutral-300`}>
-                      { ingredients.map((ingredient, index) => <OText key={'ingredient-amount' + index} className={`pl-2 pt-1`}>{parseAmount(ingredient.amount)} {parseUnit(ingredient.amount, ingredient.unit)}</OText>)}
+                      { ingredients.map((ingredient, index) => <OText key={'ingredient-amount' + index} className={`pl-2 pt-1`}>{parseAmount(ingredient.amount)} {parseUnit(ingredient.amount, ingredient.unit, false)}</OText>)}
                     </View>
                   </View>
                 ) : (
@@ -239,6 +224,22 @@ export default function App() {
                     <OText>Sorry for any inconvenience caused!</OText>
                   </>
                 )}
+                <View className={`border-t border-neutral-200 mt-2 text-xs`}></View>
+                <OText className={`txt-xs`}>
+                  {dietary && (() => {
+                    const contains: string[] = []; const mayContain: string[] = [];
+                    const allergens: (keyof typeof dietary)[] = ["celery","gluten","crustaceans","eggs","fish","lupin","milk","molluscs","mustard","peanuts","sesame","soybeans","sulphites","treenuts"];
+                    allergens.forEach((key) => { if (dietary[key] === 2) contains.push(key); else if (dietary[key] === 1) mayContain.push(key); });
+                    const sentences: string[] = [];
+                    if (contains.length) sentences.push(`Contains ${contains.join(", ")}.`);
+                    if (mayContain.length) sentences.push(`May contain ${mayContain.join(", ")}.`);
+                    if (dietary.animal_products === 2) sentences.push("Not suitable for vegans."); else if (dietary.animal_products === 1) sentences.push("May not be suitable for vegans.");
+                    if (dietary.meat === 2) sentences.push("Not suitable for vegetarians."); else if (dietary.meat === 1) sentences.push("May not be suitable for vegetarians.");
+                    if (sentences.length !== 0) sentences.unshift("Dietary information:");
+                    return sentences.join(" ");
+                  })()}
+                </OText>
+                <OText className={`txt-xs pt-2`}>{disclaimers.map((disclaimer) => (' '+disclaimer))}</OText>
               </View>
               { recipe.tips && (
                 <View className={`mobile-span-2 gap-std bg-secondary p-xs grid flex-grow`}>

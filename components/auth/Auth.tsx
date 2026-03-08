@@ -1,4 +1,4 @@
-import { OPressable } from '../Overrides';
+import { OLink, OPressable } from '../Overrides';
 import { useLogto } from '@logto/rn';
 import { getSignInRedirectUrl } from '../../utils/auth';
 
@@ -19,5 +19,13 @@ export const SignOutButton = ({ className = 'btn-nav' }: { className?: string; }
     <OPressable onPress={async () => signOut()} className={`${className}`}>
       Sign out
     </OPressable>
+  )
+}
+
+export const SignUpButton = ({ className = 'btn-nav' }: { className?: string; }) => {
+  return (
+    <OLink href="https://portalsso.com/join/?flow=https://ourcookbook.org/" className={`${className}`}>
+      Create an Account
+    </OLink>
   )
 }

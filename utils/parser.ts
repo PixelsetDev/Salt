@@ -1,13 +1,19 @@
-export function parseUnit(amount:number, unit:string) {
-  if (unit === 'tbsp') {
-    return `Tablespoon${amount > 1 ? 's':''}`;
-  } else if (unit === 'tsp') {
-    return `Teaspoon${amount > 1 ? 's':''}`;
-  } else if (unit === 'mug') {
-    return `${String(unit).charAt(0).toUpperCase() + String(unit).slice(1)}${amount > 1 ? 's':''}`
-  } else {
-    return unit;
+import { units } from './units.ts';
+
+export function parseUnit(amount: number, unit: string, showNoUnit: boolean) {
+  const found = units.find(u => u.short === unit);
+
+  if (!found) return unit;
+
+  const name = found.long;
+
+  if (!showNoUnit && name === "No Unit") return "";
+
+  if (amount > 1 && name !== "No Unit") {
+    return `${name}s`;
   }
+
+  return name;
 }
 
 export function parseAmount(amount: number) {

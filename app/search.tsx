@@ -1,4 +1,4 @@
-/* Same as search.tsx */
+/* Same as recipes.tsx */
 import "./../global.css";
 import { Text, View, ScrollView } from 'react-native';
 import Navbar, { Footer } from '../components/Commons';

@@ -2,14 +2,16 @@ import './../global.css';
 import { View, ActivityIndicator, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { Homepage, WelcomeScreen } from '../components/Homepage';
+import { AuthedHomepage, UnauthedHomepage, WelcomeScreen } from '../components/Homepage';
+import { useLogto } from '@logto/rn';
 
 export default function App() {
   const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(Platform.OS === 'web' ? false : null);
   const [showMainApp, setShowMainApp] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
+  const { isAuthenticated } = useLogto();
 
   useEffect(() => {
-    // Skip the first launch logic if on web
     if (Platform.OS === 'web') return;
 
     const checkFirstLaunch = async () => {
@@ -29,6 +31,11 @@ export default function App() {
     checkFirstLaunch();
   }, []);
 
+  useEffect(() => {
+    console.log('Logto Auth State:', isAuthenticated);
+    setIsAuthed(isAuthenticated);
+  }, [isAuthenticated]);
+
   if (isFirstLaunch === null) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -41,5 +48,9 @@ export default function App() {
     return <WelcomeScreen onContinue={() => setShowMainApp(true)} />;
   }
 
-  return <Homepage />;
+  if (isAuthed) {
+    return <AuthedHomepage />;
+  } else {
+    return <UnauthedHomepage />;
+  }
 }

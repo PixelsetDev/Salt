@@ -15,12 +15,13 @@ export const OText = ({
 };
 
 export const OLink = ({
-  className = '', href = '', children, target = '_self', ...props
+  className = '', passthroughClassName = '', href = '', children, target = '_self', ...props
 }: {
-  className?: string; href?: string; children: ReactNode; target?: '_self' | '_blank' | '_parent' | '_top'; display?: 'inline' | 'block';
+  className?: string; passthroughClassName?: string; href?: string; children: ReactNode; target?: '_self' | '_blank' | '_parent' | '_top'; display?: 'inline' | 'block';
 }) => {
   return (
     <OPressable
+      className={passthroughClassName}
       onPress={() => {
         if (typeof window !== 'undefined') {
           window.location.href = href;

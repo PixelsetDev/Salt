@@ -22,20 +22,62 @@ export default function App() {
         </OText>
 
         <View className={`flex-row gap-sm flex-wrap`}>
+          <OText className={`chip-green`}>Salt and Pepper</OText>
           <OText className={`chip-green`}>Smart Search</OText>
           <OText className={`chip-green`}>Meal Plans</OText>
           <OText className={`chip-green`}>Shopping Lists</OText>
           <OText className={`chip-green`}>Recipe Categories</OText>
           <OText className={`chip-green`}>Dietary Information</OText>
           <OText className={`chip-green`}>Open Ingredients API</OText>
+          <OText className={`chip-green`}>New Chef&apos;s Feed</OText>
           <OText className={`chip-green`}>Profile Customisation</OText>
           <OText className={`chip-green`}>Private Collections</OText>
+          <OText className={`chip-green`}>More Badges</OText>
           <OText className={`chip-green`}>Annoying ads, goodbye!</OText>
           <OText className={`chip-green`}>Chef+</OText>
         </View>
 
         <View className={`grid gap-std`}>
-          <Text className={`h2 font-serif`}>Search and Categorisation</Text>
+          <View className={`flex-row gap-2`}>
+            <Text className={`h2 font-serif`}>Salt and Pepper</Text>
+            <Text className={`chip-green self-center`}>Out now!</Text>
+          </View>
+          <OText>
+            You&apos;ve probably heard us waffling on about those two seasonings for a while now and
+            thought &quot;what on earth are they talking about?&quot;. Salt and Pepper are the names
+            of our new frontend (what you see) and backend (what you don&apos;t see) services.
+          </OText>
+          <OText>
+            Salt is the frontend - that is what you are looking at now! It is the website and soon
+            to be app. We&apos;ve made significant upgrades in terms of visuals, accessibility, and
+            functionality. Making it easier to use than ever before.
+          </OText>
+          <OText>
+            Pepper is the server that powers OurCookbook - and wow has it been improved! The server
+            now runs faster than ever before, hosting a database with thousands of rows of data
+            which it is capable of querying in a matter of milliseconds! You will notice in this
+            post the amount of features we have improved and added, it&apos;s all thanks to Pepper!
+          </OText>
+          <OText>
+            Another benefit of the new server is redundancy and stability. You&apos;ll notice some
+            features feeling smoother and more stable. For example, if you forget to save your
+            recipe, you&apos;ll now only lose whatever you just did - previously you&apos;d lose it
+            all! Pepper can now autosave data mid-use, meaning that if something goes wrong it&apos;
+            pretty good at making it better again.
+          </OText>
+          <OText>
+            The new Salt and Pepper digital experience is all-round improved, feeling smoother and
+            more feature-rich than ever before! We&apos;re still making changes and would love to
+            hear any feedback - we&apos;re also planning to Open Source our software soon, so keep
+            an eye on our Git repository if you&apos;re interested.
+          </OText>
+        </View>
+
+        <View className={`grid gap-std`}>
+          <View className={`flex-row gap-2`}>
+            <Text className={`h2 font-serif`}>Search and Categorisation</Text>
+            <Text className={`chip-green self-center`}>Out now!</Text>
+          </View>
           <OText>
             When we first made OurCookbook, it had a few recipes that were all simple dinner meals.
             That has since grown to include lunch sandwiches, a wide array of meals, and even
@@ -58,32 +100,58 @@ export default function App() {
         <View className={`grid gap-std`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Meal Plans</Text>
-            <Text className={`chip-yellow self-center`}>Chef+</Text>
+            <Text className={`chip-red self-center`}>Coming Soon</Text>
+            <Text className={`chip-yellow self-center`}>Coming Soon to Chef+</Text>
           </View>
-          <Text className={`txt-subtle`}>
-            Some parts of this feature require a Chef+ subscription.
+          <Text>
+            You can now create Meal Plans on OurCookbook. Meal not on here? No problem - you can add
+            non-OurCookbook meals too!
           </Text>
           <OText>
-            With Chef+, you can export your meal plans as a shopping list, getting every ingredient
-            you need to make your food shop a breeze!
+            You can export your meal plans to a Shopping List, getting every ingredient you need to
+            make your food shop a breeze!
+          </OText>
+          <OText className={`txt-xs txt-subtle`}>
+            Chef+ required to export meal plans to shopping lists.
+          </OText>
+        </View>
+
+        <View className={`grid gap-std`}>
+          <View className={`flex-row gap-2`}>
+            <Text className={`h2 font-serif`}>New Chef&apos;s Feed</Text>
+            <Text className={`chip-green self-center`}>Out now!</Text>
+          </View>
+          <OText>
+            We have introduced a new Chef&apos;s feed so you can keep up-to-date with all things
+            going on with your friends. To visit the feed, click the button in the navigation bar
+            above.
           </OText>
         </View>
 
         <View className={`grid gap-std`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Shopping Lists</Text>
-            <Text className={`chip-yellow self-center`}>Chef+</Text>
+            <Text className={`chip-red self-center`}>Coming Soon</Text>
+            <Text className={`chip-yellow self-center`}>Coming Soon to Chef+</Text>
           </View>
           <Text className={`txt-subtle`}>
-            Some parts of this feature require a Chef+ subscription.
+            You can now create shopping lists based on the ingredients found in recipes on
+            OurCookbook! Simply select the recipes you&apos;d like to buy, or import a Meal Plan to
+            get started!
           </Text>
-          <OText>
-            With Chef+, you can export your shopping lists into other formats including PDFs.
+          <Text className={`txt-subtle`}>
+            You can also export shopping lists to text, PDF, and other formats!
+          </Text>
+          <OText className={`txt-xs txt-subtle`}>
+            Chef+ required to import meal plans and export shopping lists to other formats.
           </OText>
         </View>
 
         <View className={`grid gap-std`}>
-          <Text className={`h2 font-serif`}>Ingredients, Allergens, and Dietary Requirements</Text>
+          <View className={`flex-row gap-2`}>
+            <Text className={`h2 font-serif`}>Ingredients, Allergens, and Dietary Requirements</Text>
+            <Text className={`chip-green self-center`}>Out now!</Text>
+          </View>
           <OText>
             One of the biggest complaints we received was how long it took to upload new recipes,
             and with the new categorisation step we figured it would be a good idea to try and cut
@@ -119,11 +187,9 @@ export default function App() {
         <View className={`grid gap-std`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Profile Customisation</Text>
-            <Text className={`chip-yellow self-center`}>Chef+</Text>
+            <Text className={`chip-red self-center`}>Coming Soon</Text>
+            <Text className={`chip-yellow self-center`}>Coming Soon to Chef+</Text>
           </View>
-          <Text className={`txt-subtle`}>
-            Some of these features requires a Chef+ subscription.
-          </Text>
           <OText>
             We&apos;re expanding how you can make your profile look by adding bios and the ability
             to add links to your other social media accounts.
@@ -135,7 +201,10 @@ export default function App() {
         </View>
 
         <View className={`grid gap-std`}>
-          <Text className={`h2 font-serif`}>Goodbye saved recipes, hello private collections!</Text>
+          <View className={`flex-row gap-2`}>
+            <Text className={`h2 font-serif`}>Goodbye saved recipes, hello collections!</Text>
+            <Text className={`chip-green self-center`}>Out now!</Text>
+          </View>
           <OText>
             You could previously save recipes to a &quot;reading list&quot; style folder in OurCookbook,
             almost like a playlist of recipes. These were private to you and could not be shared
@@ -152,7 +221,10 @@ export default function App() {
         </View>
 
         <View className={`grid gap-std`}>
-          <Text className={`h2 font-serif`}>Going smoooooooth</Text>
+          <View className={`flex-row gap-2`}>
+            <Text className={`h2 font-serif`}>Going smoooooooth</Text>
+            <Text className={`chip-green self-center`}>Out now!</Text>
+          </View>
           <OText>
             A while back we announced that we were moving to a new API system that would speed up
             our website a lot, it was fantastic and did exactly what we wanted but it didn&apos;t
@@ -167,7 +239,31 @@ export default function App() {
         </View>
 
         <View className={`grid gap-std`}>
-          <Text className={`h2 font-serif`}>About those ads...</Text>
+          <View className={`flex-row gap-2`}>
+            <Text className={`h2 font-serif`}>More Badges</Text>
+            <Text className={`chip-red self-center`}>Coming Soon</Text>
+          </View>
+          <OText>
+            If you remember, some profiles had small tags below their names to say if they&apos;ve
+            done cool stuff, for example our OG users had &quot;Early Contributor&quot; there.
+            We&apos;ve since added more profile badges so even more people have the chance to earn
+            them.
+          </OText>
+          <OText>
+            New badges include awards for uploading a certain number of recipes, leaving a certain
+            number of reviews, and more! Visit your profile for more information.
+          </OText>
+          <OText className="txt-xs txt-subtle">
+            Profile badges may take some time to appear as our new Pepper server is still indexing
+            past profile activity.
+          </OText>
+        </View>
+
+        <View className={`grid gap-std`}>
+          <View className={`flex-row gap-2`}>
+            <Text className={`h2 font-serif`}>About those ads...</Text>
+            <Text className={`chip-green self-center`}>Out now!</Text>
+          </View>
           <OText>
             Wow were they annoying. We&apos;ve toned down the ads, a lot. Shockingly, our developers
             used ad blockers, so were unaware. We&apos;re sorry!

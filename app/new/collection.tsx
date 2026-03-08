@@ -82,7 +82,7 @@ export default function App() {
                             <View className="grid divide-y divide-neutral-500 gap-sm">
                                 {selectedRecipes.map(r => (
                                     <View className="flex-row gap-std items-center py-2" key={r.id}>
-                                        <OText className="text-white grow">{r.name}</OText>
+                                        <OText className="grow">{r.name}</OText>
                                         <OPressable onPress={() => toggleRecipe(r)} className="btn btn-danger">
                                             <FontAwesome name="times" size={14} color="white" />
                                         </OPressable>

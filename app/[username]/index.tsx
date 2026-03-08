@@ -13,15 +13,19 @@ import { RecipeLink } from '../../components/RecipeLink.tsx';
 import { useApiCall } from '../../utils/api.ts';
 import { Modal } from '../../components/Modal.tsx';
 import { useToast } from "../../components/ToastProvider";
+import { useUser } from '../../components/auth/UserProvider.tsx';
+import { useLogto } from '@logto/rn';
 
 export default function App() {
+  const { user } = useUser();
+  const { isAuthenticated } = useLogto();
   const { username } = useLocalSearchParams();
   const cleanId = (typeof username === 'string' ? username : '').replace(/^@/, '');
   const [editingReview, setEditingReview] = useState<any>(null);
   const [deletingReview, setDeletingReview] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<userType>(null);
+  const [currentUser, setUser] = useState<userType>(null);
   const apiCall = useApiCall();
   const { showToast } = useToast();
 
@@ -52,7 +56,7 @@ export default function App() {
       });
       const data = await res.json();
       if (res.status === 200) {
-        setUser({ ...user, reviews: user.reviews.filter((r: any) => r.id !== deletingReview.id) });
+        setUser({ ...user, reviews: currentUser.reviews.filter((r: any) => r.id !== deletingReview.id) });
         setDeletingReview(null);
         showToast({ type: 'success', message: data.message || 'Review deleted successfully.' });
       } else {
@@ -72,7 +76,7 @@ export default function App() {
       });
       const data = await res.json();
       if (res.status === 200) {
-        setUser({ ...user, reviews: user.reviews.map((r: any) => r.id === editingReview.id ? editingReview : r) });
+        setUser({ ...user, reviews: currentUser.reviews.map((r: any) => r.id === editingReview.id ? editingReview : r) });
         setEditingReview(null);
         showToast({ type: 'success', message: data.message || 'Review updated successfully.' });
       } else {
@@ -86,14 +90,22 @@ export default function App() {
     <ScrollView className="body">
       <Navbar />
       <View className="header grid-2">
-        {user ? (
+        {currentUser ? (
           <View className="gap-std flex-row">
             <Image
-              source={{ uri: `https://data.portalsso.com/avatar/${user.uuid}.webp` }}
+              source={{ uri: `https://data.portalsso.com/avatar/${currentUser.uuid}.webp` }}
               className="h-20 w-20 rounded-full md:h-28 md:w-28 lg:h-36 lg:w-36" />
-            <View className="gap-std grid self-center">
-              <Text className="h1 font-serif text-white">{user.name}</Text>
-              <Text className="h3 text-white">@{user.username}</Text>
+            <View className="gap-std grid-2 self-center flex-grow items-center">
+              <View className="gap-std grid self-center">
+                <Text className="h1 font-serif text-white">{currentUser.name}</Text>
+                <Text className="h3 text-white">@{currentUser.username}</Text>
+              </View>
+              {(isAuthenticated && (currentUser?.uuid === user?.uuid)) && (
+                <View className="flex-row">
+                  <Text className="flex-grow">&nbsp;</Text>
+                  <OLink href="/account" className="btn btn-info">Manage Account</OLink>
+                </View>
+              )}
             </View>
           </View>
         ) : (
@@ -109,14 +121,14 @@ export default function App() {
 
         <View className="gap-std grid">
           <Text className="h2 text-center font-serif">Recipes</Text>
-          {user?.recipes && user.recipes.length > 0 ? (
-            <View className="grid-5 gap-std">
-              {user.recipes.map((recipe) => (
+          {currentUser?.recipes && currentUser.recipes.length > 0 ? (
+            <View className="grid-5 gap-std items-stretch">
+              {currentUser.recipes.map((recipe) => (
                 <RecipeLink
                   recipe={{
                     slug: recipe.slug,
                     name: recipe.name,
-                    author: { username: user.username, name: user.name },
+                    author: { username: currentUser.username, name: currentUser.name },
                     visibility: recipe.visibility
                   }}
                   key={recipe.slug}
@@ -130,10 +142,10 @@ export default function App() {
 
         <View className="gap-std grid">
           <Text className="h2 text-center font-serif">Collections</Text>
-          {user?.collections && user.collections.length > 0 ? (
+          {currentUser?.collections && currentUser.collections.length > 0 ? (
             <View className="gap-std grid">
               <View className="grid-3 gap-std">
-                {user.collections.map((collection) => (
+                {currentUser.collections.map((collection) => (
                   <OLink
                     href={`/collections/${collection.slug}`}
                     className={`btn btn-primary relative grid gap-2 px-4 py-2`}
@@ -165,17 +177,17 @@ export default function App() {
 
         <View className="gap-std grid">
           <Text className="h2 text-center font-serif">Reviews</Text>
-          {user?.reviews && user.reviews.length > 0 ? (
+          {currentUser?.reviews && currentUser.reviews.length > 0 ? (
             <View className="grid-3 gap-std">
-              {user.reviews.map((review, index) => (
+              {currentUser.reviews.map((review, index) => (
                 <View key={'review' + index} className={`relative border-4 px-4 py-3 ${review.rating >= 4 ? "border-green-800" : review.rating === 3 ? "border-yellow-700" : "border-red-800"} bg-white dark:bg-neutral-900`}>
-                  {user.self && (
+                  {currentUser.self && (
                     <View className="absolute right-2 top-2 z-10 flex-row gap-2">
                       <OPressable disabled={loading} onPress={() => setEditingReview({ ...review })} className="btn-sm btn-info"><FontAwesome name="pencil" size={14} color="white" /></OPressable>
                       <OPressable disabled={loading} onPress={() => setDeletingReview({ ...review })} className="btn-sm btn-danger"><FontAwesome name="trash" size={14} color="white" /></OPressable>
                     </View>
                   )}
-                  <View className={`flex flex-row flex-wrap gap-2 ${user.self ? 'pr-20' : ''}`}>
+                  <View className={`flex flex-row flex-wrap gap-2 ${currentUser.self ? 'pr-20' : ''}`}>
                     <OLink href={`/@${review.recipe_author.username}/${review.recipe_slug}`} className="h3 font-serif underline">{review.recipe_name}</OLink>
                     <Text className="h3 font-serif">by</Text>
                     <OLink href={`/@${review.recipe_author.username}`} className="h3 font-serif underline">{review.recipe_author.name}</OLink>
@@ -186,7 +198,7 @@ export default function App() {
               ))}
             </View>
           ) : (
-            <OText className="text-center text-neutral-500">This user hasn&apos;t left any reviews.</OText>
+            <OText className="text-center">This user hasn&apos;t left any reviews.</OText>
           )}
 
           <Modal visible={!!editingReview} title="Edit Review" onClose={() => !loading && setEditingReview(null)}>

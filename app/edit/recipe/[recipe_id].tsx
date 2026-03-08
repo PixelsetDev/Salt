@@ -11,6 +11,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Modal } from '../../../components/Modal.tsx';
 import { recipeType } from '../../../utils/types';
 import { Picker } from '@react-native-picker/picker';
+import { units } from '../../../utils/units.ts';
 
 export default function EditRecipe() {
   const { recipe_id } = useLocalSearchParams();
@@ -29,7 +30,6 @@ export default function EditRecipe() {
   const [ingToDelete, setIngToDelete] = useState<any | null>(null);
   const [stepToDelete, setStepToDelete] = useState<{index: number, text: string} | null>(null);
 
-  const units = ['', 'g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup', 'pcs', 'oz', 'lb'];
   const difficulties = ['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert'];
   const visibilities = [{id: 3, name: 'Public'}, {id: 2, name: 'Unlisted'}, {id: 1, name: 'Friends'}, {id: 0, name: 'Private'}];
 
@@ -144,7 +144,7 @@ export default function EditRecipe() {
   const addStep = async () => {
     if (!newStepText.trim()) return;
     setLoading(true);
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'POST', body: JSON.stringify({ step: steps.length + 1, text: newStepText.substring(0, 255) }) });
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/steps`, true, { method: 'POST', body: JSON.stringify({ step: steps.length + 1, text: newStepText.substring(0, 512) }) });
     if (res.status === 201) { loadData(); setNewStepText(''); showToast({ type: 'success', message: 'Step added.' }); }
     else showToast({ type: 'error', message: 'Failed to add step.' });
     setLoading(false);
@@ -160,12 +160,17 @@ export default function EditRecipe() {
   const saveIngredient = async (id: number) => {
     const item = ingredients.find(i => i.id === id);
     if (!item) return;
-    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'PUT', body: JSON.stringify({
-        ...item,
-        amount: parseFloat(item.amount) || 0
-      }) });
-    if (res.status === 200) showToast({ type: 'success', message: 'Ingredient saved.' });
-    else showToast({ type: 'error', message: 'Save failed.' });
+
+    const amount = item.amount.includes('/')
+      ? (() => { const [n,d] = item.amount.split('/').map(Number); return d ? n/d : 0 })()
+      : parseFloat(item.amount) || 0;
+
+    const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, {
+      method: 'PUT',
+      body: JSON.stringify({ ...item, amount })
+    });
+
+    showToast({ type: res.status === 200 ? 'success' : 'error', message: res.status === 200 ? 'Ingredient saved.' : 'Save failed.' });
   };
 
   const saveStep = async (index: number) => {
@@ -220,8 +225,8 @@ export default function EditRecipe() {
             {ingredients.length === 0 ? <OText>This recipe has no ingredients, please add some!</OText> : ingredients.map((ing, idx) => (
               <View key={ing.id || idx} className="flex-row gap-sm items-center">
                 <View className="flex-1 input justify-center bg-neutral-200 dark:bg-neutral-800 h-10 px-2 rounded"><OText>{ingredientNames[ing.ingredient] || "Loading..."}</OText></View>
-                <TextInput className="input flex-1" placeholder="Qty" keyboardType="numeric" value={ing.amount.toString()} onChangeText={t => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, amount: parseFloat(t) || 0} : i))} />
-                <Picker style={{ height: 40, flex: 1 }} className="input" selectedValue={ing.unit} onValueChange={(v) => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, unit: v} : i))}>{units.map(u => <Picker.Item key={u} label={u || 'Unit'} value={u} />)}</Picker>
+                <TextInput className="input flex-1" placeholder="Qty" keyboardType="numeric" inputMode="decimal" value={ing.amount} onChangeText={t => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, amount: t} : i))} />
+                <Picker style={{ height: 40, flex: 1 }} className="input" selectedValue={ing.unit} onValueChange={(v) => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, unit: v} : i))}>{units.map(u => <Picker.Item key={u.short} label={u.long} value={u.short} />)}</Picker>
                 <OPressable onPress={() => saveIngredient(ing.id)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>
                 <OPressable onPress={() => setIngToDelete({...ing, name: ingredientNames[ing.ingredient]})} className="btn btn-danger"><FontAwesome name="trash" size={16} color="white" /></OPressable>
               </View>
@@ -247,10 +252,10 @@ export default function EditRecipe() {
             <View className="grid gap-xs mt-2">
               <View className="flex-row gap-sm items-center">
                 <Text className="font-serif txt-4xl dark:text-white w-12">{steps.length + 1}.</Text>
-                <TextInput maxLength={255} className="input flex-1" placeholder="Add a new step..." multiline numberOfLines={1} value={newStepText} onChangeText={setNewStepText} />
+                <TextInput maxLength={512} className="input flex-1" placeholder="Add a new step..." multiline numberOfLines={1} value={newStepText} onChangeText={setNewStepText} />
                 <OPressable onPress={addStep} disabled={loading} className="btn btn-secondary">+ Add</OPressable>
               </View>
-              <Text className="txt-xs txt-subtle text-right mr-20">{newStepText.length}/255</Text>
+              <Text className="txt-xs txt-subtle text-right mr-20">{newStepText.length}/512</Text>
             </View>
           </View>
 

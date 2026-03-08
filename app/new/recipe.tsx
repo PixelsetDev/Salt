@@ -82,7 +82,7 @@ export default function NewRecipe() {
       const data = await res.json();
       if (res.status === 201) {
         showToast({ type: 'success', message: 'Recipe created!' });
-        router.replace({ pathname: '/edit/recipe/[recipe_id]', params: { recipe_id: data.id } });
+        router.replace({ pathname: '/edit/recipe/[recipe_id]', params: { recipe_id: data } });
       } else {
         showToast({ type: 'error', message: data.message || 'Failed to create recipe.' });
       }
