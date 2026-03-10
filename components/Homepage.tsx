@@ -1,4 +1,12 @@
-import { Button, Image, ImageBackground, ScrollView, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Button,
+  Image,
+  ImageBackground,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import Navbar, { Footer } from './Commons';
 import { Desktop } from './Exclusions';
 import { OLink, OPressable, OText } from './Overrides';
@@ -280,7 +288,9 @@ export const AuthedHomepage = () => {
               </View>
             </View>
           </View>
-          ) : (<OText>Loading...</OText>)}
+          ) : (
+            <ActivityIndicator size="large"/>
+          )}
         </View>
       </View>
       <Footer />

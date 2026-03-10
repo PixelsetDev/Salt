@@ -1,5 +1,5 @@
 import './../../../global.css';
-import { ScrollView, Text, View, TextInput } from 'react-native';
+import { ScrollView, Text, View, TextInput, ActivityIndicator } from 'react-native';
 import Navbar, { Footer } from '../../../components/Commons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useEffect, useState, useCallback } from 'react';
@@ -224,7 +224,7 @@ export default function EditRecipe() {
             <View className="flex-row justify-between"><Text className="h2 font-serif">Ingredients</Text><OPressable onPress={() => setShowAddIngModal(true)} className="btn btn-secondary">+ Add</OPressable></View>
             {ingredients.length === 0 ? <OText>This recipe has no ingredients, please add some!</OText> : ingredients.map((ing, idx) => (
               <View key={ing.id || idx} className="flex-row gap-sm items-center">
-                <View className="flex-1 input justify-center bg-neutral-200 dark:bg-neutral-800 h-10 px-2 rounded"><OText>{ingredientNames[ing.ingredient] || "Loading..."}</OText></View>
+                <View className="flex-1 input justify-center bg-neutral-200 dark:bg-neutral-800 h-10 px-2 rounded"><OText>{ingredientNames[ing.ingredient] || <ActivityIndicator size="large"/>}</OText></View>
                 <TextInput className="input flex-1" placeholder="Qty" keyboardType="numeric" inputMode="decimal" value={ing.amount} onChangeText={t => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, amount: t} : i))} />
                 <Picker style={{ height: 40, flex: 1 }} className="input" selectedValue={ing.unit} onValueChange={(v) => setIngredients(ingredients.map(i => i.id === ing.id ? {...i, unit: v} : i))}>{units.map(u => <Picker.Item key={u.short} label={u.long} value={u.short} />)}</Picker>
                 <OPressable onPress={() => saveIngredient(ing.id)} className="btn btn-primary"><FontAwesome name="save" size={16} color="white" /></OPressable>

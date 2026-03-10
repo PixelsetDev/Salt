@@ -32,7 +32,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    console.log('Logto Auth State:', isAuthenticated);
     setIsAuthed(isAuthenticated);
   }, [isAuthenticated]);
 

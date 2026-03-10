@@ -22,19 +22,19 @@ export default function App() {
         </OText>
 
         <View className={`flex-row gap-sm flex-wrap`}>
-          <OText className={`chip-green`}>Salt and Pepper</OText>
-          <OText className={`chip-green`}>Smart Search</OText>
-          <OText className={`chip-green`}>Meal Plans</OText>
-          <OText className={`chip-green`}>Shopping Lists</OText>
-          <OText className={`chip-green`}>Recipe Categories</OText>
-          <OText className={`chip-green`}>Dietary Information</OText>
-          <OText className={`chip-green`}>Open Ingredients API</OText>
-          <OText className={`chip-green`}>New Chef&apos;s Feed</OText>
-          <OText className={`chip-green`}>Profile Customisation</OText>
-          <OText className={`chip-green`}>Private Collections</OText>
-          <OText className={`chip-green`}>More Badges</OText>
-          <OText className={`chip-green`}>Annoying ads, goodbye!</OText>
-          <OText className={`chip-green`}>Chef+</OText>
+          <Text className={`chip-green txt-xl`}>Salt and Pepper</Text>
+          <Text className={`chip-green txt-xl`}>Smart Search</Text>
+          <Text className={`chip-green txt-xl`}>Meal Plans</Text>
+          <Text className={`chip-green txt-xl`}>Shopping Lists</Text>
+          <Text className={`chip-green txt-xl`}>Recipe Categories</Text>
+          <Text className={`chip-green txt-xl`}>Dietary Information</Text>
+          <Text className={`chip-green txt-xl`}>Open Ingredients API</Text>
+          <Text className={`chip-green txt-xl`}>New Chef&apos;s Feed</Text>
+          <Text className={`chip-green txt-xl`}>Profile Customisation</Text>
+          <Text className={`chip-green txt-xl`}>Private Collections</Text>
+          <Text className={`chip-green txt-xl`}>More Badges</Text>
+          <Text className={`chip-green txt-xl`}>Annoying ads, goodbye!</Text>
+          <Text className={`chip-green txt-xl`}>Chef+</Text>
         </View>
 
         <View className={`grid gap-std`}>
@@ -100,20 +100,20 @@ export default function App() {
         <View className={`grid gap-std`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Meal Plans</Text>
-            <Text className={`chip-red self-center`}>Coming Soon</Text>
-            <Text className={`chip-yellow self-center`}>Coming Soon to Chef+</Text>
+            <Text className={`chip-green self-center`}>Out now!</Text>
+            <Text className={`chip-yellow self-center`}>Some features require Chef+</Text>
           </View>
-          <Text>
+          <OText>
             You can now create Meal Plans on OurCookbook. Meal not on here? No problem - you can add
             non-OurCookbook meals too!
-          </Text>
+          </OText>
           <OText>
             You can export your meal plans to a Shopping List, getting every ingredient you need to
             make your food shop a breeze!
           </OText>
-          <OText className={`txt-xs txt-subtle`}>
+          <Text className={`txt-xs txt-subtle`}>
             Chef+ required to export meal plans to shopping lists.
-          </OText>
+          </Text>
         </View>
 
         <View className={`grid gap-std`}>
@@ -131,20 +131,20 @@ export default function App() {
         <View className={`grid gap-std`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Shopping Lists</Text>
-            <Text className={`chip-red self-center`}>Coming Soon</Text>
-            <Text className={`chip-yellow self-center`}>Coming Soon to Chef+</Text>
+            <Text className={`chip-green self-center`}>Out now!</Text>
+            <Text className={`chip-yellow self-center`}>Some features require Chef+</Text>
           </View>
-          <Text className={`txt-subtle`}>
+          <OText>
             You can now create shopping lists based on the ingredients found in recipes on
             OurCookbook! Simply select the recipes you&apos;d like to buy, or import a Meal Plan to
             get started!
-          </Text>
-          <Text className={`txt-subtle`}>
-            You can also export shopping lists to text, PDF, and other formats!
-          </Text>
-          <OText className={`txt-xs txt-subtle`}>
-            Chef+ required to import meal plans and export shopping lists to other formats.
           </OText>
+          <OText>
+            You&apos;ll soon also be able to export shopping lists to text, PDF, and other formats!
+          </OText>
+          <Text className={`txt-xs txt-subtle`}>
+            Chef+ required to import meal plans and export shopping lists to other formats.
+          </Text>
         </View>
 
         <View className={`grid gap-std`}>
@@ -188,7 +188,7 @@ export default function App() {
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Profile Customisation</Text>
             <Text className={`chip-red self-center`}>Coming Soon</Text>
-            <Text className={`chip-yellow self-center`}>Coming Soon to Chef+</Text>
+            <Text className={`chip-yellow self-center`}>Some features require Chef+</Text>
           </View>
           <OText>
             We&apos;re expanding how you can make your profile look by adding bios and the ability
@@ -253,10 +253,10 @@ export default function App() {
             New badges include awards for uploading a certain number of recipes, leaving a certain
             number of reviews, and more! Visit your profile for more information.
           </OText>
-          <OText className="txt-xs txt-subtle">
+          <Text className="txt-xs txt-subtle">
             Profile badges may take some time to appear as our new Pepper server is still indexing
             past profile activity.
-          </OText>
+          </Text>
         </View>
 
         <View className={`grid gap-std`}>

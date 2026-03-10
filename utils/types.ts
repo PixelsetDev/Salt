@@ -89,6 +89,27 @@ export type ingredientsType = {
   name: string;
 }[];
 
+export type mealPlanType = {
+  id: string;
+  visibility: number;
+  isOwned: boolean;
+  author: {
+    username: string;
+    name: string;
+    uuid: string;
+  };
+  items?: mealItemType[];
+};
+
+export type mealItemType = {
+  id: number;
+  plan_id: number;
+  recipe_id: number | null;
+  text: string | null;
+  date: string;
+  recipe_name?: string | null;
+};
+
 export type recipeType = {
   id: number;
   slug: string;
@@ -136,6 +157,24 @@ export type reviewsType = {
     },
   ];
 } | null;
+
+export type shoppingItemType = {
+  id: number;
+  text: string | null;
+  ingredient_id: number | null;
+  ingredient_name: string | null;
+  checked: boolean;
+}
+
+export type shoppingListType = {
+  uuid: string;
+  name: string;
+  date: string;
+  visibility: number;
+  isOwned: boolean;
+  author: { username: string; name: string };
+  items: shoppingItemType[];
+}
 
 export type stepsType = [string] | null;
 

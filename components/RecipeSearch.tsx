@@ -64,8 +64,8 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
   }, [apiCall, isAuthenticated]);
 
   const fetchRecipes = useCallback(async (query = '') => {
-    onSearchPerformed?.(true);
     setShowSpinner(false);
+    onSearchPerformed?.(true);
     const timeout = setTimeout(() => setShowSpinner(true), 300);
 
     try {
@@ -160,7 +160,7 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
               </ScrollView>
             </View>
           )}
-          {showSpinner && <ActivityIndicator size="large" color="#fff" className="mb-5" />}
+          {showSpinner && <ActivityIndicator size="large" />}
           <View className="mb-5">
             <InfoBox message="We're still loading in dietary information right now, so some filters may not behave as expected."/>
           </View>

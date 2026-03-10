@@ -1,5 +1,5 @@
 import "./../../global.css";
-import { Text, View, ScrollView, Image, TextInput } from 'react-native';
+import { Text, View, ScrollView, Image, TextInput, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { OLink, OText, OPressable } from "../../components/Overrides";
@@ -110,8 +110,7 @@ export default function App() {
           </View>
         ) : (
           <View className="gap-std grid">
-            <Text className="h1 font-serif text-white">Loading...</Text>
-            <Text className="h3 text-white">Loading...</Text>
+            <ActivityIndicator size="large"/>
           </View>
         )}
       </View>
@@ -210,7 +209,7 @@ export default function App() {
               />
               <View>
                 <TextInput multiline numberOfLines={4} maxLength={128} editable={!loading} className="input" style={{ textAlignVertical: 'top', minHeight: 100 }} value={editingReview?.comment || ''} onChangeText={(text) => setEditingReview({ ...editingReview, comment: text })} />
-                <OText className="txt-xs text-right mt-1 opacity-60">{(editingReview?.comment || '').length}/128</OText>
+                <OText className="txt-xs text-right mt-1 txt-subtle">{(editingReview?.comment || '').length}/128</OText>
               </View>
               <View className="mt-2 flex-row gap-std">
                 <OPressable disabled={loading} onPress={saveEdit} className="btn btn-primary">

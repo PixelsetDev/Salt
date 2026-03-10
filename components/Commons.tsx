@@ -33,7 +33,6 @@ const Navbar = () => {
           ocb-app-issues@pixelset.dev
         </Text>
       </View>*/}
-      <WarningBox message="Some features are temporarily unavailable due to maintenance works. For more information, visit ourcookbook.org/service-status"></WarningBox>
       <View className={`bg-green-d px-std hidden flex-row gap-sm sm:flex`}>
         <OLink href={`/`} className={`link-nav font-serif py-1`}>
           OurCookbook
@@ -74,11 +73,11 @@ const Navbar = () => {
         </OLink>
         {isAuthenticated && (
           <>
-            <OLink href={`/plans`} className={`btn-nav`}>
+            <OLink href={`/meal-plans`} className={`btn-nav`}>
               Meal Plans
             </OLink>
-            <OLink href={`/shopping-list`} className={`btn-nav`}>
-              Shopping List
+            <OLink href={`/shopping-lists`} className={`btn-nav`}>
+              Shopping Lists
             </OLink>
           </>
         )}
@@ -108,8 +107,8 @@ const Navbar = () => {
         </OPressable>
       </View>
       {visible && (
-        <View className={`rounded bg-gray-200 p-4`}>
-          <View className={`gap-sm p-std grid`}>
+        <View className={`rounded bg-gray-200 p-2`}>
+          <View className={`gap-2 grid`}>
             {isAuthenticated && (
               <OLink href={`/`} className={`btn btn-primary text-white`}>
                 Feed
@@ -123,11 +122,11 @@ const Navbar = () => {
             </OLink>
             {isAuthenticated && (
               <>
-                <OLink href={`/plans`} className={`btn btn-primary text-white`}>
+                <OLink href={`/meal-plans`} className={`btn btn-primary text-white`}>
                   Meal Plans
                 </OLink>
-                <OLink href={`/plans`} className={`btn btn-primary text-white`}>
-                  Shopping List
+                <OLink href={`/shopping-lists`} className={`btn btn-primary text-white`}>
+                  Shopping Lists
                 </OLink>
               </>
             )}
@@ -175,6 +174,7 @@ export const Footer = () => {
       </View>
       <View>
         <Text className={`font-serif h3`}>Support</Text>
+        <OLink href={`/service-status`} className={`link-inline`} target={`_blank`}>Service Status</OLink>
         <OLink href={`https://support.pixelset.dev/knowledgebase.php?category=7`} className={`link-inline`} target={`_blank`}>Articles and Guides</OLink>
         <OLink href={`https://support.pixelset.dev/index.php?a=add&amp;category=6`} className={`link-inline`} target={`_blank`}>Contact Support</OLink>
         <OLink href={`https://support.pixelset.dev/knowledgebase.php?article=19`} className={`link-inline`} target={`_blank`}>Community Guidelines</OLink>

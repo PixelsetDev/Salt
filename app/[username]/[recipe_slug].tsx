@@ -1,5 +1,12 @@
 import './../../global.css';
-import { ImageBackground, ScrollView, Text, View, TextInput } from 'react-native';
+import {
+  ImageBackground,
+  ScrollView,
+  Text,
+  View,
+  TextInput,
+  ActivityIndicator,
+} from 'react-native';
 import Navbar, { Footer } from '../../components/Commons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -175,13 +182,12 @@ export default function App() {
                 <OText className="text-white">({reviews?.reviews?.length} reviews)</OText>
               </View>
             ) : (
-              <OText className="text-white italic opacity-70">This recipe doesn&apos;t have any reviews yet.</OText>
+              <OText className="txt-subtle">This recipe doesn&apos;t have any reviews yet.</OText>
             )}
           </View>
         ) : (
           <View className={`gap-std grid`}>
-            <Text className={`h1 font-serif text-white`}>Loading...</Text>
-            <OText className={`text-white`}>Loading...</OText>
+            <ActivityIndicator size="large"/>
           </View>
         )}
       </ImageBackground>

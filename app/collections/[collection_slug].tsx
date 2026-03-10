@@ -1,5 +1,5 @@
 import "./../../global.css";
-import { Text, View, ScrollView, TextInput } from 'react-native';
+import { Text, View, ScrollView, TextInput, ActivityIndicator } from 'react-native';
 import { useEffect, useState } from 'react';
 import Navbar, { Footer } from '../../components/Commons';
 import { collectionType, recipeType } from '../../utils/types';
@@ -165,11 +165,11 @@ export default function App() {
       </Modal>
       <View className="header grid-2">
         <View className="grid gap-std">
-          <Text className="h1 font-serif text-white grow">{collection?.name || 'Loading...'}</Text>
+          <Text className="h1 font-serif text-white grow">{collection?.name || <ActivityIndicator size="large"/>}</Text>
           {(collection?.author.name === "SYSTEM") ? (
             <Text className="h3 text-white">By OurCookbook.</Text>
           ) : (
-            <Text className="h3 text-white">By <Link className="underline h3 text-white" href={`/@${collection?.author.username}`}>{collection?.author.name || 'Loading...'}</Link>.</Text>
+            <Text className="h3 text-white">By <Link className="underline h3 text-white" href={`/@${collection?.author.username}`}>{collection?.author.name || <ActivityIndicator size="large"/>}</Link>.</Text>
           )}
         </View>
           <View className="grid gap-sm justify-end items-end">
