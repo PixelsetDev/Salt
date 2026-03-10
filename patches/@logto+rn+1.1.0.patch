@@ -1,0 +1,68 @@
+diff --git a/node_modules/@logto/rn/lib/client.js b/node_modules/@logto/rn/lib/client.js
+index 1e7a63d..7bd8d26 100644
+--- a/node_modules/@logto/rn/lib/client.js
++++ b/node_modules/@logto/rn/lib/client.js
+@@ -6,6 +6,8 @@ import { LogtoNativeClientError } from './errors';
+ import { BrowserStorage, SecureStorage } from './storage';
+ import { generateCodeChallenge, generateRandomString } from './utils';
+ const issuedAtTimeTolerance = 300; // 5 minutes
++const windowName = 'logtoAuth';
++
+ export class LogtoClient extends StandardLogtoClient {
+     constructor(config) {
+         const storage = Platform.OS === 'web'
+@@ -20,6 +22,7 @@ export class LogtoClient extends StandardLogtoClient {
+                         this.authSessionResult = undefined;
+                         this.authSessionResult = await WebBrowser.openAuthSessionAsync(url, redirectUri, {
+                             preferEphemeralSession: config.preferEphemeralSession ?? true,
++                            windowName,
+                             createTask: false,
+                         });
+                         break;
+@@ -37,13 +40,6 @@ export class LogtoClient extends StandardLogtoClient {
+             generateCodeVerifier: generateRandomString,
+             generateState: generateRandomString,
+         }, (client) => ({
+-            // Due to the limitation of Expo, we could not verify JWT signature on the client side.
+-            // Thus we only decode the token and verify the claims here. The signature verification
+-            // may be done on the server side or in the future when the limitation is resolved.
+-            //
+-            // Limitations:
+-            // - Lack of support for the crypto module or Web Crypto API.
+-            // - Lack of support for native modules in the managed workflow.
+             verifyIdToken: async (idToken) => {
+                 const { issuer } = await client.getOidcConfig();
+                 const claims = decodeIdToken(idToken);
+@@ -57,7 +53,19 @@ export class LogtoClient extends StandardLogtoClient {
+         }));
+         this.storage = storage;
+     }
++
+     async signIn(options, interactionMode) {
++        if (Platform.OS === 'web') {
++            // Hack is primarily needed for safari,
++            // because it's too strict that after awaiting some promises
++            // it consider opening a popup-window as action without user initiative
++            // How the hack works:
++            // 1. It opens blank page with empty urls synchronously after button click
++            // 2. After awaiting promises logto triggers navigation function, which calls WebBrowser.openAuthSession()
++            // Under the hood, it will trigger window.open() with the same windowName and new url,
++            // which will be recognized by browser as navigation to new url in existing opened window.
++            await WebBrowser.openBrowserAsync('', { windowName });
++        }
+         await (typeof options === 'string'
+             ? super.signIn(options, interactionMode)
+             : super.signIn(options));
+@@ -66,11 +74,7 @@ export class LogtoClient extends StandardLogtoClient {
+         }
+         await this.handleSignInCallback(this.authSessionResult.url);
+     }
+-    /**
+-     * Revokes all the tokens and cleans up the storage. By default, it will NOT open the browser
+-     * to start the sign-out flow for better user experience, and the `postLogoutRedirectUri` will
+-     * be ignored.
+-     */
++
+     async signOut(postLogoutRedirectUri) {
+         return super.signOut(postLogoutRedirectUri);
+     }
