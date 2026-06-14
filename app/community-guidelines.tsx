@@ -18,7 +18,7 @@ export default function App() {
         <View className="p-std gap-lg grid">
           <WarningBox
             message={
-              'These community guidelines come into force on 16th July 2026. Until that date, the Community Guidelines available at ourcookbook.org/guidelines apply.'
+              'These community guidelines come into force on 16th July 2026. Until that date, the current Community Guidelines available at ourcookbook.org/old-guidelines apply.'
             }></WarningBox>
           <View className="gap-sm grid">
             <OText>
@@ -117,9 +117,7 @@ export default function App() {
               </View>
               <View className="flex-row gap-2">
                 <OText>•</OText>
-                <OText>
-                  Misinformation: sharing false or misleading information.
-                </OText>
+                <OText>Misinformation: sharing false or misleading information.</OText>
               </View>
               <View className="flex-row gap-2">
                 <OText>•</OText>
@@ -146,9 +144,9 @@ export default function App() {
                   away from it. Advertisements or links to unrelated commercial services, affiliate
                   marketing links, or links to platforms primarily used for scraping or competing
                   services are not permitted. We do allow links to personal social media profiles or
-                  websites showcasing your own cooking to be linked from your profile&apos;s
-                  links field, provided the linked content itself complies with these Guidelines. We
-                  do not allow such content elsewhere on the website.
+                  websites showcasing your own cooking to be linked from your profile&apos;s links
+                  field, provided the linked content itself complies with these Guidelines. We do
+                  not allow such content elsewhere on the website.
                 </OText>
               </View>
               <View className="flex-row gap-2">
