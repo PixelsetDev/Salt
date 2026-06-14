@@ -104,8 +104,8 @@ export default function App() {
                 <OText>•</OText>
                 <OText>
                   Graphic content: content that is gratuitously violent, gory, or disturbing. This
-                  does not include standard depictions of raw meat, fish, or food preparation that
-                  would be expected in ordinary cooking content.
+                  does not include standard depictions of raw meat, fish, butchery, or food
+                  preparation that would be expected in ordinary cooking content.
                 </OText>
               </View>
               <View className="flex-row gap-2">

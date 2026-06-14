@@ -24,6 +24,12 @@ const Navbar = () => {
           rel={`stylesheet`}
         />
       </Helmet>
+      <View className={`px-std flex flex-row gap-2 bg-yellow-800 py-1`}>
+        <Text className={`text-xs text-white`}>
+          From 16th July 2026, our Terms and Conditions, Privacy Policy, and Community Guidelines are changing.
+          For more information, visit <OLink href={"/new-terms"} className={"underline"}>ourcookbook.org/new-terms</OLink>.
+        </Text>
+      </View>
       <View className={`px-std flex flex-row gap-2 bg-red-800 py-1`}>
         <Text className={`text-xs text-white`}>
           You&apos;re on our BETA website, it&apos;s under active development and is likely to
