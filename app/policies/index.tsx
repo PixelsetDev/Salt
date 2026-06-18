@@ -34,19 +34,23 @@ export default function App() {
               a few areas that needed tightening up. We&apos;d encourage all users to review the
               updated documents before they come into effect.
             </OText>
+            <OText>
+              Some key changes to our Community Guidelines include limited exceptions for graphic
+              content and animal-related content such as raw meat in food preparation, an
+              no-exceptions ban on AI-generated content, tighter rules on platform manipulation with
+              cross-platform bans for serious offenders, a formal way to challenge moderation
+              decisions, rules related to new and upcoming features and privacy settings, and a
+              proper reporting process via the report button or support site. Security-related
+              clauses have moved to the Terms of Service, where they more naturally belong.
+            </OText>
+            <OText>
+              Once these new policies are in force, this page will be changed to only include links
+              to the new policies.
+            </OText>
           </View>
           <View className="gap-sm grid">
             <Text className="h2 font-serif">Community Guidelines</Text>
             <InfoBox message={`Our new Community Guidelines come into effect on 19th July 2026.`}/>
-            <OText>
-              Some key changes include exceptions for graphic content and animal-related content
-              such as raw meat in food preparation, an no-exceptions ban on AI-generated content,
-              tighter rules on platform manipulation with cross-platform bans for serious offenders,
-              a formal way to challenge moderation decisions, rules related to new and upcoming
-              features and privacy settings, and a proper reporting process via the report button or
-              support site. Security-related clauses have moved to the Terms of Service, where they
-              more naturally belong.
-            </OText>
             <OText>
               Please use the buttons below to read the full updated Community Guidelines.
             </OText>
