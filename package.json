@@ -50,7 +50,7 @@
     "react-native-worklets": "^0.5.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
+    "@babel/core": "^7.29.6",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/he": "^1.2.3",
     "@types/react": "~19.1.10",
