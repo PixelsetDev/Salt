@@ -26,14 +26,20 @@ const Navbar = () => {
           rel={`stylesheet`}
         />
       </Helmet>
-      {/*<View className={`px-std flex flex-row gap-2 bg-red-800 py-1`}>
-        <Text className={`text-xs text-center text-white`}>
+      <View className={`px-std flex flex-row gap-2 bg-yellow-800 py-1`}>
+        <Text className={`text-xs text-white`}>
+          From 16th July 2026, our Terms and Conditions, Privacy Policy, and Community Guidelines are changing.
+          For more information, visit <OLink href={"/new-terms"} className={"underline"}>ourcookbook.org/new-terms</OLink>.
+        </Text>
+      </View>
+      <View className={`px-std flex flex-row gap-2 bg-red-800 py-1`}>
+        <Text className={`text-xs text-white`}>
           You&apos;re on our BETA website, it&apos;s under active development and is likely to
           behave unexpectedly. Please report any bugs, crashes, or issues to
           ocb-app-issues@pixelset.dev
         </Text>
-      </View>*/}
-      <View className={`bg-green-d px-std hidden flex-row gap-sm sm:flex`}>
+      </View>
+      <View className={`bg-green-d px-std hidden flex-row gap-2 sm:flex`}>
         <OLink href={`/`} className={`link-nav font-serif py-1`}>
           OurCookbook
         </OLink>
@@ -52,7 +58,7 @@ const Navbar = () => {
             <OLink href={`/new`}>
               <FontAwesome6 name={"plus"} className={`btn-sm btn-primary`}/>
             </OLink>
-            <OLink href={`/@${user?.username}`} className={`link-nav`}>
+            <OLink href={`/account`} className={`link-nav`}>
               {name}
             </OLink>
             <SignOutButton className={`link-nav`} />
@@ -60,11 +66,6 @@ const Navbar = () => {
         )}
       </View>
       <View className={`px-std hidden flex-row bg-white sm:flex dark:bg-neutral-900 dark:text-white`}>
-        {isAuthenticated && (
-          <OLink href={`/`} className={`btn-nav`}>
-            Feed
-          </OLink>
-        )}
         <OLink href={`/recipes`} className={`btn-nav`}>
           Recipes
         </OLink>
