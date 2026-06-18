@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { LogtoProvider, LogtoConfig } from '@logto/rn';
+import { LogtoProvider, LogtoConfig, UserScope } from '@logto/rn';
 import { Slot } from 'expo-router';
 import * as Sentry from '@sentry/react-native';
 import * as SplashScreen from 'expo-splash-screen';
@@ -31,7 +31,7 @@ Sentry.init({
 let config: LogtoConfig = {
   endpoint: 'https://auth.portalsso.com/',
   appId: 'lcjrqsxgiqxt27dyygoby',
-  scopes: ['openid', 'email', 'profile', 'roles'],
+  scopes: [UserScope.Profile, UserScope.Email, UserScope.Roles, UserScope.Identities],
   resources: ['https://api.ourcookbook.org'],
 };
 

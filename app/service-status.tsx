@@ -18,20 +18,16 @@ export default function App() {
         <View className="grid gap-sm">
           <Text className="h2 font-serif">Current Status</Text>
           <ErrorBox message="The following features are currently unavailable due to technical issues: Icons"/>
-          <WarningBox message="The following features are currently unavailable for maintenance: Ingredient Creation"/>
           <OText>
             We are aware of an issue resulting in icons not loading correctly on web and
-            are working to fix it. Ingredient Creation is
-            temporarily unavailable whilst we finish polishing that features up. You can still add
-            existing ingredients to recipes.
-          </OText>
-          <OText>
-            Update 9 March: Shopping Lists and Meal Plans are now available.
+            are working to fix it.
           </OText>
         </View>
         <View className="grid gap-sm">
           <Text className="h2 font-serif">Past Incidents</Text>
-          <OText>There&apos;s nothing to see here...</OText>
+          <OText>
+            8 March – 10 March 2026: Ingredient Creation, Shopping Lists, and Meal Plans were unavailable.
+          </OText>
         </View>
         <View className="grid gap-sm">
           <Text className="h2 font-serif">Server Status</Text>

@@ -27,8 +27,10 @@ export default function EditRecipe() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddIngModal, setShowAddIngModal] = useState(false);
   const [ingSearch, setIngSearch] = useState<{query: string, results: any[]}>({query: '', results: []});
+  const [ingSearching, setIngSearching] = useState(false);
   const [ingToDelete, setIngToDelete] = useState<any | null>(null);
   const [stepToDelete, setStepToDelete] = useState<{index: number, text: string} | null>(null);
+
 
   const difficulties = ['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert'];
   const visibilities = [{id: 3, name: 'Public'}, {id: 2, name: 'Unlisted'}, {id: 1, name: 'Friends'}, {id: 0, name: 'Private'}];
@@ -88,9 +90,10 @@ export default function EditRecipe() {
   useEffect(() => { loadData(); }, [loadData]);
 
   useEffect(() => {
-    if (!ingSearch.query) { setIngSearch(prev => ({ ...prev, results: [] })); return; }
+    if (!ingSearch.query) { setIngSearch(prev => ({ ...prev, results: [] })); setIngSearching(false); return; }
+    setIngSearching(true);
     const delayDebounceFn = setTimeout(() => {
-      fetch(`${API_BASE}/v1/ingredients?search=${encodeURIComponent(ingSearch.query)}&lang=GB`).then(res => res.ok ? res.json() : null).then(data => setIngSearch(prev => ({ ...prev, results: data?.data?.results || [] }))).catch(() => setIngSearch(prev => ({ ...prev, results: [] })));
+      fetch(`${API_BASE}/v1/ingredients?search=${encodeURIComponent(ingSearch.query)}&lang=GB`).then(res => res.ok ? res.json() : null).then(data => { setIngSearch(prev => ({ ...prev, results: data?.data?.results || [] })); setIngSearching(false); }).catch(() => { setIngSearch(prev => ({ ...prev, results: [] })); setIngSearching(false); });
     }, 400);
     return () => clearTimeout(delayDebounceFn);
   }, [ingSearch.query]);
@@ -132,6 +135,18 @@ export default function EditRecipe() {
     const res = await apiCall(`${API_BASE}/v1/recipes/${recipe_id}/ingredients`, true, { method: 'POST', body: JSON.stringify({ ingredient: ingredientId, amount: 0, unit: '' }) });
     if (res.status === 201) { loadData(); setShowAddIngModal(false); }
     else showToast({ type: 'error', message: 'Failed to add ingredient.' });
+  };
+
+  const createIngredient = async () => {
+    if (!ingSearch.query.trim()) return;
+    const res = await apiCall(`${API_BASE}/v1/ingredients`, true, { method: 'POST', body: JSON.stringify({ name_gb: ingSearch.query.trim() }) });
+    if (res.status === 201) {
+      const data = await res.json();
+      await addIngredient(data.data);
+    } else {
+      const data = await res.json();
+      showToast({ type: 'error', message: data?.message || 'Failed to create ingredient.' });
+    }
   };
 
   const deleteIngredient = async () => {
@@ -266,11 +281,22 @@ export default function EditRecipe() {
         </View>
       )}
 
-      <Modal visible={showAddIngModal} title="Add Ingredient" onClose={() => setShowAddIngModal(false)}>
+      <Modal visible={showAddIngModal} title="Add Ingredient" onClose={() => { setShowAddIngModal(false); setIngSearching(false); setIngSearch({query: '', results: []}); }}>
         <View className="gap-std">
           <TextInput className="input" autoFocus placeholder="Type to search..." onChangeText={(t) => setIngSearch(prev => ({ ...prev, query: t }))} />
-          <ScrollView style={{maxHeight: 200}} className="mt-2">{ingSearch.results.length > 0 ? ingSearch.results.map((res: any) => (<OPressable key={res.id} className="p-3 border-b border-neutral-200 dark:border-neutral-700" onPress={() => addIngredient(res.id)}><OText>{res.name}</OText></OPressable>)) : <View className="p-8 items-center"><OText className="opacity-50 text-center">{ingSearch.query ? `No ingredients found for "${ingSearch.query}"` : "Start typing to find ingredients..."}</OText></View>}</ScrollView>
-          <OPressable onPress={() => setShowAddIngModal(false)} className="btn btn-secondary">Close</OPressable>
+          <ScrollView style={{maxHeight: 200}} className="mt-2">{ingSearching ? <ActivityIndicator size="large" /> : ingSearch.results.length > 0 ? ingSearch.results.map((res: any) => (<OPressable key={res.id} className="p-3 border-b border-neutral-200 dark:border-neutral-700" onPress={() => addIngredient(res.id)}><OText>{res.name}</OText></OPressable>)) : (
+            <View className="gap-std">
+              <OText className="opacity-50 text-center">{ingSearch.query ? `No ingredients found for "${ingSearch.query}"` : "Start typing to find ingredients..."}</OText>
+              {ingSearch.query.trim().length > 0 && (
+                <View className="gap-sm">
+                  <OText>Create "{ingSearch.query}" as a new ingredient?</OText>
+                  <Text className="txt-xs txt-subtle">This ingredient will be publicly available to all users and subject to review. By creating it, you agree to our community guidelines.</Text>
+                  <OPressable onPress={createIngredient} className="btn btn-secondary">+ Create & Add</OPressable>
+                </View>
+              )}
+            </View>
+          )}</ScrollView>
+          <OPressable onPress={() => { setShowAddIngModal(false); setIngSearching(false); setIngSearch({query: '', results: []}); }} className="btn btn-secondary">Close</OPressable>
         </View>
       </Modal>
 

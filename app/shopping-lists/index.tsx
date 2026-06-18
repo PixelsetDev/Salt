@@ -14,9 +14,9 @@ import { ButtonArrow } from '../../components/Buttons';
 import {shoppingListType} from "../../utils/types.ts";
 
 const visibilities = [
-    { id: 2, name: 'Unlisted' },
-    { id: 1, name: 'Friends' },
     { id: 0, name: 'Private' },
+    { id: 1, name: 'Friends' },
+    { id: 2, name: 'Unlisted' },
 ];
 
 const visibilityChip: Record<number, string> = {
@@ -75,7 +75,8 @@ export default function ShoppingLists() {
             setNewList({ name: '', visibility: 0 });
             router.push(`/shopping-lists/${id}`);
         } else {
-            showToast({ type: 'error', message: 'Failed to create list.' });
+            const err = await res.json();
+            showToast({ type: 'error', message: err?.message || 'Failed to create list.' });
         }
         setLoading(false);
     };
@@ -165,7 +166,7 @@ export default function ShoppingLists() {
                             onValueChange={v => setNewList({ ...newList, visibility: v })}
                         >
                             {visibilities.map(v => (
-                                <Picker.Item key={v.uuid} label={v.name} value={v.uuid} />
+                                <Picker.Item key={v.id} label={v.name} value={v.id} />
                             ))}
                         </Picker>
                     </View>

@@ -13,19 +13,19 @@ import { API_BASE } from '../utils/settings.ts';
 import { useApiCall } from '../utils/api.ts';
 
 type Preferences = {
-  activity_privacy:    boolean;
-  email_marketing:     boolean;
+  activity_privacy: boolean;
+  email_marketing: boolean;
   email_notifications: boolean;
-  email_reminders:     boolean;
-  email_updates:       boolean;
+  email_reminders: boolean;
+  email_updates: boolean;
 };
 
 const DEFAULT_PREFS: Preferences = {
-  activity_privacy:    true,
-  email_marketing:     true,
+  activity_privacy: true,
+  email_marketing: true,
   email_notifications: true,
-  email_reminders:     true,
-  email_updates:       true,
+  email_reminders: true,
+  email_updates: true,
 };
 
 export default function App() {
@@ -40,11 +40,11 @@ export default function App() {
   useEffect(() => {
     if (user?.preferences) {
       setPrefs({
-        activity_privacy:    user.preferences.activity_privacy    ?? true,
-        email_marketing:     user.preferences.email_marketing     ?? true,
+        activity_privacy: user.preferences.activity_privacy ?? true,
+        email_marketing: user.preferences.email_marketing ?? true,
         email_notifications: user.preferences.email_notifications ?? true,
-        email_reminders:     user.preferences.email_reminders     ?? true,
-        email_updates:       user.preferences.email_updates       ?? true,
+        email_reminders: user.preferences.email_reminders ?? true,
+        email_updates: user.preferences.email_updates ?? true,
       });
     }
   }, [user]);
@@ -98,22 +98,43 @@ export default function App() {
                   <Text className={`h2 font-serif`}>About you</Text>
                   <View className={`flex flex-row gap-2`}>
                     <OText className={`font-bold`}>Name:</OText>
-                    <OText>{user.name}</OText>
+                    <OText className="flex-grow">{user.name}</OText>
                   </View>
                   <View className={`flex flex-row gap-2`}>
                     <OText className={`font-bold`}>Username:</OText>
-                    <OText>@{user.username}</OText>
+                    <OText className="flex-grow">@{user.username}</OText>
+                    <OLink href="https://auth.portalsso.com/account/username" className="btn btn-secondary">Change</OLink>
                   </View>
                   <View className={`flex flex-row gap-2`}>
                     <OText className={`font-bold`}>Email:</OText>
-                    <OText>{user.email}</OText>
+                    <OText className="flex-grow">{user.email}</OText>
+                    <OLink href="https://auth.portalsso.com/account/email" className="btn btn-secondary">Change</OLink>
                   </View>
+                  <Text className="txt-xs txt-subtle">
+                    To change your name or profile picturec, please visit portalsso.com and login to MyPortal.
+                  </Text>
                 </View>
 
                 <View className={`grid gap-std bg-secondary p-xs`}>
-                  <Text className={`h2 font-serif`}>Your links</Text>
-                  <OLink href={`/@${user.username}`} className={`btn btn-secondary`}>Your profile</OLink>
-                  <OLink href={`https://portalsso.com`} className={`btn btn-secondary`}>Manage your Portal Account</OLink>
+                  <Text className={`h2 font-serif`}>Account Security</Text>
+                  <View className={`flex flex-row gap-2`}>
+                    <OText className="font-bold flex-grow">Password</OText>
+                    <OLink href="https://auth.portalsso.com/account/password" className="btn btn-secondary">Change</OLink>
+                  </View>
+                  <View className={`flex flex-row gap-2`}>
+                    <OText className="font-bold flex-grow">Passkeys</OText>
+                    <OLink href="https://auth.portalsso.com/account/passkey/manage" className="btn btn-secondary">Manage</OLink>
+                    <OLink href="https://auth.portalsso.com/account/passkey/add" className="btn btn-secondary">Add New</OLink>
+                  </View>
+                  <View className={`flex flex-row gap-2`}>
+                    <OText className="font-bold flex-grow">Multi-Factor Authentication</OText>
+                    <OLink href="https://auth.portalsso.com/account/authenticator-app" className="btn btn-secondary">Set up</OLink>
+                  </View>
+                  <View className={`flex flex-row gap-2`}>
+                    <OText className="font-bold flex-grow">Backup Codes</OText>
+                    <OLink href="https://auth.portalsso.com/account/backup-codes/manage" className="btn btn-secondary">Manage</OLink>
+                    <OLink href="https://auth.portalsso.com/account/backup-codes/generate" className="btn btn-secondary">Generate</OLink>
+                  </View>
                 </View>
 
                 <View className={`grid-2-1 span-2 gap-std bg-secondary p-xs`}>
@@ -146,7 +167,7 @@ export default function App() {
                   <View className="grid gap-sm">
                     <OText>Reminder Emails</OText>
                     <OText className="txt-xs txt-subtle">Reminds you when you have outstanding actions.</OText>
-                    <Picker style={{ height: 40, flex: 1 }} className="input" selectedValue={boolToStr(prefs.email_reminders)} onValueChange={(v) => handlePreferenceChange('email_updates', v)}>
+                    <Picker style={{ height: 40, flex: 1 }} className="input" selectedValue={boolToStr(prefs.email_reminders)} onValueChange={(v) => handlePreferenceChange('email_reminders', v)}>
                       <Picker.Item label="Yes" value="true" />
                       <Picker.Item label="No" value="false" />
                     </Picker>

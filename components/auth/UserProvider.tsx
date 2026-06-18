@@ -57,9 +57,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
             const json = await res.json();
-            console.log('json.data:', json.data);
-            console.log('preferences:', json.data?.preferences);
-            console.log('pathname:', globalThis.location?.pathname);
             setUser(json.data);
             if (json.data?.preferences === null && globalThis.location?.pathname !== '/account') {
               router.push('/account');
