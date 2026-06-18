@@ -20,7 +20,7 @@ export default function App() {
           <OLink href={`/new/recipe`} className={`btn btn-secondary font-serif txt-4xl`}>Recipe</OLink>
           <OLink href={`/new/collection`} className={`btn btn-secondary font-serif txt-4xl`}>Collection</OLink>
         </View>
-        <Text className={`txt-subtle`}>By posting to OurCookbook you agree to our <Link href={`https://support.pixelset.dev/knowledgebase.php?article=19`} className={`link-inline-subtle`}>Community Guidelines</Link>.</Text>
+        <Text className={`txt-subtle`}>By posting to OurCookbook you agree to our <Link href={`/policies/community-guidelines`} className={`link-inline-subtle`}>Community Guidelines</Link>.</Text>
       </View>
       <Footer/>
     </ScrollView>

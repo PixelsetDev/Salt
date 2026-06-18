@@ -1,10 +1,10 @@
 /* This file is not licensed under the Apache License 2.0. Copyright Pixelset. All rights reserved. */
 
-import "./../global.css";
+import "./../../global.css";
 import { Text, View, ScrollView } from "react-native";
-import Navbar, { Footer } from '../components/Commons';
-import { OText } from '../components/Overrides';
-import {WarningBox} from "../components/Boxes.tsx";
+import Navbar, { Footer } from '../../components/Commons';
+import { OText } from '../../components/Overrides';
+import {WarningBox} from "../../components/Boxes.tsx";
 
 export default function App() {
 
@@ -20,7 +20,7 @@ export default function App() {
         <View className="p-std gap-lg grid">
           <WarningBox
             message={
-              'These community guidelines come into force on 16th July 2026. Until that date, the current Community Guidelines available at ourcookbook.org/old-guidelines apply.'
+              'This Privacy Policy comes into force on 19th July 2026. Until that date, the current Privacy Policy available at https://pixelset.dev/legal/privacy/?s=ourcookbook apply.'
             }></WarningBox>
           <View className="gap-sm grid">
             <OText>
@@ -106,8 +106,8 @@ export default function App() {
                 <OText>•</OText>
                 <OText>
                   Graphic content: content that is gratuitously violent, gory, or disturbing. This
-                  does not include standard depictions of raw meat, fish, or food preparation that
-                  would be expected in ordinary cooking content.
+                  does not include standard depictions of raw meat, fish, butchery, or food
+                  preparation that would be expected in ordinary cooking content.
                 </OText>
               </View>
               <View className="flex-row gap-2">

@@ -1,11 +1,11 @@
 /* This file is not licensed under the Apache License 2.0. Copyright Pixelset. All rights reserved. */
 
-import "./../global.css";
+import "./../../global.css";
 import { Text, View, ScrollView } from "react-native";
-import Navbar, { Footer } from '../components/Commons';
-import { OLink, OText } from '../components/Overrides';
-import {WarningBox} from "../components/Boxes.tsx";
-import { BulletItem, List } from '../components/Lists.tsx';
+import Navbar, { Footer } from '../../components/Commons';
+import { OLink, OText } from '../../components/Overrides';
+import {WarningBox} from "../../components/Boxes.tsx";
+import { BulletItem, List } from '../../components/Lists.tsx';
 
 export default function App() {
 
@@ -21,7 +21,7 @@ export default function App() {
         <View className="p-std gap-lg grid">
           <WarningBox
             message={
-              'These community guidelines come into force on 16th July 2026. Until that date, the current Community Guidelines available at ourcookbook.org/old-guidelines apply.'
+            'These Terms and Conditions replace our existing Terms of Use on 19th July 2026. Until that date, the current Terms of Use available at https://pixelset.dev/legal/terms/?s=ourcookbook apply.'
             }></WarningBox>
           <View className="gap-sm grid">
             <Text className="h2 font-serif">Agreement to These Terms</Text>
@@ -34,7 +34,7 @@ export default function App() {
             <OText>
               You can contact us by email at support@pixelset.dev.These Terms of Service
               (&apos;Terms&apos;), together with our{' '}
-              <OLink href={`/community-guidelines`} className={`link-inline`}>
+              <OLink href={`/policies/community-guidelines`} className={`link-inline`}>
                 Community Guidelines
               </OLink>
               , constitute a legally binding agreement between you and Pixelset regarding your
@@ -64,50 +64,29 @@ export default function App() {
               credentials and identity.
             </OText>
             <OText>By registering, you agree that:</OText>
-            <View className="grid">
-              <View className="flex-row gap-2">
-                <OText>•</OText>
-                <OText>
-                  all registration information you submit will be true, accurate, current, and
-                  complete;
-                </OText>
-              </View>
-              <View className="flex-row gap-2">
-                <OText>•</OText>
-                <OText>
-                  you will maintain the accuracy of that information and update it promptly if it
-                  changes;
-                </OText>
-              </View>
-              <View className="flex-row gap-2">
-                <OText>•</OText>
-                <OText>you have the legal capacity to enter into these Terms;</OText>
-              </View>
-              <View className="flex-row gap-2">
-                <OText>•</OText>
-                <OText>you are at least 18 years of age;</OText>
-              </View>
-              <View className="flex-row gap-2">
-                <OText>•</OText>
-                <OText>
-                  you will keep your credentials confidential and are responsible for all activity
-                  under your account;
-                </OText>
-              </View>
-              <View className="flex-row gap-2">
-                <OText>•</OText>
-                <OText>
-                  you will not access the Services through automated or non-human means unless
-                  expressly permitted by us;
-                </OText>
-              </View>
-              <View className="flex-row gap-2">
-                <OText>•</OText>
-                <OText>
-                  your use of the Services will not violate any applicable law or regulation.
-                </OText>
-              </View>
-            </View>
+            <List>
+              <BulletItem>
+                all registration information you submit will be true, accurate, current, and
+                complete;
+              </BulletItem>
+              <BulletItem>
+                you will maintain the accuracy of that information and update it promptly if it
+                changes;
+              </BulletItem>
+              <BulletItem>you have the legal capacity to enter into these Terms;</BulletItem>
+              <BulletItem>you are at least 18 years of age;</BulletItem>
+              <BulletItem>
+                you will keep your credentials confidential and are responsible for all activity
+                under your account;
+              </BulletItem>
+              <BulletItem>
+                you will not access the Services through automated or non-human means unless
+                expressly permitted by us;
+              </BulletItem>
+              <BulletItem>
+                your use of the Services will not violate any applicable law or regulation.
+              </BulletItem>
+            </List>
             <OText>
               Your public profile information — including your username, display name, and profile
               picture — will be visible to other users of the Services. You consent to this by
@@ -161,8 +140,8 @@ export default function App() {
             </OText>
             <OText>
               Our Community Guidelines can be found online at{' '}
-              <OLink href={`/community-guidelines`} className={`link-inline`}>
-                ourcookbook.org/community-guidelines
+              <OLink href={`/policies/community-guidelines`} className={`link-inline`}>
+                ourcookbook.org/policies/community-guidelines
               </OLink>
               .
             </OText>

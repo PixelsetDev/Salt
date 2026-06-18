@@ -1,10 +1,11 @@
 /* This file is not licensed under the Apache License 2.0. Copyright Pixelset. All rights reserved. */
 
-import "./../global.css";
+import "./../../global.css";
 import { Text, View, ScrollView } from "react-native";
-import Navbar, { Footer } from '../components/Commons';
-import { OText } from '../components/Overrides';
-import {WarningBox} from "../components/Boxes.tsx";
+import Navbar, { Footer } from '../../components/Commons';
+import { OText } from '../../components/Overrides';
+import {WarningBox} from "../../components/Boxes.tsx";
+import { OLink } from 'components/Overrides.tsx';
 
 export default function App() {
 
@@ -20,7 +21,7 @@ export default function App() {
         <View className="p-std gap-lg grid">
           <WarningBox
             message={
-              'These community guidelines come into force on 16th July 2026. Until that date, the current Community Guidelines available at ourcookbook.org/old-guidelines apply.'
+              'These Community Guidelines come into force on 19th July 2026. Until that date, the current Community Guidelines available at ourcookbook.org/old-guidelines apply.'
             }></WarningBox>
           <View className="gap-sm grid">
             <OText>
@@ -35,10 +36,11 @@ export default function App() {
               staff.
             </OText>
             <OText>
-              The OurCookbook Terms of Service also apply to all users and visitors. Where there is
-              any conflict between these Guidelines and the Terms of Service, the Terms of Service
-              take precedence on legal matters, and these Guidelines take precedence on community
-              standards and acceptable content.
+              The <OLink href={`/policies/terms-and-conditions`} className={`link-inline`}>OurCookbook Terms and Conditions</OLink>
+              also apply to all users and visitors. Where there is any conflict between these
+              Guidelines and the Terms and Conditions, the Terms and Conditions take precedence on
+              legal matters, and these Guidelines take precedence on community standards and
+              acceptable content.
             </OText>
           </View>
           <View className="gap-sm grid">
@@ -75,7 +77,7 @@ export default function App() {
               <View className="flex-row gap-2">
                 <OText>•</OText>
                 <OText>
-                  Doxxing: sharing another person's private information without their consent.
+                  Doxxing: sharing another person&apos;s private information without their consent.
                   Content listed as public on OurCookbook is considered public information and may
                   be shared.
                 </OText>
@@ -106,8 +108,8 @@ export default function App() {
                 <OText>•</OText>
                 <OText>
                   Graphic content: content that is gratuitously violent, gory, or disturbing. This
-                  does not include standard depictions of raw meat, fish, butchery, or food
-                  preparation that would be expected in ordinary cooking content.
+                  does not include standard depictions of raw meat, fish, or food preparation that
+                  would be expected in ordinary cooking content.
                 </OText>
               </View>
               <View className="flex-row gap-2">

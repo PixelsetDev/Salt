@@ -28,8 +28,8 @@ const Navbar = () => {
       </Helmet>
       <View className={`px-std flex flex-row gap-2 bg-yellow-800 py-1`}>
         <Text className={`text-xs text-white`}>
-          From 16th July 2026, our Terms and Conditions, Privacy Policy, and Community Guidelines are changing.
-          For more information, visit <OLink href={"/new-terms"} className={"underline"}>ourcookbook.org/new-terms</OLink>.
+          From 19th July 2026, our Community Guidelines, Terms and Conditions, Privacy Policy, and Cookie Policy are changing.
+          For more information, visit <OLink href={"/policies"} className={"underline"}>ourcookbook.org/policies</OLink>.
         </Text>
       </View>
       <View className={`px-std flex flex-row gap-2 bg-red-800 py-1`}>
@@ -176,15 +176,15 @@ export const Footer = () => {
       <View>
         <Text className={`font-serif h3`}>Support</Text>
         <OLink href={`/service-status`} className={`link-inline`} target={`_blank`}>Service Status</OLink>
-        <OLink href={`https://support.pixelset.dev/knowledgebase.php?category=7`} className={`link-inline`} target={`_blank`}>Articles and Guides</OLink>
-        <OLink href={`https://support.pixelset.dev/index.php?a=add&amp;category=6`} className={`link-inline`} target={`_blank`}>Contact Support</OLink>
-        <OLink href={`https://support.pixelset.dev/knowledgebase.php?article=19`} className={`link-inline`} target={`_blank`}>Community Guidelines</OLink>
+        <OLink href={`https://support.pixelset.dev/hc/120564831/category/1`} className={`link-inline`} target={`_blank`}>Articles and Guides</OLink>
+        <OLink href={`https://support.pixelset.dev`} className={`link-inline`} target={`_blank`}>Contact Support</OLink>
+        <OLink href={`/policies/community-guidelines`} className={`link-inline`} target={`_blank`}>Community Guidelines</OLink>
       </View>
       <View>
         <Text className={`font-serif h3`}>Legal</Text>
-        <OLink href={`https://pixelset.dev/legal/terms/?s=ourcookbook`} className={`link-inline`} target={`_blank`}>Terms and Conditions</OLink>
-        <OLink href={`https://pixelset.dev/legal/privacy/?s=ourcookbook`} className={`link-inline`} target={`_blank`}>Privacy Policy</OLink>
-        <OLink href={`https://pixelset.dev/legal/cookies/?s=ourcookbook`} className={`link-inline`} target={`_blank`}>Cookie Policy</OLink>
+        <OLink href={`/policies/terms-and-conditions`} className={`link-inline`} target={`_blank`}>Terms and Conditions</OLink>
+        <OLink href={`/policies/privacy-policy`} className={`link-inline`} target={`_blank`}>Privacy Policy</OLink>
+        <OLink href={`/policies/cookie-policy`} className={`link-inline`} target={`_blank`}>Cookie Policy</OLink>
       </View>
     </View>
   )
