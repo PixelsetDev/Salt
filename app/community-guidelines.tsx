@@ -1,3 +1,5 @@
+/* This file is not licensed under the Apache License 2.0. Copyright Pixelset. All rights reserved. */
+
 import "./../global.css";
 import { Text, View, ScrollView } from "react-native";
 import Navbar, { Footer } from '../components/Commons';
