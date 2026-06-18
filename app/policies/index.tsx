@@ -4,7 +4,7 @@ import "./../../global.css";
 import { Text, View, ScrollView } from "react-native";
 import Navbar, { Footer } from '../../components/Commons';
 import { OLink, OText } from '../../components/Overrides';
-import { InfoBox, WarningBox } from '../../components/Boxes.tsx';
+import { InfoBox } from '../../components/Boxes.tsx';
 
 export default function App() {
 
