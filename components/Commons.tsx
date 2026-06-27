@@ -32,13 +32,6 @@ const Navbar = () => {
           For more information, visit <OLink href={"/policies"} className={"underline"}>ourcookbook.org/policies</OLink>.
         </Text>
       </View>
-      <View className={`px-std flex flex-row gap-2 bg-red-800 py-1`}>
-        <Text className={`text-xs text-white`}>
-          You&apos;re on our BETA website, it&apos;s under active development and is likely to
-          behave unexpectedly. Please report any bugs, crashes, or issues to
-          ocb-app-issues@pixelset.dev
-        </Text>
-      </View>
       <View className={`bg-green-d px-std hidden flex-row gap-2 sm:flex`}>
         <OLink href={`/`} className={`link-nav font-serif py-1`}>
           OurCookbook
