@@ -123,6 +123,9 @@ const Navbar = () => {
             </OLink>
             {isAuthenticated && (
               <>
+                <OLink href={`/new`} className={`btn btn-primary text-white flex-row w-full`}>
+                  Post a new Recipe or Collection
+                </OLink>
                 <OLink href={`/meal-plans`} className={`btn btn-primary text-white`}>
                   Meal Plans
                 </OLink>
@@ -142,6 +145,9 @@ const Navbar = () => {
             </OLink>
             {isAuthenticated ? (
               <View className={`gap-sm grid`}>
+                <OLink href={`/new`} className={`btn btn-primary text-white`}>
+                  New post
+                </OLink>
                 <OLink href={`/@${user?.username}`} className={`btn btn-primary text-white`}>
                   {name}
                 </OLink>

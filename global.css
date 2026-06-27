@@ -43,7 +43,7 @@
 
 @utility h1 { @apply txt-7xl dark:text-white; }
 @utility h2 { @apply txt-5xl dark:text-white; }
-@utility h3 { @apply txt-2xl dark:text-white; }
+@utility h3 { @apply txt-2xl dark:text-white pt-3; }
 
 @utility space-x-std { @apply gap-4; }
 @utility gap-sm { @apply gap-2; }

@@ -7,19 +7,20 @@ export const RecipeLink = ({ recipe, children }: { recipe: { author: { username:
       <OLink
         href={'/@' + recipe.author.username + '/' + recipe.slug}
         key={recipe.slug}
-        className="btn-np btn-primary grid gap-2 relative flex-grow"
+        className="btn-np btn-primary flex gap-2 relative flex-grow"
         passthroughClassName="h-full"
       >
-        <View className="flex-1">
+        <View className="h-full flex flex-col flex-1">
           <Image
             source={{
               uri: `https://api.ourcookbook.org/storage/recipes/@${recipe.author.username}/${recipe.slug}.webp`,
             }}
             className="h-40"
           />
-          <View className="grid gap-2 px-4 py-3">
+          <View className="flex flex-col flex-1 gap-2 px-4 py-3">
             <Text className="txt-2xl font-serif text-white">{recipe.name}</Text>
             {children}
+            {children === undefined && (<View className="flex-grow"></View>)}
             <OText className="txt-xl text-white">By {recipe.author.name}</OText>
           </View>
         </View>

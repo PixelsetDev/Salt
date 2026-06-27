@@ -15,13 +15,11 @@ import { useEffect, useState } from 'react';
 import { collectionType, feedType, recipeType } from '../utils/types.ts';
 import { API_BASE } from '../utils/settings.ts';
 import { ErrorBox } from './Boxes.tsx';
-import { RecipeLink } from './RecipeLink.tsx';
 import { useUser } from './auth/UserProvider.tsx';
-import { FontAwesome } from '@expo/vector-icons';
 import { useApiCall } from '../utils/api.ts';
 import { useToast } from './ToastProvider.tsx';
 import { router } from 'expo-router';
-import { TextInput } from './Forms.tsx';
+import { FontAwesome } from '@expo/vector-icons';
 
 export const UnauthedHomepage = () => {
   const [collections, setCollections] = useState<collectionType[]>([]);
@@ -35,7 +33,7 @@ export const UnauthedHomepage = () => {
       .then((body) => {
         setCollections(body.data);
       });
-    fetch(API_BASE + '/v1/collections/1', { method: 'GET' })
+    fetch(API_BASE + '/v1/collections/2', { method: 'GET' })
       .then((response) => response.json())
       .then((body) => {
         setPopularRecipes(body.data);
@@ -64,53 +62,28 @@ export const UnauthedHomepage = () => {
       </Desktop>
 
       <View className={`p-std grid gap-std`}>
-        <ImageBackground source={{ uri: 'https://api.ourcookbook.org/storage/recipes/no-image.webp' }} resizeMode={`cover`} className={`span-2 p-sm`}>
-          <View className={`bg-white/25 p-sm grid gap-std`}>
-            <Text className={`h2 font-serif text-white`}>
-              Spice up ya life!
-            </Text>
-            <OText className={`text-white`}>
-              Welcome to Salt, the new OurCookbook UI. Powered by our revolutionary new Pepper server
-              (see what we did there), this latest update brings a whole host of new features.
-            </OText>
-            <OText className={`text-white`}>
-              From categories, to overhauled collections, dietary and allergen information, a new
-              recommendations algorithm, and over 500 ingredients in a new open-source API.
-              We&apos;ve got everything a chef needs covered.
-            </OText>
-            <OLink href={`/news/2026-03-07-spice-up-ya-life`} className={`btn btn-primary`}>
-              Learn more
-            </OLink>
-          </View>
-        </ImageBackground>
+        <View className={`grid-3 gap-sm`}>
+          {popularRecipes && (
+            <>
+              <FeaturedImages popularRecipes={popularRecipes} index={0} span={2}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={1} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={2} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={3} span={2}/>
+            </>
+          )}
+        </View>
       </View>
 
       <View className={`px-std grid gap-std`}>
-        <Text className={`h2 text-center font-serif`}>Popular recipes</Text>
-        {(popularRecipes && popularRecipes.recipes.length > 0) ? (
-          <View className={`grid gap-std`}>
-            <View className={`grid-5 gap-std`}>
-              {popularRecipes?.recipes.slice(0, 5).map((recipe) => (
-                recipe && (
-                  <RecipeLink recipe={recipe} key={recipe.slug}/>
-                )
-              ))}
-            </View>
-          </View>
-        ) : (
-          <ErrorBox message={`We're having trouble loading collections right now, please try again later...`}/>
-        )}
-      </View>
-
-      <View className={`p-std grid gap-std`}>
         <Text className={`h2 text-center font-serif`}>Featured Collections</Text>
         {(collections && collections.length > 0) ? (
-          <View className={`grid gap-std`}>
+          <View className={`grid gap-sm`}>
             <View className={`grid-4 gap-std items-stretch`}>
               {collections.map((collection) => (!!collection?.featured && (
-                <OLink href={`/collections/${collection.slug}`} className={`grid gap-2 px-4 py-2 btn btn-secondary relative group`} passthroughClassName="h-full" key={collection.id}>
+                <OLink href={`/collections/${collection.slug}`} className={`flex flex-col gap-2 px-4 py-2 btn btn-secondary relative group h-full`} passthroughClassName="h-full" key={collection.id}>
                   <Text className={`txt-4xl font-serif group-hover:text-white`}>{collection.name}</Text>
                   <OText className={`group-hover:text-white`}>{collection.description}</OText>
+                  <View className="flex-grow"></View>
                   <OText className={`txt-subtle group-hover:text-white`}>By {(collection.author.name === 'SYSTEM') ? 'OurCookbook' : collection.author.name}</OText>
                 </OLink>
               )))}
@@ -119,6 +92,21 @@ export const UnauthedHomepage = () => {
         ) : (
           <ErrorBox message={`We're having trouble loading collections right now, please try again later...`}/>
         )}
+      </View>
+
+      <View className={`p-std grid gap-std`}>
+        <View className={`grid-3 gap-sm`}>
+          {popularRecipes && (
+            <>
+              <FeaturedImages popularRecipes={popularRecipes} index={4} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={5} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={6} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={7} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={8} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={9} span={1}/>
+            </>
+          )}
+        </View>
       </View>
 
       <View className={`px-std grid gap-std`}>
@@ -150,7 +138,19 @@ export const AuthedHomepage = () => {
   const apiCall = useApiCall();
   const toast = useToast();
 
+  useEffect(() => { getData(); },[]);
+
   const [feed, setFeed] = useState<feedType>(null);
+  const [popularRecipes, setPopularRecipes] = useState<{recipes: recipeType[]}>();
+
+  async function getData() {
+    fetch(API_BASE + '/v1/collections/1', { method: 'GET' })
+      .then((response) => response.json())
+      .then((body) => {
+        setPopularRecipes(body.data);
+        console.log(body.data);
+      });
+  }
 
   useEffect(() => {
     apiCall(`${API_BASE}/v1/feed/`, false)
@@ -203,7 +203,9 @@ export const AuthedHomepage = () => {
             Manage Account
           </OLink>
         </View>
+      </View>
 
+      <View className="px-std gap-xl grid">
         <View className="gap-std grid">
           <Text className="h2 font-serif">Your feed.</Text>
           { feed ? (
@@ -293,6 +295,27 @@ export const AuthedHomepage = () => {
           )}
         </View>
       </View>
+
+      <View className={`p-std grid gap-std`}>
+        <Text className="h2 font-serif">Trending recipes.</Text>
+        <View className={`grid-3 gap-sm`}>
+          {popularRecipes && (
+            <>
+              <FeaturedImages popularRecipes={popularRecipes} index={0} span={2}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={1} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={2} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={3} span={2}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={4} span={2}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={5} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={6} span={1}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={7} span={2}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={8} span={2}/>
+              <FeaturedImages popularRecipes={popularRecipes} index={9} span={1}/>
+            </>
+          )}
+        </View>
+      </View>
+
       <Footer />
     </ScrollView>
   );
@@ -322,5 +345,50 @@ export const WelcomeScreen = ({ onContinue }: { onContinue: () => void }) => {
         <Button title={`Continue`} onPress={onContinue} />
       </View>
     </ScrollView>
+  );
+};
+
+export const FeaturedImages = ({ popularRecipes, index, span }: { popularRecipes: {recipes: recipeType[]}, index: number, span: number}) => {
+  return (
+    <ImageBackground source={{ uri: 'https://api.ourcookbook.org/storage/recipes/@' + popularRecipes?.recipes[index]?.author.username + '/' + popularRecipes?.recipes[index]?.slug + '.webp' }} resizeMode={`cover`} className={`span-${span} h-full p-xs`}>
+      <View className={`bg-black/25 p-xs flex-col gap-std h-full`}>
+        {(popularRecipes && popularRecipes.recipes.length > 0) ? (
+          <Text className={`${span === 2 ? 'h2' : 'h3'} font-serif text-white`}>{popularRecipes.recipes[index]?.name}</Text>
+        ) : (
+          <ActivityIndicator size="large" />
+        )}
+        <OText className={`text-white ${span === 1 && 'txt-sm'}`}>
+          By {popularRecipes?.recipes[index]?.author.name}
+        </OText>
+        <View className="flex-grow"></View>
+        {popularRecipes && popularRecipes.recipes && (
+          <View className="flex flex-row gap-std items-center">
+            {(popularRecipes.recipes[index]?.score !== -1) ? (
+              <>
+                <View className="flex flex-row gap-1">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <FontAwesome
+                      key={i}
+                      name={(((popularRecipes.recipes[index]?.score ?? 0) - i + 1) >= 0.8 ? "star" : ((popularRecipes.recipes[index]?.score ?? 0) - i + 1) >= 0.3 ? "star-half-o" : "star-o") as any}
+                      size={18}
+                      color="#fff"
+                    />
+                  ))}
+                </View>
+                <OText className="text-white txt-sm italic">{popularRecipes.recipes[index]?.score}/5</OText>
+              </>
+            ) : (
+              <OText className="text-white txt-sm italic">No reviews</OText>
+            )}
+          </View>
+        )}
+        <OText className={`text-white`}>
+          {popularRecipes?.recipes[index]?.description}
+        </OText>
+        <OLink href={`/@${popularRecipes?.recipes[index]?.author.username}/${popularRecipes?.recipes[index]?.slug}`} className={`btn btn-primary`}>
+          Check it out
+        </OLink>
+      </View>
+    </ImageBackground>
   );
 };

@@ -4,7 +4,7 @@ import "./../../global.css";
 import { Text, View, ScrollView } from "react-native";
 import Navbar, { Footer } from '../../components/Commons';
 import { OLink, OText } from '../../components/Overrides';
-import {WarningBox} from "../../components/Boxes.tsx";
+import { InfoBox, WarningBox } from '../../components/Boxes.tsx';
 import { BulletItem, List } from '../../components/Lists.tsx';
 
 export default function App() {
@@ -21,8 +21,9 @@ export default function App() {
         <View className="p-std gap-lg grid">
           <WarningBox
             message={
-            'These Terms and Conditions replace our existing Terms of Use on 19th July 2026. Until that date, the current Terms of Use available at https://pixelset.dev/legal/terms/?s=ourcookbook apply.'
+            'These Terms and Conditions replace our existing Terms of Use on 27th July 2026. Until that date, the current Terms of Use available at https://pixelset.dev/legal/terms/?s=ourcookbook apply.'
             }></WarningBox>
+          <InfoBox message={'Last updated 27 June 2026. Takes effect on 27 July 2026.'}></InfoBox>
           <View className="gap-sm grid">
             <Text className="h2 font-serif">Agreement to These Terms</Text>
             <OText>

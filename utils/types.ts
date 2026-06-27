@@ -133,6 +133,7 @@ export type recipeType = {
   }
   isOwned: string;
   views: number;
+  score: number|undefined;
 } | null;
 
 export type recipeIngredientsType = {

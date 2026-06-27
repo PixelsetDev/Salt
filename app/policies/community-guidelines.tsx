@@ -4,7 +4,7 @@ import "./../../global.css";
 import { Text, View, ScrollView } from "react-native";
 import Navbar, { Footer } from '../../components/Commons';
 import { OText } from '../../components/Overrides';
-import {WarningBox} from "../../components/Boxes.tsx";
+import { InfoBox, WarningBox } from '../../components/Boxes.tsx';
 import { OLink } from 'components/Overrides.tsx';
 
 export default function App() {
@@ -21,8 +21,9 @@ export default function App() {
         <View className="p-std gap-lg grid">
           <WarningBox
             message={
-              'These Community Guidelines come into force on 19th July 2026. Until that date, the current Community Guidelines available at ourcookbook.org/old-guidelines apply.'
+              'These Community Guidelines come into force on 27th July 2026. Until that date, the current Community Guidelines available at ourcookbook.org/old-guidelines apply.'
             }></WarningBox>
+          <InfoBox message={'Last updated 27 June 2026. Takes effect on 27 July 2026.'}></InfoBox>
           <View className="gap-sm grid">
             <OText>
               By creating an account, posting, or otherwise contributing to OurCookbook, you agree

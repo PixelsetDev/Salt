@@ -20,11 +20,7 @@ SplashScreen.preventAutoHideAsync();
 
 Sentry.init({
   dsn: 'https://ab4cc21cf3270eeb0a957a3e0a610a8d@o4509832364687360.ingest.de.sentry.io/4509832365801552',
-
-  sendDefaultPii: true,
-
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
+  sendDefaultPii: false,
   integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
 });
 
