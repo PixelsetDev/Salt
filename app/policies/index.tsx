@@ -50,61 +50,61 @@ export default function App() {
           </View>
           <View className="gap-sm grid">
             <Text className="h2 font-serif">Community Guidelines</Text>
-            <InfoBox message={`Our new Community Guidelines come into effect on 19th July 2026.`}/>
+            <InfoBox message={`Our new Community Guidelines come into effect on 27th July 2026.`}/>
             <OText>
               Please use the buttons below to read the full updated Community Guidelines.
             </OText>
             <View className="gap-sm grid-2">
               <OLink className={`btn btn-primary`} href={'/policies/community-guidelines'}>
-                Our new Community Guidelines, in effect from 19th July 2026
+                Our new Community Guidelines, in effect from 27th July 2026
               </OLink>
               <OLink className={`btn btn-primary`} href={'/old-guidelines'}>
-                Our existing Community Guidelines, in effect until 19th July 2026
+                Our existing Community Guidelines, in effect until 27th July 2026
               </OLink>
             </View>
           </View>
           <View className="gap-sm grid">
             <Text className="h2 font-serif">Terms and Conditions</Text>
-            <InfoBox message={`Our new Terms and Conditions replace our existing Terms of Use on 19th July 2026.`}/>
+            <InfoBox message={`Our new Terms and Conditions replace our existing Terms of Use on 27th July 2026.`}/>
             <OText>
               Please use the buttons below to read the full updated Terms and Conditions.
             </OText>
             <View className="gap-sm grid-2">
               <OLink className={`btn btn-primary`} href={'/policies/terms-and-conditions'}>
-                Our new Terms and Conditions, in effect from 19th July 2026
+                Our new Terms and Conditions, in effect from 27th July 2026
               </OLink>
               <OLink className={`btn btn-primary`} href={'https://pixelset.dev/legal/terms/?s=ourcookbook'}>
-                Our existing Terms of Use, in effect until 19th July 2026
+                Our existing Terms of Use, in effect until 27th July 2026
               </OLink>
             </View>
           </View>
           <View className="gap-sm grid">
             <Text className="h2 font-serif">Privacy Policy</Text>
-            <InfoBox message={`Our new Privacy Policy comes into effect on 19th July 2026.`}/>
+            <InfoBox message={`Our new Privacy Policy comes into effect on 27th July 2026.`}/>
             <OText>
               Please use the buttons below to read the full updated Privacy Policy.
             </OText>
             <View className="gap-sm grid-2">
               <OLink className={`btn btn-primary`} href={'/policies/privacy-policy'}>
-                Our new Privacy Policy, in effect from 19th July 2026
+                Our new Privacy Policy, in effect from 27th July 2026
               </OLink>
               <OLink className={`btn btn-primary`} href={'https://pixelset.dev/legal/privacy/?s=ourcookbook'}>
-                Our existing Privacy Policy, in effect until 19th July 2026
+                Our existing Privacy Policy, in effect until 27th July 2026
               </OLink>
             </View>
           </View>
           <View className="gap-sm grid">
             <Text className="h2 font-serif">Cookie Policy</Text>
-            <InfoBox message={`Our new Cookie Policy comes into effect on 19th July 2026.`}/>
+            <InfoBox message={`Our new Cookie Policy comes into effect on 27th July 2026.`}/>
             <OText>
               Please use the buttons below to read the full updated Cookie Policy.
             </OText>
             <View className="gap-sm grid-2">
               <OLink className={`btn btn-primary`} href={'/policies/cookie-policy'}>
-                Our new Cookie Policy, in effect from 19th July 2026
+                Our new Cookie Policy, in effect from 27th July 2026
               </OLink>
               <OLink className={`btn btn-primary`} href={'https://pixelset.dev/legal/cookies/?s=ourcookbook'}>
-                Our existing Cookie Policy, in effect until 19th July 2026
+                Our existing Cookie Policy, in effect until 27th July 2026
               </OLink>
             </View>
           </View>

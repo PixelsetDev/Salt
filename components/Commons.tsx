@@ -28,7 +28,7 @@ const Navbar = () => {
       </Helmet>
       <View className={`px-std flex flex-row gap-2 bg-yellow-800 py-1`}>
         <Text className={`text-xs text-white`}>
-          From 19th July 2026, our Community Guidelines, Terms and Conditions, Privacy Policy, and Cookie Policy are changing.
+          From 27th July 2026, our Community Guidelines, Terms and Conditions, Privacy Policy, and Cookie Policy are changing.
           For more information, visit <OLink href={"/policies"} className={"underline"}>ourcookbook.org/policies</OLink>.
         </Text>
       </View>
