@@ -1,15 +1,8 @@
 import './../../global.css';
-import {
-  ImageBackground,
-  ScrollView,
-  Text,
-  View,
-  TextInput,
-  ActivityIndicator,
-} from 'react-native';
+import { ImageBackground, Image, ScrollView, Text, View, TextInput, ActivityIndicator, } from 'react-native';
 import Navbar, { Footer } from '../../components/Commons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { OLink, OPressable, OText } from '../../components/Overrides';
 import { Difficulty } from '../../components/Scales';
 import { API_BASE } from '../../utils/settings';
@@ -22,6 +15,8 @@ import { Modal } from '../../components/Modal.tsx';
 import { StarRating } from '../../components/StarRating.tsx';
 import { useToast } from '../../components/ToastProvider';
 import { useLogto } from '@logto/rn';
+import { Tooltip } from '../../components/Tooltip';
+import { allergenList, dietaryColour, dietaryTooltip, VeganIcon, VegetarianIcon } from '../../utils/dietary.ts';
 
 export default function App() {
   const { user } = useUser();
@@ -41,6 +36,8 @@ export default function App() {
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [loading, setLoading] = useState(false);
   const apiCall = useApiCall();
+  const baseServings = useRef<number | null>(null);
+  const [showServingsModal, setShowServingsModal] = useState(false);
 
   const fetchReviews = () => {
     if (!recipe?.id) return;
@@ -106,7 +103,10 @@ export default function App() {
     if (!cleanUsername || typeof recipe_slug !== 'string') return;
     apiCall(`${API_BASE}/v1/recipes/${cleanUsername}/${recipe_slug}`)
       .then((res) => res.ok ? res.json() : Promise.reject(new Error('Recipe not found')))
-      .then((data) => setRecipe(data.data))
+      .then((data) => {
+          setRecipe(data.data);
+          baseServings.current = data.data.servings;
+      })
       .catch((err) => showToast({ type: 'error', message: err.message }));
   }, [cleanUsername, recipe_slug, isAuthenticated]);
 
@@ -136,8 +136,11 @@ export default function App() {
           const disclaimers = new Set<string>();
           ingredientsWithNames.forEach(({ dietary, disclaimer }) => {
             if (disclaimer) disclaimers.add(disclaimer);
-            if (!dietary) return;
-            Object.keys(aggregatedDietary).forEach(key => { if (dietary[key] > aggregatedDietary[key as keyof typeof aggregatedDietary]) aggregatedDietary[key as keyof typeof aggregatedDietary] = dietary[key]; });
+            Object.keys(aggregatedDietary).forEach((key) => {
+              const k = key as keyof typeof aggregatedDietary;
+              const value = dietary?.[k] ?? 1; // missing = maybe
+              if (value > aggregatedDietary[k]) aggregatedDietary[k] = value;
+            });
           });
           setDietary(aggregatedDietary);
           setDisclaimers([...disclaimers]);
@@ -148,6 +151,7 @@ export default function App() {
 
   const userReview = reviews?.reviews?.find((r: any) => r.author.username === user?.username);
   const backgroundImage = { uri: 'https://api.ourcookbook.org/storage/recipes/' + username + '/' + recipe_slug + '.webp' };
+  const scale = baseServings.current ? recipe.servings / baseServings.current : 1;
 
   return (
     <ScrollView className={`body`}>
@@ -155,24 +159,51 @@ export default function App() {
       <ImageBackground source={backgroundImage} className={`px-std py-sm`}>
         {recipe ? (
           <View className={`gap-sm p-sm grid`} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <View className="flex-row gap-sm items-center">
-              <Text className={`h1 font-serif text-white grow`}>{recipe.name}</Text>
-              { recipe.isOwned && (<OPressable onPress={() => {router.push(`/edit/recipe/${recipe.id}`)}} className="btn btn-info">Edit</OPressable>)}
+            <View className="gap-sm flex-row items-center">
+              <Text className={`h1 grow font-serif text-white`}>{recipe.name}</Text>
+              {recipe.isOwned && (
+                <OPressable
+                  onPress={() => {
+                    router.push(`/edit/recipe/${recipe.id}`);
+                  }}
+                  className="btn btn-info">
+                  Edit
+                </OPressable>
+              )}
             </View>
-            <View className={`flex flex-row gap-sm`}>
-              <OText className="txt-2xl text-white">By <OLink className={`txt-2xl text-white underline`} href={`/@${recipe.author.username}`}>{recipe.author.name}</OLink></OText>
+            <View className={`gap-sm flex flex-row`}>
+              <OText className="txt-2xl text-white">
+                By{' '}
+                <OLink
+                  className={`txt-2xl text-white underline`}
+                  href={`/@${recipe.author.username}`}>
+                  {recipe.author.name}
+                </OLink>
+              </OText>
               <OText className="txt-2xl text-white">•</OText>
-              <OText className="txt-2xl text-white">{new Date(recipe.created).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</OText>
+              <OText className="txt-2xl text-white">
+                {new Date(recipe.created).toLocaleDateString('en-GB', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </OText>
               <OText className="txt-2xl text-white">•</OText>
               <OText className="txt-2xl text-white">{recipe.views} views</OText>
             </View>
             {reviews && reviews?.score !== -1 ? (
-              <View className="flex flex-row gap-std items-center">
+              <View className="gap-std flex flex-row items-center">
                 <View className="flex flex-row gap-1">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <FontAwesome
                       key={i}
-                      name={((reviews?.score - i + 1) >= 0.8 ? "star" : (reviews?.score - i + 1) >= 0.3 ? "star-half-o" : "star-o") as any}
+                      name={
+                        (reviews?.score - i + 1 >= 0.8
+                          ? 'star'
+                          : reviews?.score - i + 1 >= 0.3
+                            ? 'star-half-o'
+                            : 'star-o') as any
+                      }
                       size={18}
                       color="#fff"
                     />
@@ -187,67 +218,180 @@ export default function App() {
           </View>
         ) : (
           <View className={`gap-std grid`}>
-            <ActivityIndicator size="large"/>
+            <ActivityIndicator size="large" />
           </View>
         )}
       </ImageBackground>
 
-      <View className={`w-full h-2 bg-green relative`}></View>
+      <View className={`bg-green relative h-2 w-full`}></View>
 
       {recipe && (
         <View className={`gap-std p-std grid`}>
           <View className={`grid-3 gap-std`}>
             <View className={`gap-std span-2 bg-secondary p-xs grid`}>
               <Text className={`h2 font-serif`}>About this recipe</Text>
-              <OText>{(recipe.description?.trim()==="")?("Looks like the author didn't upload a description!"):recipe.description }</OText>
-              <OText>This recipe was created by {recipe.author.name}{recipe.edited && (<OText> - last updated {new Date(recipe.edited).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</OText>)}.</OText>
+              <OText>
+                {recipe.description?.trim() === ''
+                  ? "Looks like the author didn't upload a description!"
+                  : recipe.description}
+              </OText>
+              <OText>
+                This recipe was created by {recipe.author.name}
+                {recipe.edited && (
+                  <OText>
+                    {' '}
+                    - last updated{' '}
+                    {new Date(recipe.edited).toLocaleDateString('en-GB', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    })}
+                  </OText>
+                )}
+                .
+              </OText>
               <OText className={`txt-xs italic`}>
-                Always follow proper food hygiene procedures when cooking. Recipe information uploaded by the author, OurCookbook cannot guarantee the accuracy or completeness of any information on this page.
+                Always follow proper food hygiene procedures when cooking. Recipe information
+                uploaded by the author, OurCookbook cannot guarantee the accuracy or completeness of
+                any information on this page.
               </OText>
             </View>
-            <View className={`gap-std bg-secondary p-xs grid mobile-span-2`}>
+            <View className={`gap-std bg-secondary p-xs mobile-span-2 grid`}>
               <Text className={`h2 font-serif`}>Cooking</Text>
-              <OText>This recipe serves {recipe.servings} people.</OText>
-              <OText>{recipe.author.name} estimates that this recipe takes {recipe.time.prep} minutes to prepare, and {recipe.time.cook} minutes to cook.</OText>
-              <Difficulty currentStep={2} steps={['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert']} />
+              <View className="flex-row items-center gap-2">
+                <OText>This recipe serves {recipe.servings} people.</OText>
+                <OPressable
+                  onPress={() => setShowServingsModal(true)}
+                  className="link-inline-subtle">
+                  <OText className="txt-sm">Change</OText>
+                </OPressable>
+              </View>
+              <Modal
+                visible={showServingsModal}
+                title="Adjust Servings"
+                onClose={() => setShowServingsModal(false)}>
+                <View className="gap-4">
+                  <View className="gap-std flex-row items-center justify-center">
+                    <OPressable
+                      onPress={() =>
+                        setRecipe((r) => (r ? { ...r, servings: Math.max(1, r.servings - 1) } : r))
+                      }
+                      className="btn btn-secondary">
+                      −
+                    </OPressable>
+                    <OText className="txt-xl">{recipe.servings} servings</OText>
+                    <OPressable
+                      onPress={() => setRecipe((r) => (r ? { ...r, servings: r.servings + 1 } : r))}
+                      className="btn btn-secondary">
+                      +
+                    </OPressable>
+                  </View>
+                  <OPressable
+                    onPress={() => setShowServingsModal(false)}
+                    className="btn btn-secondary">
+                    Done
+                  </OPressable>
+                </View>
+              </Modal>
+              <OText>
+                {recipe.author.name} estimates that this recipe takes {recipe.time.prep} minutes to
+                prepare, and {recipe.time.cook} minutes to cook.
+              </OText>
+              <Difficulty
+                currentStep={2}
+                steps={['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert']}
+              />
             </View>
-            <View className={`gap-std flex mobile-span-2`}>
-              <View className={`gap-std bg-secondary p-xs grid ${ !recipe.tips && (`flex-grow`)}`}>
+            <View className={`gap-std mobile-span-2 flex`}>
+              <View className={`gap-std bg-secondary p-xs grid ${!recipe.tips && `flex-grow`}`}>
                 <Text className={`h2 font-serif`}>Ingredients</Text>
-                { ingredients ? (
+                {ingredients ? (
                   <View className={`flex-row divide-x-2 divide-neutral-200/75`}>
-                    <View className={`grid gap-1 flex-grow divide-y-2 divide-neutral-300`}>
-                      { ingredients.map((ingredient, index) => <OText key={'ingredient-name' + index} className={`flex-grow pr-2 pt-1`}>{ingredient.name}</OText>)}
+                    <View className={`grid flex-grow gap-1 divide-y-2 divide-neutral-300`}>
+                      {ingredients.map((ingredient, index) => (
+                        <OText key={'ingredient-name' + index} className={`flex-grow pt-1 pr-2`}>
+                          {ingredient.name}
+                        </OText>
+                      ))}
                     </View>
                     <View className={`grid gap-1 divide-y-2 divide-neutral-300`}>
-                      { ingredients.map((ingredient, index) => <OText key={'ingredient-amount' + index} className={`pl-2 pt-1`}>{parseAmount(ingredient.amount)} {parseUnit(ingredient.amount, ingredient.unit, false)}</OText>)}
+                      {ingredients.map((ingredient, index) => (
+                        <OText key={'ingredient-amount' + index} className={`pt-1 pl-2`}>
+                          {parseAmount(Math.round(ingredient.amount * scale * 100) / 100)}{' '}
+                          {parseUnit(
+                            Math.round(ingredient.amount * scale * 100) / 100,
+                            ingredient.unit,
+                            false
+                          )}
+                        </OText>
+                      ))}
                     </View>
                   </View>
                 ) : (
                   <>
-                    <OText>Looks like {recipe.author.name} didn&apos;t give us a list of ingredients... that&apos;s awkward.</OText>
-                    <OText>Try messaging them to ask, or see what&apos;s mentioned in the steps to the right.</OText>
+                    <OText>
+                      Looks like {recipe.author.name} didn&apos;t give us a list of ingredients...
+                      that&apos;s awkward.
+                    </OText>
+                    <OText>
+                      Try messaging them to ask, or see what&apos;s mentioned in the steps to the
+                      right.
+                    </OText>
                     <OText>Sorry for any inconvenience caused!</OText>
                   </>
                 )}
-                <View className={`border-t border-neutral-200 mt-2 text-xs`}></View>
-                <OText className={`txt-xs`}>
-                  {dietary && (() => {
-                    const contains: string[] = []; const mayContain: string[] = [];
-                    const allergens: (keyof typeof dietary)[] = ["celery","gluten","crustaceans","eggs","fish","lupin","milk","molluscs","mustard","peanuts","sesame","soybeans","sulphites","treenuts"];
-                    allergens.forEach((key) => { if (dietary[key] === 2) contains.push(key); else if (dietary[key] === 1) mayContain.push(key); });
-                    const sentences: string[] = [];
-                    if (contains.length) sentences.push(`Contains ${contains.join(", ")}.`);
-                    if (mayContain.length) sentences.push(`May contain ${mayContain.join(", ")}.`);
-                    if (dietary.animal_products === 2) sentences.push("Not suitable for vegans."); else if (dietary.animal_products === 1) sentences.push("May not be suitable for vegans.");
-                    if (dietary.meat === 2) sentences.push("Not suitable for vegetarians."); else if (dietary.meat === 1) sentences.push("May not be suitable for vegetarians.");
-                    if (sentences.length !== 0) sentences.unshift("Dietary information:");
-                    return sentences.join(" ");
-                  })()}
+                <View className={`mt-2 border-t border-neutral-200 text-xs`}></View>
+                {scale !== 1 && (
+                  <OText className={`txt-xs pt-2`}>
+                    Servings have been adjusted from the author's original recipe, therefore
+                    ingredient amounts may not be exact.
+                  </OText>
+                )}
+
+                {dietary && (
+                  <View className="mt-2 grid gap-2 xl:grid-cols-7 md:grid-cols-6 grid-cols-12">
+                    {allergenList.map(({ key, label, Icon }) => {
+                      const value = dietary[key as keyof typeof dietary] as number;
+                      return (
+                        <Tooltip key={key} text={dietaryTooltip(value, label)}>
+                          <View className="aspect-square w-full">
+                            <Image
+                              source={Icon}
+                              tintColor={dietaryColour(value)}
+                              style={{ width: '100%', height: '100%' }}
+                            />
+                            </View>
+                        </Tooltip>
+                      );
+                    })}
+                    <Tooltip text={dietary.animal_products === 2 ? 'Not suitable for vegans' : dietary.animal_products === 1 ? 'May not be suitable for vegans' : 'Suitable for vegans'}>
+                      <View className="aspect-square w-full">
+                        <Image
+                          source={VeganIcon}
+                          tintColor={dietaryColour(dietary.animal_products)}
+                          style={{ width: '100%', height: '100%' }}
+                        />
+                      </View>
+                    </Tooltip>
+                    <Tooltip text={dietary.meat === 2 ? 'Not suitable for vegetarians' : dietary.meat === 1 ? 'May not be suitable for vegetarians' : 'Suitable for vegetarians'}>
+                      <View className="aspect-square w-full">
+                        <Image
+                          source={VegetarianIcon}
+                          tintColor={dietaryColour(dietary.meat)}
+                          style={{ width: '100%', height: '100%' }}
+                        />
+                      </View>
+                    </Tooltip>
+                  </View>
+                )}
+
+                <OText className={`txt-xs pt-2`}>
+                  {disclaimers.map((disclaimer, index) =>
+                    index === 0 ? disclaimer : ' ' + disclaimer
+                  )}{' '}
                 </OText>
-                <OText className={`txt-xs pt-2`}>{disclaimers.map((disclaimer) => (' '+disclaimer))}</OText>
               </View>
-              { recipe.tips && (
+              {recipe.tips && (
                 <View className={`mobile-span-2 gap-std bg-secondary p-xs grid flex-grow`}>
                   <Text className={`h2 font-serif`}>Chef&apos;s Tips</Text>
                   <OText>{recipe.tips}</OText>
@@ -256,45 +400,84 @@ export default function App() {
             </View>
             <View className={`span-2 gap-std bg-secondary p-xs`}>
               <Text className={`h2 font-serif`}>Steps</Text>
-              {(steps != null) ? (steps.map((step, index) => (
-                <View key={step} className={`flex flex-row gap-std`}>
-                  <Text className={`txt-4xl font-serif dark:text-white`}>{index + 1}.&nbsp;&nbsp;</Text>
-                  <OText className={`self-center`}>{step}</OText>
-                </View>
-              ))) : (<OText>This recipe doesn&apos;t have any steps, is it even a recipe???</OText>)}
+              {steps != null ? (
+                steps.map((step, index) => (
+                  <View key={step} className={`gap-std flex flex-row`}>
+                    <Text className={`txt-4xl font-serif dark:text-white`}>
+                      {index + 1}.&nbsp;&nbsp;
+                    </Text>
+                    <OText className={`self-center`}>{step}</OText>
+                  </View>
+                ))
+              ) : (
+                <OText>This recipe doesn&apos;t have any steps, is it even a recipe???</OText>
+              )}
               <View className={`flex-grow`}></View>
             </View>
             <View className={`span-2 gap-std bg-secondary p-xs grid`}>
-              <View className="flex-row gap-std">
-                <Text className={`h2 font-serif grow`}>Reviews</Text>
-                {user?.name && (
-                  userReview ? (
+              <View className="gap-std flex-row">
+                <Text className={`h2 grow font-serif`}>Reviews</Text>
+                {user?.name &&
+                  (userReview ? (
                     <View className="flex-row gap-2">
-                      <OPressable disabled={loading} onPress={() => setEditingReview({ ...userReview })} className="btn btn-info px-4">Edit Review</OPressable>
-                      <OPressable disabled={loading} onPress={() => setDeletingReview({ ...userReview })} className="btn btn-danger px-4">Delete Review</OPressable>
+                      <OPressable
+                        disabled={loading}
+                        onPress={() => setEditingReview({ ...userReview })}
+                        className="btn btn-info px-4">
+                        Edit Review
+                      </OPressable>
+                      <OPressable
+                        disabled={loading}
+                        onPress={() => setDeletingReview({ ...userReview })}
+                        className="btn btn-danger px-4">
+                        Delete Review
+                      </OPressable>
                     </View>
                   ) : (
-                    <OPressable onPress={() => setShowReviewModal(true)} className="btn btn-secondary">Post Review</OPressable>
-                  )
-                )}
+                    <OPressable
+                      onPress={() => setShowReviewModal(true)}
+                      className="btn btn-secondary">
+                      Post Review
+                    </OPressable>
+                  ))}
               </View>
               <View className={`grid-2 gap-std`}>
                 {reviews?.reviews && reviews?.score !== -1 ? (
                   reviews.reviews.map((review, index) => (
-                    <View key={'review' + index} className={`px-4 py-3 border-4 ${(review.rating === 5 || review.rating === 4) ? "border-green-800" : (review.rating === 3) ? "border-yellow-700" : "border-red-800"}`}>
+                    <View
+                      key={'review' + index}
+                      className={`border-4 px-4 py-3 ${review.rating === 5 || review.rating === 4 ? 'border-green-800' : review.rating === 3 ? 'border-yellow-700' : 'border-red-800'}`}>
                       <View className={`flex flex-row gap-2`}>
-                        <OLink href={`/@${review.author.username}`} className={`h3 font-serif underline`}>{review.author.name}</OLink>
+                        <OLink
+                          href={`/@${review.author.username}`}
+                          className={`h3 font-serif underline`}>
+                          {review.author.name}
+                        </OLink>
                         <Text className={`h3 font-serif`}>{review.rating}/5</Text>
                       </View>
-                      {review.comment ? <OText className={`italic`}>&quot;{review.comment}&quot;</OText> : <OText className={`italic`}>They didn&apos;t leave a comment.</OText>}
+                      {review.comment ? (
+                        <OText className={`italic`}>&quot;{review.comment}&quot;</OText>
+                      ) : (
+                        <OText className={`italic`}>They didn&apos;t leave a comment.</OText>
+                      )}
                       <OText className="txt-xs txt-subtle">
-                        Posted {new Date(review.created.replace(' ', 'T')).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        {review.edited && ` (Edited ${new Date(review.edited.replace(' ', 'T')).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })})`}
+                        Posted{' '}
+                        {new Date(review.created.replace(' ', 'T')).toLocaleString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                        {review.edited &&
+                          ` (Edited ${new Date(review.edited.replace(' ', 'T')).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })})`}
                       </OText>
                     </View>
                   ))
                 ) : (
-                  <View className={`span-2`}><OText>Nobody has reviewed this recipe, why not be the first?</OText></View>
+                  <View className={`span-2`}>
+                    <OText>Nobody has reviewed this recipe, why not be the first?</OText>
+                  </View>
                 )}
               </View>
             </View>
@@ -306,45 +489,139 @@ export default function App() {
         </View>
       )}
 
-      <Modal visible={showReviewModal} title="Leave Review" onClose={() => !loading && setShowReviewModal(false)}>
+      <Modal
+        visible={showReviewModal}
+        title="Leave Review"
+        onClose={() => !loading && setShowReviewModal(false)}>
         <View className="gap-4">
-          <StarRating rating={newReview.rating} disabled={loading} onRatingChange={(n) => setNewReview({ ...newReview, rating: n })} />
+          <StarRating
+            rating={newReview.rating}
+            disabled={loading}
+            onRatingChange={(n) => setNewReview({ ...newReview, rating: n })}
+          />
           <View>
-            <TextInput multiline numberOfLines={4} maxLength={128} editable={!loading} className="input" placeholder="Share your thoughts (optional)..." style={{ textAlignVertical: 'top', minHeight: 100 }} value={newReview.comment} onChangeText={(text) => setNewReview({ ...newReview, comment: text })} />
-            <OText className="txt-xs text-right mt-1 opacity-60">{newReview.comment.length}/128</OText>
+            <TextInput
+              multiline
+              numberOfLines={4}
+              maxLength={128}
+              editable={!loading}
+              className="input"
+              placeholder="Share your thoughts (optional)..."
+              style={{ textAlignVertical: 'top', minHeight: 100 }}
+              value={newReview.comment}
+              onChangeText={(text) => setNewReview({ ...newReview, comment: text })}
+            />
+            <OText className="txt-xs mt-1 text-right opacity-60">
+              {newReview.comment.length}/128
+            </OText>
           </View>
-          <View className="mt-2 flex-row gap-std">
-            <OPressable disabled={loading} onPress={submitReview} className="btn btn-primary">{loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Submit Review"}</OPressable>
-            <OPressable disabled={loading} onPress={() => setShowReviewModal(false)} className="btn btn-secondary">Cancel</OPressable>
+          <View className="gap-std mt-2 flex-row">
+            <OPressable disabled={loading} onPress={submitReview} className="btn btn-primary">
+              {loading ? (
+                <FontAwesome
+                  name="circle-o-notch"
+                  size={18}
+                  color="white"
+                  className="animate-spin"
+                />
+              ) : (
+                'Submit Review'
+              )}
+            </OPressable>
+            <OPressable
+              disabled={loading}
+              onPress={() => setShowReviewModal(false)}
+              className="btn btn-secondary">
+              Cancel
+            </OPressable>
           </View>
         </View>
       </Modal>
 
-      <Modal visible={!!editingReview} title="Edit Review" onClose={() => !loading && setEditingReview(null)}>
+      <Modal
+        visible={!!editingReview}
+        title="Edit Review"
+        onClose={() => !loading && setEditingReview(null)}>
         <View className="gap-4">
-          <StarRating rating={editingReview?.rating || 0} disabled={loading} onRatingChange={(n) => setEditingReview({ ...editingReview, rating: n })} />
+          <StarRating
+            rating={editingReview?.rating || 0}
+            disabled={loading}
+            onRatingChange={(n) => setEditingReview({ ...editingReview, rating: n })}
+          />
           <View>
-            <TextInput multiline numberOfLines={4} maxLength={128} editable={!loading} className="input" style={{ textAlignVertical: 'top', minHeight: 100 }} value={editingReview?.comment || ''} onChangeText={(text) => setEditingReview({ ...editingReview, comment: text })} />
-            <OText className="txt-xs text-right mt-1 opacity-60">{(editingReview?.comment || '').length}/128</OText>
+            <TextInput
+              multiline
+              numberOfLines={4}
+              maxLength={128}
+              editable={!loading}
+              className="input"
+              style={{ textAlignVertical: 'top', minHeight: 100 }}
+              value={editingReview?.comment || ''}
+              onChangeText={(text) => setEditingReview({ ...editingReview, comment: text })}
+            />
+            <OText className="txt-xs mt-1 text-right opacity-60">
+              {(editingReview?.comment || '').length}/128
+            </OText>
           </View>
-          <View className="mt-2 flex-row gap-std">
-            <OPressable disabled={loading} onPress={saveEdit} className="btn btn-primary">{loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Save Changes"}</OPressable>
-            <OPressable disabled={loading} onPress={() => setEditingReview(null)} className="btn btn-secondary">Cancel</OPressable>
+          <View className="gap-std mt-2 flex-row">
+            <OPressable disabled={loading} onPress={saveEdit} className="btn btn-primary">
+              {loading ? (
+                <FontAwesome
+                  name="circle-o-notch"
+                  size={18}
+                  color="white"
+                  className="animate-spin"
+                />
+              ) : (
+                'Save Changes'
+              )}
+            </OPressable>
+            <OPressable
+              disabled={loading}
+              onPress={() => setEditingReview(null)}
+              className="btn btn-secondary">
+              Cancel
+            </OPressable>
           </View>
         </View>
       </Modal>
 
-      <Modal visible={!!deletingReview} title="Delete Review" onClose={() => !loading && setDeletingReview(null)}>
+      <Modal
+        visible={!!deletingReview}
+        title="Delete Review"
+        onClose={() => !loading && setDeletingReview(null)}>
         <View className="gap-4">
-          <OText className="text-center txt-xl">Are you sure you want to delete your review for <OText className="font-bold">{recipe?.name}</OText>?</OText>
-          <View className="mt-4 flex-row gap-std">
-            <OPressable disabled={loading} onPress={confirmDelete} className="btn btn-danger flex-1 items-center justify-center">{loading ? <FontAwesome name="circle-o-notch" size={18} color="white" className="animate-spin" /> : "Delete Forever"}</OPressable>
-            <OPressable disabled={loading} onPress={() => setDeletingReview(null)} className="btn btn-secondary flex-1 items-center">Keep It</OPressable>
+          <OText className="txt-xl text-center">
+            Are you sure you want to delete your review for{' '}
+            <OText className="font-bold">{recipe?.name}</OText>?
+          </OText>
+          <View className="gap-std mt-4 flex-row">
+            <OPressable
+              disabled={loading}
+              onPress={confirmDelete}
+              className="btn btn-danger flex-1 items-center justify-center">
+              {loading ? (
+                <FontAwesome
+                  name="circle-o-notch"
+                  size={18}
+                  color="white"
+                  className="animate-spin"
+                />
+              ) : (
+                'Delete Forever'
+              )}
+            </OPressable>
+            <OPressable
+              disabled={loading}
+              onPress={() => setDeletingReview(null)}
+              className="btn btn-secondary flex-1 items-center">
+              Keep It
+            </OPressable>
           </View>
         </View>
       </Modal>
 
-      <Footer/>
+      <Footer />
     </ScrollView>
   );
 }

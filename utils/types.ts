@@ -36,6 +36,7 @@ export type collectionType = {
   id: number;
   name: string;
   slug: string;
+  image: string;
   author: {
     uuid: string;
     name: string;

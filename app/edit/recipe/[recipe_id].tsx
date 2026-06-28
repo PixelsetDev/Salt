@@ -21,8 +21,7 @@ export default function EditRecipe() {
   const [ingredients, setIngredients] = useState<any[]>([]);
   const [ingredientNames, setIngredientNames] = useState<{[key: number]: string}>({});
   const [steps, setSteps] = useState<any[]>([]);
-  const [flatCategories, setFlatCategories] = useState<{id: number, name: string}[]>([]);
-  const [newStepText, setNewStepText] = useState('');
+  const [flatCategories, setFlatCategories] = useState<{ id: number; name: string; parent: number | null }[]>([]);  const [newStepText, setNewStepText] = useState('');
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddIngModal, setShowAddIngModal] = useState(false);
@@ -30,10 +29,37 @@ export default function EditRecipe() {
   const [ingSearching, setIngSearching] = useState(false);
   const [ingToDelete, setIngToDelete] = useState<any | null>(null);
   const [stepToDelete, setStepToDelete] = useState<{index: number, text: string} | null>(null);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [selectedParent, setSelectedParent] = useState<number | null>(null);
 
+  const topLevelCategories = flatCategories.filter((c) => !c.parent && c.id !== 0);
+  const subCategories = flatCategories.filter((c) => c.parent === selectedParent);
+  const selectedCategory = flatCategories.find((c) => c.id === recipe.category);
+
+  const handleSelectParent = (id: number) => {
+    const hasSubs = flatCategories.some((c) => c.parent === id);
+    if (!hasSubs) {
+      setRecipe({ ...recipe, category: id });
+      setCategoryModalVisible(false);
+      setSelectedParent(null);
+    } else {
+      setSelectedParent(id);
+    }
+  };
+
+  const handleSelectCategory = (id: number) => {
+    setRecipe({ ...recipe, category: id });
+    setCategoryModalVisible(false);
+    setSelectedParent(null);
+  };
 
   const difficulties = ['Beginner', 'Easy', 'Moderate', 'Difficult', 'Expert'];
-  const visibilities = [{id: 3, name: 'Public'}, {id: 2, name: 'Unlisted'}, {id: 1, name: 'Friends'}, {id: 0, name: 'Private'}];
+  const visibilities = [
+    { id: 3, name: 'Public' },
+    { id: 2, name: 'Unlisted' },
+    { id: 1, name: 'Friends' },
+    { id: 0, name: 'Private' },
+  ];
 
   const loadData = useCallback(async () => {
     try {
@@ -53,11 +79,15 @@ export default function EditRecipe() {
         )
       );
 
-      let flattened: {id: number, name: string}[] = [{ id: 0, name: "Uncategorised" }];
+      let flattened: { id: number; name: string; parent: number | null }[] = [
+        { id: 0, name: 'Uncategorised', parent: null },
+      ];
       parents.forEach((cat, index) => {
-        flattened.push({ id: Number(cat.id), name: cat.name });
+        flattened.push({ id: Number(cat.id), name: cat.name, parent: null });
         const subs = subcategoryData[index]?.data?.subcategories || [];
-        subs.forEach((s: any) => flattened.push({ id: Number(s.id), name: `└ ${s.name}` }));
+        subs.forEach((s: any) =>
+          flattened.push({ id: Number(s.id), name: s.name, parent: Number(cat.id) })
+        );
       });
 
       setFlatCategories(flattened);
@@ -229,7 +259,48 @@ export default function EditRecipe() {
               <View><OText>Cook (mins)</OText><TextInput className="input" keyboardType="numeric" value={recipe.time.cook.toString()} onChangeText={t => setRecipe({...recipe, time: {...recipe.time, cook: parseInt(t) || 0}})} /></View>
             </View>
             <View className="grid-3 gap-std">
-              <View><OText>Category</OText><Picker style={{ height: 40 }} className="input w-full" selectedValue={recipe.category} onValueChange={(v) => setRecipe({...recipe, category: v})}>{flatCategories.map(c => <Picker.Item key={c.id} label={c.name} value={c.id} />)}</Picker></View>
+              <View>
+                <OText>Category</OText>
+                <OPressable className="input w-full" onPress={() => setCategoryModalVisible(true)}>
+                  {selectedCategory ? selectedCategory.name : 'Select a category'}
+                </OPressable>
+
+                <Modal visible={categoryModalVisible} title={selectedParent ? flatCategories.find(c => c.id === selectedParent)?.name ?? 'Select Category' : 'Select Category'} onClose={() => { setCategoryModalVisible(false); setSelectedParent(null); }} maxw="max-w-md">
+                  {selectedParent && (
+                    <OPressable className="btn btn-secondary mb-2 flex-row items-center gap-2" onPress={() => setSelectedParent(null)}>
+                      <OText>Back</OText>
+                    </OPressable>
+                  )}
+                  <ScrollView className="max-h-96">
+                    {!selectedParent ? (
+                      <>
+                        {topLevelCategories.map(c => (
+                          <OPressable key={c.id} className="btn btn-primary mb-2" onPress={() => handleSelectParent(c.id)}>
+                            <View className="flex-row items-center justify-between">
+                              <OText>{c.name}</OText>
+                              {flatCategories.some(sub => sub.parent === c.id)}
+                            </View>
+                          </OPressable>
+                        ))}
+                        <OPressable className="btn btn-secondary mb-2" onPress={() => handleSelectCategory(0)}>
+                          <OText>Uncategorised</OText>
+                        </OPressable>
+                      </>
+                    ) : (
+                      <>
+                        <OPressable className="btn btn-primary mb-2" onPress={() => handleSelectCategory(selectedParent)}>
+                          <OText>Use {flatCategories.find(c => c.id === selectedParent)?.name} (top level)</OText>
+                        </OPressable>
+                        {subCategories.map(c => (
+                          <OPressable key={c.id} className="btn btn-secondary mb-2" onPress={() => handleSelectCategory(c.id)}>
+                            <OText>{c.name}</OText>
+                          </OPressable>
+                        ))}
+                      </>
+                    )}
+                  </ScrollView>
+                </Modal>
+              </View>
               <View><OText>Difficulty</OText><Picker style={{ height: 40 }} className="input w-full" selectedValue={recipe.difficulty} onValueChange={(v) => setRecipe({...recipe, difficulty: v})}>{difficulties.map((d, i) => <Picker.Item key={i} label={d} value={i + 1} />)}</Picker></View>
               <View><OText>Visibility</OText><Picker style={{ height: 40 }} className="input w-full" selectedValue={recipe.visibility} onValueChange={(v) => setRecipe({...recipe, visibility: v})}>{visibilities.map(v => <Picker.Item key={v.id} label={v.name} value={v.id} />)}</Picker></View>
             </View>

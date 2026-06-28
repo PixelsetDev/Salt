@@ -168,7 +168,7 @@ function AllergenRow({ label, result }: { label: string; result: number }) {
   return (
     <View className="flex flex-row items-center justify-between py-3 border-b border-neutral-200 dark:border-neutral-700">
       <OText className="txt-xl flex-1">{label}</OText>
-      <OText className={cls}>{chipLabel}</OText>
+      <Text className={cls}>{chipLabel}</Text>
     </View>
   );
 }

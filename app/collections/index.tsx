@@ -1,5 +1,5 @@
 import "./../../global.css";
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View, ScrollView, Image } from 'react-native';
 import { useEffect, useState } from 'react';
 import Navbar, { Footer } from '../../components/Commons';
 import { collectionType } from '../../utils/types';
@@ -22,7 +22,7 @@ export default function App() {
         .then((body) => {
           setCollections(body.data);
         })
-        .catch((err) => setError(err));
+        .catch((err) => setError(err.message ?? 'An error occurred'));
     };
     call();
   }, [apiCall]);
@@ -45,6 +45,11 @@ export default function App() {
             <View className={`grid-3 gap-std`}>
               {collections?.map((collection) => (!!collection?.featured && (
                 <OLink href={`/collections/${collection.slug}`} className={`grid gap-2 px-4 py-2 btn btn-primary relative`} key={collection.id}>
+                  {collection.image ? (
+                    <Image source={{ uri: collection.image }} className="w-full aspect-video rounded-md" />
+                  ) : (
+                    <Image source={{ uri: 'https://api.ourcookbook.org/storage/recipes/no-image.webp' }} className="w-full aspect-video rounded-md" />
+                  )}
                   <Text className={`txt-2xl font-serif`}>{collection.name}</Text>
                   <OText className={`text-white`}>By {(collection.author.name === "SYSTEM") ? ('OurCookbook') : (collection.author.name)}</OText>
                   <OText className={`bg-yellow-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-yellow-900`}>
@@ -63,19 +68,22 @@ export default function App() {
                 </OLink>
               )))}
               {collections?.map((collection) => ((collection && !collection?.featured) && (
-                  <OLink href={`/collections/${collection.slug}`} className={`grid gap-2 px-4 py-2 btn btn-primary`} key={collection.id}>
-                    <Text className={`txt-2xl font-serif`}>{collection.name}</Text>
-                    <OText className={`text-white`}>By {(collection.author.name === "SYSTEM") ? ('OurCookbook') : (collection.author.name)}</OText>
-                    {collection.visibility === 0 && (<OText className={`bg-red-700 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
-                      <FontAwesome name={`lock`} size={16}/>&nbsp;Private
-                    </OText>)}
-                    {collection.visibility === 1 && (<OText className={`bg-orange-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
-                      <FontAwesome name={`users`} size={16}/>&nbsp;Friends Only
-                    </OText>)}
-                    {collection.visibility === 2 && (<OText className={`bg-yellow-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2`}>
-                      <FontAwesome name={`eye`} size={16}/>&nbsp;Unlisted
-                    </OText>)}
-                  </OLink>
+                <OLink href={`/collections/${collection.slug}`} className={`grid gap-2 px-4 py-2 btn btn-primary`} key={collection.id}>
+                  {collection.image && (
+                    <Image source={{ uri: collection.image }} className="w-full aspect-video rounded-md" />
+                  )}
+                  <Text className={`txt-2xl font-serif`}>{collection.name}</Text>
+                  <OText className={`text-white`}>By {(collection.author.name === "SYSTEM") ? ('OurCookbook') : (collection.author.name)}</OText>
+                  {collection.visibility === 0 && (<OText className={`bg-red-700 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
+                    <FontAwesome name={`lock`} size={16}/>&nbsp;Private
+                  </OText>)}
+                  {collection.visibility === 1 && (<OText className={`bg-orange-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2 text-white`}>
+                    <FontAwesome name={`users`} size={16}/>&nbsp;Friends Only
+                  </OText>)}
+                  {collection.visibility === 2 && (<OText className={`bg-yellow-500 absolute top-0 right-0 rounded-bl-md rounded-tr-md px-2`}>
+                    <FontAwesome name={`eye`} size={16}/>&nbsp;Unlisted
+                  </OText>)}
+                </OLink>
                 )
               ))}
             </View>

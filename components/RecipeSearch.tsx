@@ -124,11 +124,15 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
           </OPressable>
           {showMore && (
             <View className="grid gap-sm animate-fade-in">
-              {dietaryOptions.map(o => (
-                <OPressable key={o} className={btnStyle(selectedDietary.includes(o), 'danger')} onPress={() => setSelectedDietary(d => d.includes(o) ? d.filter(x => x !== o) : [...d, o])}>
-                  {selectedDietary.includes(o) ? `Excludes ${o}` : `Includes ${o}`}
-                </OPressable>
-              ))}
+              {dietaryOptions.map(o => {
+                const label = o.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                const active = selectedDietary.includes(o);
+                return (
+                  <OPressable key={o} className={btnStyle(active, 'danger')} onPress={() => setSelectedDietary(d => d.includes(o) ? d.filter(x => x !== o) : [...d, o])}>
+                    {active ? `Does not contain ${label}` : `May contain ${label}`}
+                  </OPressable>
+                );
+              })}
             </View>
           )}
         </View>
@@ -161,9 +165,6 @@ const RecipeSearch = ({ navigateToRecipe = true, onRecipePress, user, doSearch, 
             </View>
           )}
           {showSpinner && <ActivityIndicator size="large" />}
-          <View className="mb-5">
-            <InfoBox message="We're still loading in dietary information right now, so some filters may not behave as expected."/>
-          </View>
           <View className="grid-2 md:grid-3 xl:grid-4 gap-std items-stretch">
             {recipes.length > 0 ? (
               recipes.map(r => (

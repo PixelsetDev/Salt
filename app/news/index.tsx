@@ -7,19 +7,50 @@ import { NewsListItem } from '../../components/News.tsx';
 export default function App() {
   return (
     <ScrollView className={`body`}>
-      <Navbar/>
+      <Navbar />
       <View className="header grid-2">
-        <View className="grid gap-std">
+        <View className="gap-std grid">
           <Text className="h1 font-serif text-white">News</Text>
         </View>
       </View>
       <View className={`grid-2-1 gap-std p-std`}>
-        <NewsListItem name={`Spice up ya life!`} date={`7th March 2026`} summary={`Welcome to the new OurCookbook experience.`} category={`Updates`} url={`2026-03-07-spice-up-ya-life`} />
-        <NewsListItem name={`Our Second Yearly Update`} date={`7th August 2025`} summary={`OurCookbook's annual update for 2025.`} category={`Updates`} url={`2025-08-07-our-second-yearly-update`} />
-        <NewsListItem name={`£20 Amazon Gift Card Prize Draw`} date={`19th September 2024`} summary="" category={`Competitions`} url={`2024-09-19-20-amazon-gift-card-prize-draw`} />
-        <NewsListItem name={`A new OurCookbook is arriving soon.`} date={`20th August 2024`} summary="" category={`Updates`} url={`2024-08-20-a-new-ourcookbook-is-arriving-soon`} />
+        <NewsListItem
+          name={`Scalable Servings, Pictures galore, and more!`}
+          date={`28th June 2026`}
+          summary={`We've introduced new features to help you get the most out of OurCookbook including the ability to set custom servings on any recipe, picture uploads, a homepage redesign, boosts to the social feed, and much more!`}
+          category={`Updates`}
+          url={`2026-06-28-scalable-servings-pictures-galore-and-more`}
+        />
+        <NewsListItem
+          name={`Spice up ya life!`}
+          date={`7th March 2026`}
+          summary={`Welcome to the new OurCookbook experience.`}
+          category={`Updates`}
+          url={`2026-03-07-spice-up-ya-life`}
+        />
+        <NewsListItem
+          name={`Our Second Yearly Update`}
+          date={`7th August 2025`}
+          summary={`OurCookbook's annual update for 2025.`}
+          category={`Updates`}
+          url={`2025-08-07-our-second-yearly-update`}
+        />
+        <NewsListItem
+          name={`£20 Amazon Gift Card Prize Draw`}
+          date={`19th September 2024`}
+          summary=""
+          category={`Competitions`}
+          url={`2024-09-19-20-amazon-gift-card-prize-draw`}
+        />
+        <NewsListItem
+          name={`A new OurCookbook is arriving soon.`}
+          date={`20th August 2024`}
+          summary=""
+          category={`Updates`}
+          url={`2024-08-20-a-new-ourcookbook-is-arriving-soon`}
+        />
       </View>
-      <Footer/>
+      <Footer />
     </ScrollView>
   );
 }

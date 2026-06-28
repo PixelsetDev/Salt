@@ -6,22 +6,22 @@ import { OText, OLink } from "../../components/Overrides"
 export default function App() {
   return (
     <ScrollView className={`body`}>
-      <Navbar/>
+      <Navbar />
       <View className="header">
-        <View className="grid gap-std">
+        <View className="gap-std grid">
           <Text className="h1 font-serif text-white">Spice up ya life!</Text>
           <OText className={`h3 text-white`}>7th March 2026</OText>
         </View>
       </View>
 
-      <View className={`grid gap-lg p-std`}>
+      <View className={`gap-lg p-std grid`}>
         <OText>
-          Welcome to Salt - our new UI. Powered by our revolutionary new Pepper server (see what
-          we did there), we&apos;re ready to propel OurCookbook into a new era. We have been
-          very busy, here&apos;s what we have been up to:
+          Welcome to Salt - our new UI. Powered by our revolutionary new Pepper server (see what we
+          did there), we&apos;re ready to propel OurCookbook into a new era. We have been very busy,
+          here&apos;s what we have been up to:
         </OText>
 
-        <View className={`flex-row gap-sm flex-wrap`}>
+        <View className={`gap-sm flex-row flex-wrap`}>
           <Text className={`chip-green txt-xl`}>Salt and Pepper</Text>
           <Text className={`chip-green txt-xl`}>Smart Search</Text>
           <Text className={`chip-green txt-xl`}>Meal Plans</Text>
@@ -37,7 +37,7 @@ export default function App() {
           <Text className={`chip-green txt-xl`}>Chef+</Text>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Salt and Pepper</Text>
             <Text className={`chip-green self-center`}>Out now!</Text>
@@ -73,7 +73,7 @@ export default function App() {
           </OText>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Search and Categorisation</Text>
             <Text className={`chip-green self-center`}>Out now!</Text>
@@ -97,7 +97,7 @@ export default function App() {
           </OText>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Meal Plans</Text>
             <Text className={`chip-green self-center`}>Out now!</Text>
@@ -116,7 +116,7 @@ export default function App() {
           </Text>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>New Chef&apos;s Feed</Text>
             <Text className={`chip-green self-center`}>Out now!</Text>
@@ -128,7 +128,7 @@ export default function App() {
           </OText>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Shopping Lists</Text>
             <Text className={`chip-green self-center`}>Out now!</Text>
@@ -147,28 +147,30 @@ export default function App() {
           </Text>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
-            <Text className={`h2 font-serif`}>Ingredients, Allergens, and Dietary Requirements</Text>
+            <Text className={`h2 font-serif`}>
+              Ingredients, Allergens, and Dietary Requirements
+            </Text>
             <Text className={`chip-green self-center`}>Out now!</Text>
           </View>
           <OText>
             One of the biggest complaints we received was how long it took to upload new recipes,
-            and with the new categorisation step we figured it would be a good idea to try and cut
-            a step out. We also received feedback that the most painful step was the dietary
+            and with the new categorisation step we figured it would be a good idea to try and cut a
+            step out. We also received feedback that the most painful step was the dietary
             information step, as many recipe creators didn&apos;t know the answer and were worried
             that they would provide incorrect dietary advice.
           </OText>
           <OText>
             That led us down a path to figure out the best way to resolve this, and after a few
-            months of work it resulted in the creation of a database of over 600 ingredients,
-            which we call the Open Ingredients API.
+            months of work it resulted in the creation of a database of over 600 ingredients, which
+            we call the Open Ingredients API.
           </OText>
           <OText>
             Using this API, which is powered by our new Pepper server, we&apos;re able to provide
             dietary information for hundreds (and hopefully soon thousands) of ingredients across
-            all of our recipes. We&apos;re also able to provide localisation of ingredient names
-            (no more eggplant vs aubergine, we&apos;ll show you whichever is local to you!)
+            all of our recipes. We&apos;re also able to provide localisation of ingredient names (no
+            more eggplant vs aubergine, we&apos;ll show you whichever is local to you!)
           </OText>
           <OText>
             The best part is, this actually takes less work than the previous system, since we load
@@ -184,7 +186,7 @@ export default function App() {
           </OText>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Profile Customisation</Text>
             <Text className={`chip-red self-center`}>Coming Soon</Text>
@@ -200,16 +202,16 @@ export default function App() {
           </OText>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Goodbye saved recipes, hello collections!</Text>
             <Text className={`chip-green self-center`}>Out now!</Text>
           </View>
           <OText>
-            You could previously save recipes to a &quot;reading list&quot; style folder in OurCookbook,
-            almost like a playlist of recipes. These were private to you and could not be shared
-            with others. On the other hand we also had collections, which were basically the same
-            thing but public and curated by us.
+            You could previously save recipes to a &quot;reading list&quot; style folder in
+            OurCookbook, almost like a playlist of recipes. These were private to you and could not
+            be shared with others. On the other hand we also had collections, which were basically
+            the same thing but public and curated by us.
           </OText>
           <OText>
             We thought it was silly to have both, so now we don&apos;t! We&apos;ve merged them
@@ -220,7 +222,7 @@ export default function App() {
           </OText>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Going smoooooooth</Text>
             <Text className={`chip-green self-center`}>Out now!</Text>
@@ -238,7 +240,7 @@ export default function App() {
           </OText>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>More Badges</Text>
             <Text className={`chip-red self-center`}>Coming Soon</Text>
@@ -259,7 +261,7 @@ export default function App() {
           </Text>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>About those ads...</Text>
             <Text className={`chip-green self-center`}>Out now!</Text>
@@ -270,7 +272,7 @@ export default function App() {
           </OText>
         </View>
 
-        <View className={`grid gap-std`}>
+        <View className={`gap-std grid`}>
           <View className={`flex-row gap-2`}>
             <Text className={`h2 font-serif`}>Chef+</Text>
             <Text className={`chip-red self-center`}>Coming soon</Text>
@@ -282,14 +284,14 @@ export default function App() {
           <OText>
             Chef+ supports the development of OurCookbook and allows us to release new and exciting
             features with your love! All of the main features of OurCookbook will always be free,
-            but Chef+ will unlock additional functionality within them. For example, with Chef+
-            you can export your meal plan as a shopping list, but without it you can still use them
-            both separately. You will also get a profile badge which allows you to show off your
-            support for OurCookbook.
+            but Chef+ will unlock additional functionality within them. For example, with Chef+ you
+            can export your meal plan as a shopping list, but without it you can still use them both
+            separately. You will also get a profile badge which allows you to show off your support
+            for OurCookbook.
           </OText>
           <OText>
-            As we&apos;re adding new features, we will be revisiting the price, increasing it by
-            50p to £1.49 a month, which is still a bargain!
+            As we&apos;re adding new features, we will be revisiting the price, increasing it by 50p
+            to £1.49 a month, which is still a bargain!
           </OText>
           <OText>
             Chef+ is coming soon, for now we&apos;re giving everyone free Chef+ access as a welcome
@@ -298,11 +300,22 @@ export default function App() {
         </View>
 
         <View className={`grid-3 gap-std`}>
-          <OLink className={`text-center btn btn-secondary`} href={`/news/2025-05-27-our-second-yearly-update`}>Previous Article</OLink>
-          <OLink className={`text-center btn btn-secondary`} href={`/news`}>All News</OLink>
+          <OLink
+            className={`btn btn-secondary text-center`}
+            href={`/news/2025-05-27-our-second-yearly-update`}>
+            Previous Article
+          </OLink>
+          <OLink className={`btn btn-secondary text-center`} href={`/news`}>
+            All News
+          </OLink>
+          <OLink
+            className={`btn btn-secondary text-center`}
+            href={`/news/2026-06-28-scalable-servings-pictures-galore-and-more`}>
+            Next Article
+          </OLink>
         </View>
       </View>
-      <Footer/>
+      <Footer />
     </ScrollView>
   );
 }
