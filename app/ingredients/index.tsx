@@ -102,7 +102,6 @@ export default function App() {
       <View className="header grid-2">
         <View className="grid gap-std">
           <Text className="h1 font-serif text-white">Ingredients</Text>
-          <Text className="h3 text-white">{loading ? 'Loading…' : (ingredient?.name ?? category?.name ?? 'Ingredients')}</Text>
         </View>
       </View>
 
